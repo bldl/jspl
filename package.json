@@ -3,6 +3,10 @@
     "displayName": "JSPL: JavaScript Propositional Laboratory",
     "description": "Provides support for the JavaScript Propositional Laboratory Format (JSPL), a format developed for Ecma-/JS-Developers, to be used for discussing contentious features of proposals.",
     "version": "0.0.1",
+    "icon": "icon.png",
+    "repository": {
+        "url": "https://gitlab.com/phirie/jspl"
+    },
     "files": [
         "bin",
         "templates"
@@ -15,35 +19,32 @@
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
         "vscode:prepublish": "npm run build && npm run lint",
-        "full": "npm run langium:generate && npm run build"
+        "esbuild-base": "esbuild ./src/extension/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node"
     },
     "dependencies": {
+        "chalk": "~5.3.0",
+        "commander": "~11.0.0",
         "langium": "~2.1.0",
         "vscode-languageclient": "~9.0.1",
-        "vscode-languageserver": "~9.0.1",
-        "chalk": "~5.3.0",
-        "commander": "~11.0.0"
+        "vscode-languageserver": "~9.0.1"
     },
     "devDependencies": {
         "@types/node": "~16.18.41",
-        "@typescript-eslint/parser": "~6.4.1",
+        "@types/vscode": "~1.67.0",
         "@typescript-eslint/eslint-plugin": "~6.4.1",
+        "@typescript-eslint/parser": "~6.4.1",
+        "concurrently": "~8.2.1",
+        "esbuild": "^0.19.12",
         "eslint": "~8.47.0",
         "langium-cli": "~2.1.0",
-        "typescript": "~5.1.6",
-        "@types/vscode": "~1.67.0",
-        "concurrently": "~8.2.1",
-        "esbuild": "~0.19.2"
+        "typescript": "~5.1.6"
     },
     "engines": {
         "vscode": "^1.67.0",
         "node": ">=16.0.0"
     },
     "categories": [
-        "Modelling Languages",
-        "Domain Specific Languages",
-        "Linters",
-        "Languages"
+        "Programming Languages"
     ],
     "contributes": {
         "languages": [
@@ -53,7 +54,9 @@
                     "JavaScript Propositional Laboratory Format",
                     "java-script-propositional-laboratory-format"
                 ],
-                "extensions": [".jspl"],
+                "extensions": [
+                    ".jspl"
+                ],
                 "configuration": "./language-configuration.json"
             }
         ],
@@ -94,7 +97,6 @@
                 }
             ]
         }
-        
     },
     "activationEvents": [
         "onLanguage:java-script-propositional-laboratory-format"
