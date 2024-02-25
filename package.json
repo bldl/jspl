@@ -18,7 +18,7 @@
         "lint": "eslint src --ext ts",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
-        "vscode:prepublish": "npm run build && npm run lint",
+        "vscode:prepublish": "npm run build && npm run lint && npm run esbuild-base",
         "esbuild-base": "esbuild ./src/extension/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node"
     },
     "dependencies": {
