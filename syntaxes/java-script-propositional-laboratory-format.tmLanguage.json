@@ -1,0 +1,71 @@
+{
+  "name": "java-script-propositional-laboratory-format",
+  "scopeName": "source.java-script-propositional-laboratory-format",
+  "fileTypes": [
+    ".jspl"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "name": "keyword.control.java-script-propositional-laboratory-format",
+      "match": "\\b(and|concern|condition|default|description|disabled|expression|holds|is|not|or|proposition|raise|summary|throw|value|when)\\b"
+    },
+    {
+      "name": "string.quoted.double.java-script-propositional-laboratory-format",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
+    },
+    {
+      "name": "string.quoted.single.java-script-propositional-laboratory-format",
+      "begin": "'",
+      "end": "'",
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.java-script-propositional-laboratory-format",
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.java-script-propositional-laboratory-format"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.java-script-propositional-laboratory-format"
+            }
+          }
+        },
+        {
+          "begin": "//",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.java-script-propositional-laboratory-format"
+            }
+          },
+          "end": "(?=$)",
+          "name": "comment.line.java-script-propositional-laboratory-format"
+        }
+      ]
+    },
+    "string-character-escape": {
+      "name": "constant.character.escape.java-script-propositional-laboratory-format",
+      "match": "\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|u\\{[0-9A-Fa-f]+\\}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"completion-parser-builder.d.ts","sourceRoot":"","sources":["../../src/parser/completion-parser-builder.ts"],"names":[],"mappings":"AAAA;;;;gFAIgF;AAEhF,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,gBAAgB,CAAC;AACtD,OAAO,EAAE,uBAAuB,EAAE,MAAM,qBAAqB,CAAC;AAG9D,wBAAgB,sBAAsB,CAAC,QAAQ,EAAE,eAAe,GAAG,uBAAuB,CAOzF"}
