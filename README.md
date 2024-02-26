@@ -19,6 +19,9 @@ proposition name {
         raise someConcern when someCondition is True
     }
     value "some custom value"
+    disabled {
+        throw "message" when someCondition is True and someOtherProposition is "undefined"
+    }
 }
 
 proposition given {
