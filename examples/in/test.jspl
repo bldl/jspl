@@ -1,0 +1,14 @@
+concern test {
+    summary "CONCERN!"
+    description "This is concerning."
+}
+
+condition maybe holds when maybe is True
+
+proposition test {
+    expression "a === b"
+    default value True {
+        raise test when maybe is True
+    }
+    value False
+}

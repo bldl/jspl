@@ -1,45 +1,60 @@
-import chalk from 'chalk';
 import { createJavaScriptPropositionalLaboratoryFormatServices } from '../language/java-script-propositional-laboratory-format-module.js';
 import { extractAstNode, extractFileExtension, getInputExtensionsAsSet, getInputExtensionsAsString } from './cli-util.js';
 import { generateLaboratory } from './labGenerator.js';
 import { generateGraphviz } from './graphvizGenerator.js';
 import { NodeFileSystem } from 'langium/node';
-import * as fs from 'node:fs';
-//import { workspace } from 'vscode'; // TODO: replace node:fs with workspace.fs
+import { statSync, existsSync, mkdirSync } from 'node:fs';
+import { FileSystemError } from 'vscode';
+//import { workspace, Uri } from 'vscode'; // TODO: replace node:fs with workspace.fs
 const TEMPLATES_DIRECTORY = "./templates/laboratory-template";
-export const generateLaboratoryAction = async (inputFile, destination, templatePath = TEMPLATES_DIRECTORY) => {
+function getModel(inputFile) {
+    const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
+    return extractAstNode(inputFile, services);
+}
+function checkJSPLInput(inputFile) {
     const fileExtensions = getInputExtensionsAsSet();
-    // workspace.fs.stat(destination).then((value) => {
-    //     value.type
-    // });
-    // make sure input is a jspl file
-    fs.stat(inputFile, (err, stats) => {
-        if (err)
-            throw new Error(err.message);
-        if (!stats.isFile())
-            throw new Error(`The specified input file (${inputFile}) is not a file.`);
-    });
+    const inputStats = statSync(inputFile);
+    if (!inputStats.isFile())
+        throw new FileSystemError(`The specified input file (${inputFile}) is not a file.`);
     if (!fileExtensions.has("." + extractFileExtension(inputFile)))
-        throw new Error(`The specified input file (${inputFile}) does not have one of the allowed file extensions (${getInputExtensionsAsString()}).`);
-    // make sure destination exists and is a directory
-    if (!fs.existsSync(destination))
-        fs.mkdirSync(destination);
-    fs.stat(destination, (err, stats) => {
-        if (err)
-            throw new Error(err.message);
-        if (!stats.isDirectory())
-            throw new Error(`The specified output directory (${destination}) is not a directory.`);
-    });
-    const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
-    const model = await extractAstNode(inputFile, services);
+        throw new FileSystemError(`The specified input file (${inputFile}) does not have one of the allowed file extensions (${getInputExtensionsAsString()}).`);
+}
+function checkLaboratoryOutputDirectory(outputDirectoryPath) {
+    if (!existsSync(outputDirectoryPath))
+        mkdirSync(outputDirectoryPath);
+    const outputStats = statSync(outputDirectoryPath);
+    if (!outputStats.isDirectory())
+        throw new FileSystemError(`The specified output directory (${outputDirectoryPath}) is not a directory.`);
+}
+export const generateLaboratoryAction = async (inputFile, destination, templatePath = TEMPLATES_DIRECTORY) => {
+    // check input file
+    try {
+        checkJSPLInput(inputFile);
+    }
+    catch (error) {
+        return Promise.reject(`Something went wrong while checking the input file. (Error: ${error})`);
+    }
+    // check output directory
+    try {
+        checkLaboratoryOutputDirectory(destination);
+    }
+    catch (error) {
+        return Promise.reject(`Something went wrong while checking the output directory. (Error: ${error})`);
+    }
+    const model = await getModel(inputFile);
     const generatedLabPath = generateLaboratory(model, destination, templatePath);
-    console.log(chalk.green(`JavaScript code generated successfully: ${generatedLabPath}`));
-    return generatedLabPath;
+    return Promise.resolve(generatedLabPath);
 };
-export const generateGraphvizAction = async (fileName, destination) => {
-    const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
-    const model = await extractAstNode(fileName, services);
-    const generatedFilePath = generateGraphviz(model, fileName, destination);
-    console.log(chalk.green(`Graphviz Visualization generated successfully: ${generatedFilePath}`));
+export const generateGraphvizAction = async (inputFile, destination) => {
+    // check input file
+    try {
+        checkJSPLInput(inputFile);
+    }
+    catch (error) {
+        return Promise.reject(`Something went wrong while reading the input file. (Error: ${error})`);
+    }
+    const model = await getModel(inputFile);
+    const generatedFilePath = generateGraphviz(model, destination);
+    return Promise.resolve(generatedFilePath);
 };
 //# sourceMappingURL=actions.js.map

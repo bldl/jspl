@@ -1,4 +1,4 @@
-import * as fs from 'node:fs';
+import { writeFileSync, appendFileSync } from 'node:fs';
 import { CompositeGeneratorNode, toString } from 'langium';
 const GRAPHVIZ_COLORS = {
     red: "\"#9d0208\"",
@@ -9,13 +9,13 @@ const GRAPHVIZ_POSTFIX = "}\n";
 const GRAPHVIZ_PROPOSITIONS_NODE_STYLE = "shape=oval, color=black";
 const GRAPHVIZ_PROPOSITIONS_DISABLE_EDGE_STYLE = `labelfontcolor=${GRAPHVIZ_COLORS.red}, color=${GRAPHVIZ_COLORS.red}`;
 const GRAPHVIZ_PROPOSITIONS_RAISE_EDGE_STYLE = `labelfontcolor=${GRAPHVIZ_COLORS.yellow}, color=${GRAPHVIZ_COLORS.yellow}`;
-export function generateGraphviz(model, filePath, destination) {
+export function generateGraphviz(model, destination) {
     const generatedFilePath = destination;
     const propositionsNode = new CompositeGeneratorNode();
     graphvizPropositions(model.propositions, propositionsNode);
-    fs.writeFileSync(generatedFilePath, GRAPHVIZ_PREFIX);
-    fs.appendFileSync(generatedFilePath, toString(propositionsNode));
-    fs.appendFileSync(generatedFilePath, GRAPHVIZ_POSTFIX);
+    writeFileSync(generatedFilePath, GRAPHVIZ_PREFIX);
+    appendFileSync(generatedFilePath, toString(propositionsNode));
+    appendFileSync(generatedFilePath, GRAPHVIZ_POSTFIX);
     return generatedFilePath;
 }
 function getReferenceablesInBinaryExpression(expression, output) {
@@ -45,7 +45,7 @@ function getReferencablesInExpression(expression, output) {
             break;
     }
 }
-function getReferencableInWhenCondition(condition) {
+function getReferencablesInWhenCondition(condition) {
     let result = new Set();
     getReferencablesInExpression(condition.expression, result);
     return result;
@@ -61,7 +61,7 @@ function graphvizPropositions(propositions, fileNode) {
             valueDescription.raises.forEach(raise => {
                 if (raise.condition === undefined)
                     return;
-                let referenceables = getReferencableInWhenCondition(raise.condition);
+                let referenceables = getReferencablesInWhenCondition(raise.condition);
                 referenceables.forEach(referenceable => {
                     fileNode.append(`${indentation}${referenceable.name} -> ${proposition.name} [${GRAPHVIZ_PROPOSITIONS_RAISE_EDGE_STYLE}];\n`);
                 });
@@ -70,7 +70,7 @@ function graphvizPropositions(propositions, fileNode) {
         // add edges for disabling
         if (proposition.disable !== undefined) {
             proposition.disable.statements.forEach(statement => {
-                let referenceables = getReferencableInWhenCondition(statement.condition);
+                let referenceables = getReferencablesInWhenCondition(statement.condition);
                 referenceables.forEach(referenceable => {
                     fileNode.append(`${indentation}${referenceable.name} -> ${proposition.name} [${GRAPHVIZ_PROPOSITIONS_DISABLE_EDGE_STYLE}];\n`);
                 });

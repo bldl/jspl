@@ -97,8 +97,8 @@ var require_is = __commonJS({
       if (value instanceof Promise) {
         return value;
       } else if (thenable(value)) {
-        return new Promise((resolve2, reject2) => {
-          value.then((resolved) => resolve2(resolved), (error2) => reject2(error2));
+        return new Promise((resolve, reject2) => {
+          value.then((resolved) => resolve(resolved), (error2) => reject2(error2));
         });
       } else {
         return Promise.resolve(value);
@@ -1111,8 +1111,8 @@ var require_semaphore = __commonJS({
         this._waiting = [];
       }
       lock(thunk) {
-        return new Promise((resolve2, reject2) => {
-          this._waiting.push({ thunk, resolve: resolve2, reject: reject2 });
+        return new Promise((resolve, reject2) => {
+          this._waiting.push({ thunk, resolve, reject: reject2 });
           this.runNext();
         });
       }
@@ -2607,9 +2607,9 @@ ${JSON.stringify(message, null, 4)}`);
           if (typeof cancellationStrategy.sender.enableCancellation === "function") {
             cancellationStrategy.sender.enableCancellation(requestMessage);
           }
-          return new Promise(async (resolve2, reject2) => {
+          return new Promise(async (resolve, reject2) => {
             const resolveWithCleanup = (r) => {
-              resolve2(r);
+              resolve(r);
               cancellationStrategy.sender.cleanup(id);
               disposable == null ? void 0 : disposable.dispose();
             };
@@ -3020,10 +3020,10 @@ var require_ril = __commonJS({
         return api_1.Disposable.create(() => this.stream.off("end", listener));
       }
       write(data, encoding) {
-        return new Promise((resolve2, reject2) => {
+        return new Promise((resolve, reject2) => {
           const callback = (error) => {
             if (error === void 0 || error === null) {
-              resolve2();
+              resolve();
             } else {
               reject2(error);
             }
@@ -3130,7 +3130,7 @@ var require_main = __commonJS({
     exports2.createMessageConnection = exports2.createServerSocketTransport = exports2.createClientSocketTransport = exports2.createServerPipeTransport = exports2.createClientPipeTransport = exports2.generateRandomPipeName = exports2.StreamMessageWriter = exports2.StreamMessageReader = exports2.SocketMessageWriter = exports2.SocketMessageReader = exports2.PortMessageWriter = exports2.PortMessageReader = exports2.IPCMessageWriter = exports2.IPCMessageReader = void 0;
     var ril_1 = require_ril();
     ril_1.default.install();
-    var path4 = require("path");
+    var path2 = require("path");
     var os2 = require("os");
     var crypto_1 = require("crypto");
     var net_1 = require("net");
@@ -3266,9 +3266,9 @@ var require_main = __commonJS({
       }
       let result;
       if (XDG_RUNTIME_DIR) {
-        result = path4.join(XDG_RUNTIME_DIR, `vscode-ipc-${randomSuffix}.sock`);
+        result = path2.join(XDG_RUNTIME_DIR, `vscode-ipc-${randomSuffix}.sock`);
       } else {
-        result = path4.join(os2.tmpdir(), `vscode-${randomSuffix}.sock`);
+        result = path2.join(os2.tmpdir(), `vscode-${randomSuffix}.sock`);
       }
       const limit = safeIpcPathLengths.get(process.platform);
       if (limit !== void 0 && result.length > limit) {
@@ -3279,10 +3279,10 @@ var require_main = __commonJS({
     exports2.generateRandomPipeName = generateRandomPipeName;
     function createClientPipeTransport(pipeName, encoding = "utf-8") {
       let connectResolve;
-      const connected = new Promise((resolve2, _reject) => {
-        connectResolve = resolve2;
+      const connected = new Promise((resolve, _reject) => {
+        connectResolve = resolve;
       });
-      return new Promise((resolve2, reject2) => {
+      return new Promise((resolve, reject2) => {
         let server = (0, net_1.createServer)((socket) => {
           server.close();
           connectResolve([
@@ -3293,7 +3293,7 @@ var require_main = __commonJS({
         server.on("error", reject2);
         server.listen(pipeName, () => {
           server.removeListener("error", reject2);
-          resolve2({
+          resolve({
             onConnected: () => {
               return connected;
             }
@@ -3312,10 +3312,10 @@ var require_main = __commonJS({
     exports2.createServerPipeTransport = createServerPipeTransport;
     function createClientSocketTransport(port, encoding = "utf-8") {
       let connectResolve;
-      const connected = new Promise((resolve2, _reject) => {
-        connectResolve = resolve2;
+      const connected = new Promise((resolve, _reject) => {
+        connectResolve = resolve;
       });
-      return new Promise((resolve2, reject2) => {
+      return new Promise((resolve, reject2) => {
         const server = (0, net_1.createServer)((socket) => {
           server.close();
           connectResolve([
@@ -3326,7 +3326,7 @@ var require_main = __commonJS({
         server.on("error", reject2);
         server.listen(port, "127.0.0.1", () => {
           server.removeListener("error", reject2);
-          resolve2({
+          resolve({
             onConnected: () => {
               return connected;
             }
@@ -6431,8 +6431,8 @@ var require_async = __commonJS({
           this.cancelTimeout();
         }
         if (!this.completionPromise) {
-          this.completionPromise = new Promise((resolve2) => {
-            this.onSuccess = resolve2;
+          this.completionPromise = new Promise((resolve) => {
+            this.onSuccess = resolve;
           }).then(() => {
             this.completionPromise = void 0;
             this.onSuccess = void 0;
@@ -6485,8 +6485,8 @@ var require_async = __commonJS({
         this._waiting = [];
       }
       lock(thunk) {
-        return new Promise((resolve2, reject2) => {
-          this._waiting.push({ thunk, resolve: resolve2, reject: reject2 });
+        return new Promise((resolve, reject2) => {
+          this._waiting.push({ thunk, resolve, reject: reject2 });
           this.runNext();
         });
       }
@@ -6601,9 +6601,9 @@ var require_async = __commonJS({
         if (token !== void 0 && token.isCancellationRequested) {
           break;
         }
-        index = await new Promise((resolve2) => {
+        index = await new Promise((resolve) => {
           (0, vscode_languageserver_protocol_1.RAL)().timer.setImmediate(() => {
-            resolve2(convertBatch(index));
+            resolve(convertBatch(index));
           });
         });
       }
@@ -6632,9 +6632,9 @@ var require_async = __commonJS({
         if (token !== void 0 && token.isCancellationRequested) {
           break;
         }
-        index = await new Promise((resolve2) => {
+        index = await new Promise((resolve) => {
           (0, vscode_languageserver_protocol_1.RAL)().timer.setImmediate(() => {
-            resolve2(convertBatch(index));
+            resolve(convertBatch(index));
           });
         });
       }
@@ -6662,9 +6662,9 @@ var require_async = __commonJS({
         if (token !== void 0 && token.isCancellationRequested) {
           break;
         }
-        index = await new Promise((resolve2) => {
+        index = await new Promise((resolve) => {
           (0, vscode_languageserver_protocol_1.RAL)().timer.setImmediate(() => {
-            resolve2(runBatch(index));
+            resolve(runBatch(index));
           });
         });
       }
@@ -6723,8 +6723,8 @@ var require_protocolCodeAction = __commonJS({
   "node_modules/vscode-languageclient/lib/common/protocolCodeAction.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    var vscode2 = require("vscode");
-    var ProtocolCodeAction = class extends vscode2.CodeAction {
+    var vscode = require("vscode");
+    var ProtocolCodeAction = class extends vscode.CodeAction {
       constructor(title, data) {
         super(title);
         this.data = data;
@@ -6740,7 +6740,7 @@ var require_protocolDiagnostic = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ProtocolDiagnostic = exports2.DiagnosticCode = void 0;
-    var vscode2 = require("vscode");
+    var vscode = require("vscode");
     var Is2 = require_is();
     var DiagnosticCode;
     (function(DiagnosticCode2) {
@@ -6750,7 +6750,7 @@ var require_protocolDiagnostic = __commonJS({
       }
       DiagnosticCode2.is = is;
     })(DiagnosticCode || (exports2.DiagnosticCode = DiagnosticCode = {}));
-    var ProtocolDiagnostic = class extends vscode2.Diagnostic {
+    var ProtocolDiagnostic = class extends vscode.Diagnostic {
       constructor(range, message, severity, data) {
         super(range, message, severity);
         this.data = data;
@@ -8914,8 +8914,8 @@ var require_progressPart = __commonJS({
             this._client.sendNotification(vscode_languageserver_protocol_1.WorkDoneProgressCancelNotification.type, { token: this._token });
           });
           this.report(params);
-          return new Promise((resolve2, reject2) => {
-            this._resolve = resolve2;
+          return new Promise((resolve, reject2) => {
+            this._resolve = resolve;
             this._reject = reject2;
           });
         });
@@ -9468,8 +9468,8 @@ var require_minimatch = __commonJS({
       return new Minimatch(pattern, options).match(p);
     };
     module2.exports = minimatch;
-    var path4 = require_path();
-    minimatch.sep = path4.sep;
+    var path2 = require_path();
+    minimatch.sep = path2.sep;
     var GLOBSTAR = Symbol("globstar **");
     minimatch.GLOBSTAR = GLOBSTAR;
     var expand = require_brace_expansion();
@@ -9990,8 +9990,8 @@ var require_minimatch = __commonJS({
         if (f === "/" && partial)
           return true;
         const options = this.options;
-        if (path4.sep !== "/") {
-          f = f.split(path4.sep).join("/");
+        if (path2.sep !== "/") {
+          f = f.split(path2.sep).join("/");
         }
         f = f.split(slashSplit);
         this.debug(this.pattern, "split", f);
@@ -10787,7 +10787,7 @@ var require_notebook = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.NotebookDocumentSyncFeature = void 0;
-    var vscode2 = require("vscode");
+    var vscode = require("vscode");
     var minimatch = require_minimatch();
     var proto2 = require_main3();
     var UUID = require_uuid();
@@ -10842,9 +10842,9 @@ var require_notebook = __commonJS({
         c2p2.asNotebookCell = asNotebookCell;
         function asNotebookCellKind(kind) {
           switch (kind) {
-            case vscode2.NotebookCellKind.Markup:
+            case vscode.NotebookCellKind.Markup:
               return proto2.NotebookCellKind.Markup;
-            case vscode2.NotebookCellKind.Code:
+            case vscode.NotebookCellKind.Code:
               return proto2.NotebookCellKind.Code;
           }
         }
@@ -11096,25 +11096,25 @@ var require_notebook = __commonJS({
         this.notebookDidOpen = /* @__PURE__ */ new Set();
         this.disposables = [];
         this.selector = client2.protocol2CodeConverter.asDocumentSelector($NotebookDocumentSyncOptions.asDocumentSelector(options));
-        vscode2.workspace.onDidOpenNotebookDocument((notebookDocument) => {
+        vscode.workspace.onDidOpenNotebookDocument((notebookDocument) => {
           this.notebookDidOpen.add(notebookDocument.uri.toString());
           this.didOpen(notebookDocument);
         }, void 0, this.disposables);
-        for (const notebookDocument of vscode2.workspace.notebookDocuments) {
+        for (const notebookDocument of vscode.workspace.notebookDocuments) {
           this.notebookDidOpen.add(notebookDocument.uri.toString());
           this.didOpen(notebookDocument);
         }
-        vscode2.workspace.onDidChangeNotebookDocument((event) => this.didChangeNotebookDocument(event), void 0, this.disposables);
+        vscode.workspace.onDidChangeNotebookDocument((event) => this.didChangeNotebookDocument(event), void 0, this.disposables);
         if (this.options.save === true) {
-          vscode2.workspace.onDidSaveNotebookDocument((notebookDocument) => this.didSave(notebookDocument), void 0, this.disposables);
+          vscode.workspace.onDidSaveNotebookDocument((notebookDocument) => this.didSave(notebookDocument), void 0, this.disposables);
         }
-        vscode2.workspace.onDidCloseNotebookDocument((notebookDocument) => {
+        vscode.workspace.onDidCloseNotebookDocument((notebookDocument) => {
           this.didClose(notebookDocument);
           this.notebookDidOpen.delete(notebookDocument.uri.toString());
         }, void 0, this.disposables);
       }
       getState() {
-        for (const notebook of vscode2.workspace.notebookDocuments) {
+        for (const notebook of vscode.workspace.notebookDocuments) {
           const matchingCells = this.getMatchingCells(notebook);
           if (matchingCells !== void 0) {
             return { kind: "document", id: "$internal", registrations: true, matches: true };
@@ -11126,10 +11126,10 @@ var require_notebook = __commonJS({
         return "notebook";
       }
       handles(textDocument) {
-        return vscode2.languages.match(this.selector, textDocument) > 0;
+        return vscode.languages.match(this.selector, textDocument) > 0;
       }
       didOpenNotebookCellTextDocument(notebookDocument, cell) {
-        if (vscode2.languages.match(this.selector, cell.document) === 0) {
+        if (vscode.languages.match(this.selector, cell.document) === 0) {
           return;
         }
         if (!this.notebookDidOpen.has(notebookDocument.uri.toString())) {
@@ -11160,7 +11160,7 @@ var require_notebook = __commonJS({
         }
       }
       didChangeNotebookCellTextDocument(notebookDocument, event) {
-        if (vscode2.languages.match(this.selector, event.document) === 0) {
+        if (vscode.languages.match(this.selector, event.document) === 0) {
           return;
         }
         this.doSendChange({
@@ -11440,7 +11440,7 @@ var require_notebook = __commonJS({
         this.client = client2;
         this.registrations = /* @__PURE__ */ new Map();
         this.registrationType = proto2.NotebookDocumentSyncRegistrationType.type;
-        vscode2.workspace.onDidOpenTextDocument((textDocument) => {
+        vscode.workspace.onDidOpenTextDocument((textDocument) => {
           if (textDocument.uri.scheme !== _NotebookDocumentSyncFeature.CellScheme) {
             return;
           }
@@ -11454,7 +11454,7 @@ var require_notebook = __commonJS({
             }
           }
         });
-        vscode2.workspace.onDidChangeTextDocument((event) => {
+        vscode.workspace.onDidChangeTextDocument((event) => {
           if (event.contentChanges.length === 0) {
             return;
           }
@@ -11472,7 +11472,7 @@ var require_notebook = __commonJS({
             }
           }
         });
-        vscode2.workspace.onDidCloseTextDocument((textDocument) => {
+        vscode.workspace.onDidCloseTextDocument((textDocument) => {
           if (textDocument.uri.scheme !== _NotebookDocumentSyncFeature.CellScheme) {
             return;
           }
@@ -11538,7 +11538,7 @@ var require_notebook = __commonJS({
         if (textDocument.uri.scheme !== _NotebookDocumentSyncFeature.CellScheme) {
           return false;
         }
-        if (this.dedicatedChannel !== void 0 && vscode2.languages.match(this.dedicatedChannel, textDocument) > 0) {
+        if (this.dedicatedChannel !== void 0 && vscode.languages.match(this.dedicatedChannel, textDocument) > 0) {
           return true;
         }
         for (const provider of this.registrations.values()) {
@@ -11558,7 +11558,7 @@ var require_notebook = __commonJS({
       }
       findNotebookDocumentAndCell(textDocument) {
         const uri = textDocument.uri.toString();
-        for (const notebookDocument of vscode2.workspace.notebookDocuments) {
+        for (const notebookDocument of vscode.workspace.notebookDocuments) {
           for (const cell of notebookDocument.getCells()) {
             if (cell.document.uri.toString() === uri) {
               return [notebookDocument, cell];
@@ -11738,13 +11738,13 @@ var require_configuration = __commonJS({
         });
       }
       extractSettingsInformation(keys2) {
-        function ensurePath(config, path4) {
+        function ensurePath(config, path2) {
           let current = config;
-          for (let i = 0; i < path4.length - 1; i++) {
-            let obj = current[path4[i]];
+          for (let i = 0; i < path2.length - 1; i++) {
+            let obj = current[path2[i]];
             if (!obj) {
               obj = /* @__PURE__ */ Object.create(null);
-              current[path4[i]] = obj;
+              current[path2[i]] = obj;
             }
             current = obj;
           }
@@ -11762,8 +11762,8 @@ var require_configuration = __commonJS({
             config = vscode_1.workspace.getConfiguration(void 0, resource).get(key);
           }
           if (config) {
-            let path4 = keys2[i].split(".");
-            ensurePath(result, path4)[path4[path4.length - 1]] = toJSONObject(config);
+            let path2 = keys2[i].split(".");
+            ensurePath(result, path2)[path2[path2.length - 1]] = toJSONObject(config);
           }
         }
         return result;
@@ -14077,7 +14077,7 @@ var require_semanticTokens = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.SemanticTokensFeature = void 0;
-    var vscode2 = require("vscode");
+    var vscode = require("vscode");
     var vscode_languageserver_protocol_1 = require_main3();
     var features_1 = require_features();
     var Is2 = require_is();
@@ -14155,7 +14155,7 @@ var require_semanticTokens = __commonJS({
         const selector = options.documentSelector;
         const fullProvider = Is2.boolean(options.full) ? options.full : options.full !== void 0;
         const hasEditProvider = options.full !== void 0 && typeof options.full !== "boolean" && options.full.delta === true;
-        const eventEmitter = new vscode2.EventEmitter();
+        const eventEmitter = new vscode.EventEmitter();
         const documentProvider = fullProvider ? {
           onDidChangeSemanticTokens: eventEmitter.event,
           provideDocumentSemanticTokens: (document, token) => {
@@ -14227,12 +14227,12 @@ var require_semanticTokens = __commonJS({
         const legend = client2.protocol2CodeConverter.asSemanticTokensLegend(options.legend);
         const documentSelector = client2.protocol2CodeConverter.asDocumentSelector(selector);
         if (documentProvider !== void 0) {
-          disposables.push(vscode2.languages.registerDocumentSemanticTokensProvider(documentSelector, documentProvider, legend));
+          disposables.push(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, documentProvider, legend));
         }
         if (rangeProvider !== void 0) {
-          disposables.push(vscode2.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, rangeProvider, legend));
+          disposables.push(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, rangeProvider, legend));
         }
-        return [new vscode2.Disposable(() => disposables.forEach((item) => item.dispose())), { range: rangeProvider, full: documentProvider, onDidChangeSemanticTokensEmitter: eventEmitter }];
+        return [new vscode.Disposable(() => disposables.forEach((item) => item.dispose())), { range: rangeProvider, full: documentProvider, onDidChangeSemanticTokensEmitter: eventEmitter }];
       }
     };
     exports2.SemanticTokensFeature = SemanticTokensFeature;
@@ -14332,13 +14332,13 @@ var require_fileOperations = __commonJS({
       async filter(event, prop) {
         const fileMatches = await Promise.all(event.files.map(async (item) => {
           const uri = prop(item);
-          const path4 = uri.fsPath.replace(/\\/g, "/");
+          const path2 = uri.fsPath.replace(/\\/g, "/");
           for (const filters of this._filters.values()) {
             for (const filter2 of filters) {
               if (filter2.scheme !== void 0 && filter2.scheme !== uri.scheme) {
                 continue;
               }
-              if (filter2.matcher.match(path4)) {
+              if (filter2.matcher.match(path2)) {
                 if (filter2.kind === void 0) {
                   return true;
                 }
@@ -14352,7 +14352,7 @@ var require_fileOperations = __commonJS({
                 }
               } else if (filter2.kind === proto2.FileOperationPatternKind.folder) {
                 const fileType = await _FileOperationFeature.getFileType(uri);
-                if (fileType === code.FileType.Directory && filter2.matcher.match(`${path4}/`)) {
+                if (fileType === code.FileType.Directory && filter2.matcher.match(`${path2}/`)) {
                   return true;
                 }
               }
@@ -15459,7 +15459,7 @@ var require_client = __commonJS({
         if (this._onStart !== void 0) {
           return this._onStart;
         }
-        const [promise, resolve2, reject2] = this.createOnStartPromise();
+        const [promise, resolve, reject2] = this.createOnStartPromise();
         this._onStart = promise;
         if (this._diagnostics === void 0) {
           this._diagnostics = this._clientOptions.diagnosticCollectionName ? vscode_1.languages.createDiagnosticCollection(this._clientOptions.diagnosticCollectionName) : vscode_1.languages.createDiagnosticCollection();
@@ -15570,7 +15570,7 @@ var require_client = __commonJS({
           });
           connection.listen();
           await this.initialize(connection);
-          resolve2();
+          resolve();
         } catch (error) {
           this.$state = ClientState.StartFailed;
           this.error(`${this._name} client: couldn't create connection to server.`, error, "force");
@@ -15579,13 +15579,13 @@ var require_client = __commonJS({
         return this._onStart;
       }
       createOnStartPromise() {
-        let resolve2;
+        let resolve;
         let reject2;
         const promise = new Promise((_resolve2, _reject) => {
-          resolve2 = _resolve2;
+          resolve = _resolve2;
           reject2 = _reject;
         });
-        return [promise, resolve2, reject2];
+        return [promise, resolve, reject2];
       }
       async initialize(connection) {
         this.refreshTrace(connection, false);
@@ -18132,8 +18132,8 @@ var require_main4 = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.SettingMonitor = exports2.LanguageClient = exports2.TransportKind = void 0;
     var cp = require("child_process");
-    var fs6 = require("fs");
-    var path4 = require("path");
+    var fs3 = require("fs");
+    var path2 = require("path");
     var vscode_1 = require("vscode");
     var Is2 = require_is();
     var client_1 = require_client();
@@ -18243,7 +18243,7 @@ var require_main4 = __commonJS({
       async restart() {
         await this.stop();
         if (this.isInDebugMode) {
-          await new Promise((resolve2) => setTimeout(resolve2, 1e3));
+          await new Promise((resolve) => setTimeout(resolve, 1e3));
           await this.start();
         } else {
           await this.start();
@@ -18427,7 +18427,7 @@ var require_main4 = __commonJS({
               }
             } else {
               let pipeName = void 0;
-              return new Promise((resolve2, reject2) => {
+              return new Promise((resolve, reject2) => {
                 var _a2, _b;
                 const args = (_a2 = node.args && node.args.slice()) != null ? _a2 : [];
                 if (transport === TransportKind2.ipc) {
@@ -18453,9 +18453,9 @@ var require_main4 = __commonJS({
                   sp.stderr.on("data", (data) => this.outputChannel.append(Is2.string(data) ? data : data.toString(encoding)));
                   if (transport === TransportKind2.ipc) {
                     sp.stdout.on("data", (data) => this.outputChannel.append(Is2.string(data) ? data : data.toString(encoding)));
-                    resolve2({ reader: new node_1.IPCMessageReader(this._serverProcess), writer: new node_1.IPCMessageWriter(this._serverProcess) });
+                    resolve({ reader: new node_1.IPCMessageReader(this._serverProcess), writer: new node_1.IPCMessageWriter(this._serverProcess) });
                   } else {
-                    resolve2({ reader: new node_1.StreamMessageReader(sp.stdout), writer: new node_1.StreamMessageWriter(sp.stdin) });
+                    resolve({ reader: new node_1.StreamMessageReader(sp.stdout), writer: new node_1.StreamMessageWriter(sp.stdin) });
                   }
                 } else if (transport === TransportKind2.pipe) {
                   (0, node_1.createClientPipeTransport)(pipeName).then((transport2) => {
@@ -18465,7 +18465,7 @@ var require_main4 = __commonJS({
                     sp.stderr.on("data", (data) => this.outputChannel.append(Is2.string(data) ? data : data.toString(encoding)));
                     sp.stdout.on("data", (data) => this.outputChannel.append(Is2.string(data) ? data : data.toString(encoding)));
                     transport2.onConnected().then((protocol) => {
-                      resolve2({ reader: protocol[0], writer: protocol[1] });
+                      resolve({ reader: protocol[0], writer: protocol[1] });
                     }, reject2);
                   }, reject2);
                 } else if (Transport.isSocket(transport)) {
@@ -18476,7 +18476,7 @@ var require_main4 = __commonJS({
                     sp.stderr.on("data", (data) => this.outputChannel.append(Is2.string(data) ? data : data.toString(encoding)));
                     sp.stdout.on("data", (data) => this.outputChannel.append(Is2.string(data) ? data : data.toString(encoding)));
                     transport2.onConnected().then((protocol) => {
-                      resolve2({ reader: protocol[0], writer: protocol[1] });
+                      resolve({ reader: protocol[0], writer: protocol[1] });
                     }, reject2);
                   }, reject2);
                 }
@@ -18553,19 +18553,19 @@ var require_main4 = __commonJS({
         });
       }
       _getRuntimePath(runtime, serverWorkingDirectory) {
-        if (path4.isAbsolute(runtime)) {
+        if (path2.isAbsolute(runtime)) {
           return runtime;
         }
         const mainRootPath = this._mainGetRootPath();
         if (mainRootPath !== void 0) {
-          const result = path4.join(mainRootPath, runtime);
-          if (fs6.existsSync(result)) {
+          const result = path2.join(mainRootPath, runtime);
+          if (fs3.existsSync(result)) {
             return result;
           }
         }
         if (serverWorkingDirectory !== void 0) {
-          const result = path4.join(serverWorkingDirectory, runtime);
-          if (fs6.existsSync(result)) {
+          const result = path2.join(serverWorkingDirectory, runtime);
+          if (fs3.existsSync(result)) {
             return result;
           }
         }
@@ -18589,7 +18589,7 @@ var require_main4 = __commonJS({
         }
         if (cwd) {
           return new Promise((s) => {
-            fs6.lstat(cwd, (err, stats) => {
+            fs3.lstat(cwd, (err, stats) => {
               s(!err && stats.isDirectory() ? cwd : void 0);
             });
           });
@@ -20406,8 +20406,8 @@ var require_server = __commonJS({
         if (value instanceof Promise) {
           return value;
         } else if (Is2.thenable(value)) {
-          return new Promise((resolve2, reject2) => {
-            value.then((resolved) => resolve2(resolved), (error) => reject2(error));
+          return new Promise((resolve, reject2) => {
+            value.then((resolved) => resolve(resolved), (error) => reject2(error));
           });
         } else {
           return Promise.resolve(value);
@@ -20652,8 +20652,8 @@ var require_files = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.resolveModulePath = exports2.FileSystem = exports2.resolveGlobalYarnPath = exports2.resolveGlobalNodePath = exports2.resolve = exports2.uriToFilePath = void 0;
     var url = require("url");
-    var path4 = require("path");
-    var fs6 = require("fs");
+    var path2 = require("path");
+    var fs3 = require("fs");
     var child_process_1 = require("child_process");
     function uriToFilePath(uri) {
       let parsed = url.parse(uri);
@@ -20671,13 +20671,13 @@ var require_files = __commonJS({
           segments.shift();
         }
       }
-      return path4.normalize(segments.join("/"));
+      return path2.normalize(segments.join("/"));
     }
     exports2.uriToFilePath = uriToFilePath;
     function isWindows() {
       return process.platform === "win32";
     }
-    function resolve2(moduleName, nodePath, cwd, tracer) {
+    function resolve(moduleName, nodePath, cwd, tracer) {
       const nodePathKey = "NODE_PATH";
       const app = [
         "var p = process;",
@@ -20696,13 +20696,13 @@ var require_files = __commonJS({
         "}",
         "});"
       ].join("");
-      return new Promise((resolve3, reject2) => {
+      return new Promise((resolve2, reject2) => {
         let env2 = process.env;
         let newEnv = /* @__PURE__ */ Object.create(null);
         Object.keys(env2).forEach((key) => newEnv[key] = env2[key]);
-        if (nodePath && fs6.existsSync(nodePath)) {
+        if (nodePath && fs3.existsSync(nodePath)) {
           if (newEnv[nodePathKey]) {
-            newEnv[nodePathKey] = nodePath + path4.delimiter + newEnv[nodePathKey];
+            newEnv[nodePathKey] = nodePath + path2.delimiter + newEnv[nodePathKey];
           } else {
             newEnv[nodePathKey] = nodePath;
           }
@@ -20728,7 +20728,7 @@ var require_files = __commonJS({
             if (message2.c === "r") {
               cp.send({ c: "e" });
               if (message2.s) {
-                resolve3(message2.r);
+                resolve2(message2.r);
               } else {
                 reject2(new Error(`Failed to resolve module: ${moduleName}`));
               }
@@ -20744,7 +20744,7 @@ var require_files = __commonJS({
         }
       });
     }
-    exports2.resolve = resolve2;
+    exports2.resolve = resolve;
     function resolveGlobalNodePath(tracer) {
       let npmCommand = "npm";
       const env2 = /* @__PURE__ */ Object.create(null);
@@ -20775,9 +20775,9 @@ var require_files = __commonJS({
         }
         if (prefix.length > 0) {
           if (isWindows()) {
-            return path4.join(prefix, "node_modules");
+            return path2.join(prefix, "node_modules");
           } else {
-            return path4.join(prefix, "lib", "node_modules");
+            return path2.join(prefix, "lib", "node_modules");
           }
         }
         return void 0;
@@ -20817,7 +20817,7 @@ var require_files = __commonJS({
           try {
             let yarn = JSON.parse(line);
             if (yarn.type === "log") {
-              return path4.join(yarn.data, "node_modules");
+              return path2.join(yarn.data, "node_modules");
             }
           } catch (e) {
           }
@@ -20840,36 +20840,36 @@ var require_files = __commonJS({
         if (process.platform === "win32") {
           _isCaseSensitive = false;
         } else {
-          _isCaseSensitive = !fs6.existsSync(__filename.toUpperCase()) || !fs6.existsSync(__filename.toLowerCase());
+          _isCaseSensitive = !fs3.existsSync(__filename.toUpperCase()) || !fs3.existsSync(__filename.toLowerCase());
         }
         return _isCaseSensitive;
       }
       FileSystem2.isCaseSensitive = isCaseSensitive;
       function isParent(parent, child) {
         if (isCaseSensitive()) {
-          return path4.normalize(child).indexOf(path4.normalize(parent)) === 0;
+          return path2.normalize(child).indexOf(path2.normalize(parent)) === 0;
         } else {
-          return path4.normalize(child).toLowerCase().indexOf(path4.normalize(parent).toLowerCase()) === 0;
+          return path2.normalize(child).toLowerCase().indexOf(path2.normalize(parent).toLowerCase()) === 0;
         }
       }
       FileSystem2.isParent = isParent;
     })(FileSystem || (exports2.FileSystem = FileSystem = {}));
     function resolveModulePath(workspaceRoot, moduleName, nodePath, tracer) {
       if (nodePath) {
-        if (!path4.isAbsolute(nodePath)) {
-          nodePath = path4.join(workspaceRoot, nodePath);
+        if (!path2.isAbsolute(nodePath)) {
+          nodePath = path2.join(workspaceRoot, nodePath);
         }
-        return resolve2(moduleName, nodePath, nodePath, tracer).then((value) => {
+        return resolve(moduleName, nodePath, nodePath, tracer).then((value) => {
           if (FileSystem.isParent(nodePath, value)) {
             return value;
           } else {
             return Promise.reject(new Error(`Failed to load ${moduleName} from node path location.`));
           }
         }).then(void 0, (_error) => {
-          return resolve2(moduleName, resolveGlobalNodePath(tracer), workspaceRoot, tracer);
+          return resolve(moduleName, resolveGlobalNodePath(tracer), workspaceRoot, tracer);
         });
       } else {
-        return resolve2(moduleName, resolveGlobalNodePath(tracer), workspaceRoot, tracer);
+        return resolve(moduleName, resolveGlobalNodePath(tracer), workspaceRoot, tracer);
       }
     }
     exports2.resolveModulePath = resolveModulePath;
@@ -21218,496 +21218,9 @@ __export(main_exports, {
   deactivate: () => deactivate
 });
 module.exports = __toCommonJS(main_exports);
-var vscode = __toESM(require("vscode"), 1);
-var path3 = __toESM(require("path"), 1);
+var import_vscode2 = require("vscode");
+var import_node_path4 = require("path");
 var import_node2 = __toESM(require_node3(), 1);
-
-// node_modules/chalk/source/vendor/ansi-styles/index.js
-var ANSI_BACKGROUND_OFFSET = 10;
-var wrapAnsi16 = (offset = 0) => (code) => `\x1B[${code + offset}m`;
-var wrapAnsi256 = (offset = 0) => (code) => `\x1B[${38 + offset};5;${code}m`;
-var wrapAnsi16m = (offset = 0) => (red, green, blue) => `\x1B[${38 + offset};2;${red};${green};${blue}m`;
-var styles = {
-  modifier: {
-    reset: [0, 0],
-    // 21 isn't widely supported and 22 does the same thing
-    bold: [1, 22],
-    dim: [2, 22],
-    italic: [3, 23],
-    underline: [4, 24],
-    overline: [53, 55],
-    inverse: [7, 27],
-    hidden: [8, 28],
-    strikethrough: [9, 29]
-  },
-  color: {
-    black: [30, 39],
-    red: [31, 39],
-    green: [32, 39],
-    yellow: [33, 39],
-    blue: [34, 39],
-    magenta: [35, 39],
-    cyan: [36, 39],
-    white: [37, 39],
-    // Bright color
-    blackBright: [90, 39],
-    gray: [90, 39],
-    // Alias of `blackBright`
-    grey: [90, 39],
-    // Alias of `blackBright`
-    redBright: [91, 39],
-    greenBright: [92, 39],
-    yellowBright: [93, 39],
-    blueBright: [94, 39],
-    magentaBright: [95, 39],
-    cyanBright: [96, 39],
-    whiteBright: [97, 39]
-  },
-  bgColor: {
-    bgBlack: [40, 49],
-    bgRed: [41, 49],
-    bgGreen: [42, 49],
-    bgYellow: [43, 49],
-    bgBlue: [44, 49],
-    bgMagenta: [45, 49],
-    bgCyan: [46, 49],
-    bgWhite: [47, 49],
-    // Bright color
-    bgBlackBright: [100, 49],
-    bgGray: [100, 49],
-    // Alias of `bgBlackBright`
-    bgGrey: [100, 49],
-    // Alias of `bgBlackBright`
-    bgRedBright: [101, 49],
-    bgGreenBright: [102, 49],
-    bgYellowBright: [103, 49],
-    bgBlueBright: [104, 49],
-    bgMagentaBright: [105, 49],
-    bgCyanBright: [106, 49],
-    bgWhiteBright: [107, 49]
-  }
-};
-var modifierNames = Object.keys(styles.modifier);
-var foregroundColorNames = Object.keys(styles.color);
-var backgroundColorNames = Object.keys(styles.bgColor);
-var colorNames = [...foregroundColorNames, ...backgroundColorNames];
-function assembleStyles() {
-  const codes = /* @__PURE__ */ new Map();
-  for (const [groupName, group] of Object.entries(styles)) {
-    for (const [styleName, style] of Object.entries(group)) {
-      styles[styleName] = {
-        open: `\x1B[${style[0]}m`,
-        close: `\x1B[${style[1]}m`
-      };
-      group[styleName] = styles[styleName];
-      codes.set(style[0], style[1]);
-    }
-    Object.defineProperty(styles, groupName, {
-      value: group,
-      enumerable: false
-    });
-  }
-  Object.defineProperty(styles, "codes", {
-    value: codes,
-    enumerable: false
-  });
-  styles.color.close = "\x1B[39m";
-  styles.bgColor.close = "\x1B[49m";
-  styles.color.ansi = wrapAnsi16();
-  styles.color.ansi256 = wrapAnsi256();
-  styles.color.ansi16m = wrapAnsi16m();
-  styles.bgColor.ansi = wrapAnsi16(ANSI_BACKGROUND_OFFSET);
-  styles.bgColor.ansi256 = wrapAnsi256(ANSI_BACKGROUND_OFFSET);
-  styles.bgColor.ansi16m = wrapAnsi16m(ANSI_BACKGROUND_OFFSET);
-  Object.defineProperties(styles, {
-    rgbToAnsi256: {
-      value(red, green, blue) {
-        if (red === green && green === blue) {
-          if (red < 8) {
-            return 16;
-          }
-          if (red > 248) {
-            return 231;
-          }
-          return Math.round((red - 8) / 247 * 24) + 232;
-        }
-        return 16 + 36 * Math.round(red / 255 * 5) + 6 * Math.round(green / 255 * 5) + Math.round(blue / 255 * 5);
-      },
-      enumerable: false
-    },
-    hexToRgb: {
-      value(hex) {
-        const matches = /[a-f\d]{6}|[a-f\d]{3}/i.exec(hex.toString(16));
-        if (!matches) {
-          return [0, 0, 0];
-        }
-        let [colorString] = matches;
-        if (colorString.length === 3) {
-          colorString = [...colorString].map((character) => character + character).join("");
-        }
-        const integer2 = Number.parseInt(colorString, 16);
-        return [
-          /* eslint-disable no-bitwise */
-          integer2 >> 16 & 255,
-          integer2 >> 8 & 255,
-          integer2 & 255
-          /* eslint-enable no-bitwise */
-        ];
-      },
-      enumerable: false
-    },
-    hexToAnsi256: {
-      value: (hex) => styles.rgbToAnsi256(...styles.hexToRgb(hex)),
-      enumerable: false
-    },
-    ansi256ToAnsi: {
-      value(code) {
-        if (code < 8) {
-          return 30 + code;
-        }
-        if (code < 16) {
-          return 90 + (code - 8);
-        }
-        let red;
-        let green;
-        let blue;
-        if (code >= 232) {
-          red = ((code - 232) * 10 + 8) / 255;
-          green = red;
-          blue = red;
-        } else {
-          code -= 16;
-          const remainder = code % 36;
-          red = Math.floor(code / 36) / 5;
-          green = Math.floor(remainder / 6) / 5;
-          blue = remainder % 6 / 5;
-        }
-        const value = Math.max(red, green, blue) * 2;
-        if (value === 0) {
-          return 30;
-        }
-        let result = 30 + (Math.round(blue) << 2 | Math.round(green) << 1 | Math.round(red));
-        if (value === 2) {
-          result += 60;
-        }
-        return result;
-      },
-      enumerable: false
-    },
-    rgbToAnsi: {
-      value: (red, green, blue) => styles.ansi256ToAnsi(styles.rgbToAnsi256(red, green, blue)),
-      enumerable: false
-    },
-    hexToAnsi: {
-      value: (hex) => styles.ansi256ToAnsi(styles.hexToAnsi256(hex)),
-      enumerable: false
-    }
-  });
-  return styles;
-}
-var ansiStyles = assembleStyles();
-var ansi_styles_default = ansiStyles;
-
-// node_modules/chalk/source/vendor/supports-color/index.js
-var import_node_process = __toESM(require("process"), 1);
-var import_node_os = __toESM(require("os"), 1);
-var import_node_tty = __toESM(require("tty"), 1);
-function hasFlag(flag, argv = globalThis.Deno ? globalThis.Deno.args : import_node_process.default.argv) {
-  const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
-  const position = argv.indexOf(prefix + flag);
-  const terminatorPosition = argv.indexOf("--");
-  return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
-}
-var { env } = import_node_process.default;
-var flagForceColor;
-if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false") || hasFlag("color=never")) {
-  flagForceColor = 0;
-} else if (hasFlag("color") || hasFlag("colors") || hasFlag("color=true") || hasFlag("color=always")) {
-  flagForceColor = 1;
-}
-function envForceColor() {
-  if ("FORCE_COLOR" in env) {
-    if (env.FORCE_COLOR === "true") {
-      return 1;
-    }
-    if (env.FORCE_COLOR === "false") {
-      return 0;
-    }
-    return env.FORCE_COLOR.length === 0 ? 1 : Math.min(Number.parseInt(env.FORCE_COLOR, 10), 3);
-  }
-}
-function translateLevel(level) {
-  if (level === 0) {
-    return false;
-  }
-  return {
-    level,
-    hasBasic: true,
-    has256: level >= 2,
-    has16m: level >= 3
-  };
-}
-function _supportsColor(haveStream, { streamIsTTY, sniffFlags = true } = {}) {
-  const noFlagForceColor = envForceColor();
-  if (noFlagForceColor !== void 0) {
-    flagForceColor = noFlagForceColor;
-  }
-  const forceColor = sniffFlags ? flagForceColor : noFlagForceColor;
-  if (forceColor === 0) {
-    return 0;
-  }
-  if (sniffFlags) {
-    if (hasFlag("color=16m") || hasFlag("color=full") || hasFlag("color=truecolor")) {
-      return 3;
-    }
-    if (hasFlag("color=256")) {
-      return 2;
-    }
-  }
-  if ("TF_BUILD" in env && "AGENT_NAME" in env) {
-    return 1;
-  }
-  if (haveStream && !streamIsTTY && forceColor === void 0) {
-    return 0;
-  }
-  const min2 = forceColor || 0;
-  if (env.TERM === "dumb") {
-    return min2;
-  }
-  if (import_node_process.default.platform === "win32") {
-    const osRelease = import_node_os.default.release().split(".");
-    if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
-      return Number(osRelease[2]) >= 14931 ? 3 : 2;
-    }
-    return 1;
-  }
-  if ("CI" in env) {
-    if ("GITHUB_ACTIONS" in env || "GITEA_ACTIONS" in env) {
-      return 3;
-    }
-    if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "BUILDKITE", "DRONE"].some((sign) => sign in env) || env.CI_NAME === "codeship") {
-      return 1;
-    }
-    return min2;
-  }
-  if ("TEAMCITY_VERSION" in env) {
-    return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
-  }
-  if (env.COLORTERM === "truecolor") {
-    return 3;
-  }
-  if (env.TERM === "xterm-kitty") {
-    return 3;
-  }
-  if ("TERM_PROGRAM" in env) {
-    const version = Number.parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
-    switch (env.TERM_PROGRAM) {
-      case "iTerm.app": {
-        return version >= 3 ? 3 : 2;
-      }
-      case "Apple_Terminal": {
-        return 2;
-      }
-    }
-  }
-  if (/-256(color)?$/i.test(env.TERM)) {
-    return 2;
-  }
-  if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
-    return 1;
-  }
-  if ("COLORTERM" in env) {
-    return 1;
-  }
-  return min2;
-}
-function createSupportsColor(stream2, options = {}) {
-  const level = _supportsColor(stream2, __spreadValues({
-    streamIsTTY: stream2 && stream2.isTTY
-  }, options));
-  return translateLevel(level);
-}
-var supportsColor = {
-  stdout: createSupportsColor({ isTTY: import_node_tty.default.isatty(1) }),
-  stderr: createSupportsColor({ isTTY: import_node_tty.default.isatty(2) })
-};
-var supports_color_default = supportsColor;
-
-// node_modules/chalk/source/utilities.js
-function stringReplaceAll(string, substring, replacer) {
-  let index = string.indexOf(substring);
-  if (index === -1) {
-    return string;
-  }
-  const substringLength = substring.length;
-  let endIndex = 0;
-  let returnValue = "";
-  do {
-    returnValue += string.slice(endIndex, index) + substring + replacer;
-    endIndex = index + substringLength;
-    index = string.indexOf(substring, endIndex);
-  } while (index !== -1);
-  returnValue += string.slice(endIndex);
-  return returnValue;
-}
-function stringEncaseCRLFWithFirstIndex(string, prefix, postfix, index) {
-  let endIndex = 0;
-  let returnValue = "";
-  do {
-    const gotCR = string[index - 1] === "\r";
-    returnValue += string.slice(endIndex, gotCR ? index - 1 : index) + prefix + (gotCR ? "\r\n" : "\n") + postfix;
-    endIndex = index + 1;
-    index = string.indexOf("\n", endIndex);
-  } while (index !== -1);
-  returnValue += string.slice(endIndex);
-  return returnValue;
-}
-
-// node_modules/chalk/source/index.js
-var { stdout: stdoutColor, stderr: stderrColor } = supports_color_default;
-var GENERATOR = Symbol("GENERATOR");
-var STYLER = Symbol("STYLER");
-var IS_EMPTY = Symbol("IS_EMPTY");
-var levelMapping = [
-  "ansi",
-  "ansi",
-  "ansi256",
-  "ansi16m"
-];
-var styles2 = /* @__PURE__ */ Object.create(null);
-var applyOptions = (object, options = {}) => {
-  if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
-    throw new Error("The `level` option should be an integer from 0 to 3");
-  }
-  const colorLevel = stdoutColor ? stdoutColor.level : 0;
-  object.level = options.level === void 0 ? colorLevel : options.level;
-};
-var chalkFactory = (options) => {
-  const chalk2 = (...strings) => strings.join(" ");
-  applyOptions(chalk2, options);
-  Object.setPrototypeOf(chalk2, createChalk.prototype);
-  return chalk2;
-};
-function createChalk(options) {
-  return chalkFactory(options);
-}
-Object.setPrototypeOf(createChalk.prototype, Function.prototype);
-for (const [styleName, style] of Object.entries(ansi_styles_default)) {
-  styles2[styleName] = {
-    get() {
-      const builder = createBuilder(this, createStyler(style.open, style.close, this[STYLER]), this[IS_EMPTY]);
-      Object.defineProperty(this, styleName, { value: builder });
-      return builder;
-    }
-  };
-}
-styles2.visible = {
-  get() {
-    const builder = createBuilder(this, this[STYLER], true);
-    Object.defineProperty(this, "visible", { value: builder });
-    return builder;
-  }
-};
-var getModelAnsi = (model, level, type, ...arguments_) => {
-  if (model === "rgb") {
-    if (level === "ansi16m") {
-      return ansi_styles_default[type].ansi16m(...arguments_);
-    }
-    if (level === "ansi256") {
-      return ansi_styles_default[type].ansi256(ansi_styles_default.rgbToAnsi256(...arguments_));
-    }
-    return ansi_styles_default[type].ansi(ansi_styles_default.rgbToAnsi(...arguments_));
-  }
-  if (model === "hex") {
-    return getModelAnsi("rgb", level, type, ...ansi_styles_default.hexToRgb(...arguments_));
-  }
-  return ansi_styles_default[type][model](...arguments_);
-};
-var usedModels = ["rgb", "hex", "ansi256"];
-for (const model of usedModels) {
-  styles2[model] = {
-    get() {
-      const { level } = this;
-      return function(...arguments_) {
-        const styler = createStyler(getModelAnsi(model, levelMapping[level], "color", ...arguments_), ansi_styles_default.color.close, this[STYLER]);
-        return createBuilder(this, styler, this[IS_EMPTY]);
-      };
-    }
-  };
-  const bgModel = "bg" + model[0].toUpperCase() + model.slice(1);
-  styles2[bgModel] = {
-    get() {
-      const { level } = this;
-      return function(...arguments_) {
-        const styler = createStyler(getModelAnsi(model, levelMapping[level], "bgColor", ...arguments_), ansi_styles_default.bgColor.close, this[STYLER]);
-        return createBuilder(this, styler, this[IS_EMPTY]);
-      };
-    }
-  };
-}
-var proto = Object.defineProperties(() => {
-}, __spreadProps(__spreadValues({}, styles2), {
-  level: {
-    enumerable: true,
-    get() {
-      return this[GENERATOR].level;
-    },
-    set(level) {
-      this[GENERATOR].level = level;
-    }
-  }
-}));
-var createStyler = (open, close, parent) => {
-  let openAll;
-  let closeAll;
-  if (parent === void 0) {
-    openAll = open;
-    closeAll = close;
-  } else {
-    openAll = parent.openAll + open;
-    closeAll = close + parent.closeAll;
-  }
-  return {
-    open,
-    close,
-    openAll,
-    closeAll,
-    parent
-  };
-};
-var createBuilder = (self2, _styler, _isEmpty) => {
-  const builder = (...arguments_) => applyStyle(builder, arguments_.length === 1 ? "" + arguments_[0] : arguments_.join(" "));
-  Object.setPrototypeOf(builder, proto);
-  builder[GENERATOR] = self2;
-  builder[STYLER] = _styler;
-  builder[IS_EMPTY] = _isEmpty;
-  return builder;
-};
-var applyStyle = (self2, string) => {
-  if (self2.level <= 0 || !string) {
-    return self2[IS_EMPTY] ? "" : string;
-  }
-  let styler = self2[STYLER];
-  if (styler === void 0) {
-    return string;
-  }
-  const { openAll, closeAll } = styler;
-  if (string.includes("\x1B")) {
-    while (styler !== void 0) {
-      string = stringReplaceAll(string, styler.close, styler.open);
-      styler = styler.parent;
-    }
-  }
-  const lfIndex = string.indexOf("\n");
-  if (lfIndex !== -1) {
-    string = stringEncaseCRLFWithFirstIndex(string, closeAll, openAll, lfIndex);
-  }
-  return openAll + string + closeAll;
-};
-Object.defineProperties(createChalk.prototype, styles2);
-var chalk = createChalk();
-var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
-var source_default = chalk;
 
 // node_modules/langium/lib/default-module.js
 var import_vscode_languageserver28 = __toESM(require_main5(), 1);
@@ -27376,11 +26889,11 @@ var Is;
 // node_modules/langium/lib/utils/promise-util.js
 var import_vscode_jsonrpc = __toESM(require_main(), 1);
 function delayNextTick() {
-  return new Promise((resolve2) => {
+  return new Promise((resolve) => {
     if (typeof setImmediate === "undefined") {
-      setTimeout(resolve2, 0);
+      setTimeout(resolve, 0);
     } else {
-      setImmediate(resolve2);
+      setImmediate(resolve);
     }
   });
 }
@@ -29033,15 +28546,15 @@ var TypeGraph = class {
       }
       split.properties.push(...part.properties);
       split.ruleCalls.push(...part.ruleCalls);
-      const path4 = {
+      const path2 = {
         alt: split,
         next: part.children
       };
-      if (path4.next.length === 0) {
-        path4.alt.super = path4.alt.super.filter((e) => e !== path4.alt.name);
-        paths.push(path4);
+      if (path2.next.length === 0) {
+        path2.alt.super = path2.alt.super.filter((e) => e !== path2.alt.name);
+        paths.push(path2);
       } else {
-        paths.push(...this.applyNext(root2, path4));
+        paths.push(...this.applyNext(root2, path2));
       }
     }
     return flattenTypes(paths);
@@ -29390,10 +28903,10 @@ function flattenTypes(alternatives) {
     const properties = [];
     const ruleCalls = /* @__PURE__ */ new Set();
     const type = { alt: { name, properties, ruleCalls: [], super: [] }, next: [] };
-    for (const path4 of namedAlternatives) {
-      const alt = path4.alt;
+    for (const path2 of namedAlternatives) {
+      const alt = path2.alt;
       type.alt.super.push(...alt.super);
-      type.next.push(...path4.next);
+      type.next.push(...path2.next);
       const altProperties = alt.properties;
       for (const altProperty of altProperties) {
         const existingProperty = properties.find((e) => e.name === altProperty.name);
@@ -29406,8 +28919,8 @@ function flattenTypes(alternatives) {
       }
       alt.ruleCalls.forEach((ruleCall) => ruleCalls.add(ruleCall));
     }
-    for (const path4 of namedAlternatives) {
-      const alt = path4.alt;
+    for (const path2 of namedAlternatives) {
+      const alt = path2.alt;
       if (alt.ruleCalls.length === 0) {
         for (const property2 of properties) {
           if (!alt.properties.find((e) => e.name === property2.name)) {
@@ -31321,7 +30834,7 @@ var LangiumGrammarCompletionProvider = class extends DefaultCompletionProvider {
     };
     if (existingText.length > 0) {
       const existingPath = existingText.substring(1);
-      allPaths = allPaths.filter((path4) => path4.startsWith(existingPath));
+      allPaths = allPaths.filter((path2) => path2.startsWith(existingPath));
       const start = context.textDocument.positionAt(context.tokenOffset + 1);
       const end = context.textDocument.positionAt(context.tokenEndOffset - 1);
       range = {
@@ -31329,11 +30842,11 @@ var LangiumGrammarCompletionProvider = class extends DefaultCompletionProvider {
         end
       };
     }
-    for (const path4 of allPaths) {
+    for (const path2 of allPaths) {
       const delimiter = existingText.length > 0 ? "" : '"';
-      const completionValue = `${delimiter}${path4}${delimiter}`;
+      const completionValue = `${delimiter}${path2}${delimiter}`;
       acceptor(context, {
-        label: path4,
+        label: path2,
         textEdit: {
           newText: completionValue,
           range
@@ -31346,13 +30859,13 @@ var LangiumGrammarCompletionProvider = class extends DefaultCompletionProvider {
   getAllFiles(document) {
     const documents = this.documents().all;
     const uri = document.uri.toString();
-    const dirname2 = UriUtils.dirname(document.uri).toString();
+    const dirname = UriUtils.dirname(document.uri).toString();
     const paths = [];
     for (const doc of documents) {
       if (!UriUtils.equals(doc.uri, uri)) {
         const docUri = doc.uri.toString();
         const uriWithoutExt = docUri.substring(0, docUri.length - UriUtils.extname(doc.uri).length);
-        let relativePath = UriUtils.relative(dirname2, uriWithoutExt);
+        let relativePath = UriUtils.relative(dirname, uriWithoutExt);
         if (!relativePath.startsWith(".")) {
           relativePath = `./${relativePath}`;
         }
@@ -32594,12 +32107,12 @@ var DefaultReferences = class {
     const nameNode = this.nameProvider.getNameNode(targetNode);
     if (nameNode) {
       const doc = getDocument(targetNode);
-      const path4 = this.nodeLocator.getAstNodePath(targetNode);
+      const path2 = this.nodeLocator.getAstNodePath(targetNode);
       return {
         sourceUri: doc.uri,
-        sourcePath: path4,
+        sourcePath: path2,
         targetUri: doc.uri,
-        targetPath: path4,
+        targetPath: path2,
         segment: toDocumentSegment(nameNode),
         local: true
       };
@@ -35247,19 +34760,19 @@ function toKey(value) {
 var toKey_default = toKey;
 
 // node_modules/lodash-es/_baseGet.js
-function baseGet(object, path4) {
-  path4 = castPath_default(path4, object);
-  var index = 0, length = path4.length;
+function baseGet(object, path2) {
+  path2 = castPath_default(path2, object);
+  var index = 0, length = path2.length;
   while (object != null && index < length) {
-    object = object[toKey_default(path4[index++])];
+    object = object[toKey_default(path2[index++])];
   }
   return index && index == length ? object : void 0;
 }
 var baseGet_default = baseGet;
 
 // node_modules/lodash-es/get.js
-function get(object, path4, defaultValue) {
-  var result = object == null ? void 0 : baseGet_default(object, path4);
+function get(object, path2, defaultValue) {
+  var result = object == null ? void 0 : baseGet_default(object, path2);
   return result === void 0 ? defaultValue : result;
 }
 var get_default = get;
@@ -36171,11 +35684,11 @@ function baseHasIn(object, key) {
 var baseHasIn_default = baseHasIn;
 
 // node_modules/lodash-es/_hasPath.js
-function hasPath(object, path4, hasFunc) {
-  path4 = castPath_default(path4, object);
-  var index = -1, length = path4.length, result = false;
+function hasPath(object, path2, hasFunc) {
+  path2 = castPath_default(path2, object);
+  var index = -1, length = path2.length, result = false;
   while (++index < length) {
-    var key = toKey_default(path4[index]);
+    var key = toKey_default(path2[index]);
     if (!(result = object != null && hasFunc(object, key))) {
       break;
     }
@@ -36190,21 +35703,21 @@ function hasPath(object, path4, hasFunc) {
 var hasPath_default = hasPath;
 
 // node_modules/lodash-es/hasIn.js
-function hasIn(object, path4) {
-  return object != null && hasPath_default(object, path4, baseHasIn_default);
+function hasIn(object, path2) {
+  return object != null && hasPath_default(object, path2, baseHasIn_default);
 }
 var hasIn_default = hasIn;
 
 // node_modules/lodash-es/_baseMatchesProperty.js
 var COMPARE_PARTIAL_FLAG6 = 1;
 var COMPARE_UNORDERED_FLAG4 = 2;
-function baseMatchesProperty(path4, srcValue) {
-  if (isKey_default(path4) && isStrictComparable_default(srcValue)) {
-    return matchesStrictComparable_default(toKey_default(path4), srcValue);
+function baseMatchesProperty(path2, srcValue) {
+  if (isKey_default(path2) && isStrictComparable_default(srcValue)) {
+    return matchesStrictComparable_default(toKey_default(path2), srcValue);
   }
   return function(object) {
-    var objValue = get_default(object, path4);
-    return objValue === void 0 && objValue === srcValue ? hasIn_default(object, path4) : baseIsEqual_default(srcValue, objValue, COMPARE_PARTIAL_FLAG6 | COMPARE_UNORDERED_FLAG4);
+    var objValue = get_default(object, path2);
+    return objValue === void 0 && objValue === srcValue ? hasIn_default(object, path2) : baseIsEqual_default(srcValue, objValue, COMPARE_PARTIAL_FLAG6 | COMPARE_UNORDERED_FLAG4);
   };
 }
 var baseMatchesProperty_default = baseMatchesProperty;
@@ -36218,16 +35731,16 @@ function baseProperty(key) {
 var baseProperty_default = baseProperty;
 
 // node_modules/lodash-es/_basePropertyDeep.js
-function basePropertyDeep(path4) {
+function basePropertyDeep(path2) {
   return function(object) {
-    return baseGet_default(object, path4);
+    return baseGet_default(object, path2);
   };
 }
 var basePropertyDeep_default = basePropertyDeep;
 
 // node_modules/lodash-es/property.js
-function property(path4) {
-  return isKey_default(path4) ? baseProperty_default(toKey_default(path4)) : basePropertyDeep_default(path4);
+function property(path2) {
+  return isKey_default(path2) ? baseProperty_default(toKey_default(path2)) : basePropertyDeep_default(path2);
 }
 var property_default = property;
 
@@ -36595,8 +36108,8 @@ function baseHas(object, key) {
 var baseHas_default = baseHas;
 
 // node_modules/lodash-es/has.js
-function has(object, path4) {
-  return object != null && hasPath_default(object, path4, baseHas_default);
+function has(object, path2) {
+  return object != null && hasPath_default(object, path2, baseHas_default);
 }
 var has_default = has;
 
@@ -36744,14 +36257,14 @@ function negate(predicate) {
 var negate_default = negate;
 
 // node_modules/lodash-es/_baseSet.js
-function baseSet(object, path4, value, customizer) {
+function baseSet(object, path2, value, customizer) {
   if (!isObject_default(object)) {
     return object;
   }
-  path4 = castPath_default(path4, object);
-  var index = -1, length = path4.length, lastIndex = length - 1, nested = object;
+  path2 = castPath_default(path2, object);
+  var index = -1, length = path2.length, lastIndex = length - 1, nested = object;
   while (nested != null && ++index < length) {
-    var key = toKey_default(path4[index]), newValue = value;
+    var key = toKey_default(path2[index]), newValue = value;
     if (key === "__proto__" || key === "constructor" || key === "prototype") {
       return object;
     }
@@ -36759,7 +36272,7 @@ function baseSet(object, path4, value, customizer) {
       var objValue = nested[key];
       newValue = customizer ? customizer(objValue, key, nested) : void 0;
       if (newValue === void 0) {
-        newValue = isObject_default(objValue) ? objValue : isIndex_default(path4[index + 1]) ? [] : {};
+        newValue = isObject_default(objValue) ? objValue : isIndex_default(path2[index + 1]) ? [] : {};
       }
     }
     assignValue_default(nested, key, newValue);
@@ -36773,9 +36286,9 @@ var baseSet_default = baseSet;
 function basePickBy(object, paths, predicate) {
   var index = -1, length = paths.length, result = {};
   while (++index < length) {
-    var path4 = paths[index], value = baseGet_default(object, path4);
-    if (predicate(value, path4)) {
-      baseSet_default(result, castPath_default(path4, object), value);
+    var path2 = paths[index], value = baseGet_default(object, path2);
+    if (predicate(value, path2)) {
+      baseSet_default(result, castPath_default(path2, object), value);
     }
   }
   return result;
@@ -36791,8 +36304,8 @@ function pickBy(object, predicate) {
     return [prop];
   });
   predicate = baseIteratee_default(predicate);
-  return basePickBy_default(object, props, function(value, path4) {
-    return predicate(value, path4[0]);
+  return basePickBy_default(object, props, function(value, path2) {
+    return predicate(value, path2[0]);
   });
 }
 var pickBy_default = pickBy;
@@ -38389,12 +37902,12 @@ function assignCategoriesMapProp(tokenTypes) {
     singleAssignCategoriesToksMap([], currTokType);
   });
 }
-function singleAssignCategoriesToksMap(path4, nextNode) {
-  forEach_default(path4, (pathNode) => {
+function singleAssignCategoriesToksMap(path2, nextNode) {
+  forEach_default(path2, (pathNode) => {
     nextNode.categoryMatchesMap[pathNode.tokenTypeIdx] = true;
   });
   forEach_default(nextNode.CATEGORIES, (nextCategory) => {
-    const newPath = path4.concat(nextNode);
+    const newPath = path2.concat(nextNode);
     if (!includes_default(newPath, nextCategory)) {
       singleAssignCategoriesToksMap(newPath, nextCategory);
     }
@@ -39238,10 +38751,10 @@ var GastRefResolverVisitor = class extends GAstVisitor {
 
 // node_modules/chevrotain/lib/src/parse/grammar/interpreter.js
 var AbstractNextPossibleTokensWalker = class extends RestWalker {
-  constructor(topProd, path4) {
+  constructor(topProd, path2) {
     super();
     this.topProd = topProd;
-    this.path = path4;
+    this.path = path2;
     this.possibleTokTypes = [];
     this.nextProductionName = "";
     this.nextProductionOccurrence = 0;
@@ -39285,9 +38798,9 @@ var AbstractNextPossibleTokensWalker = class extends RestWalker {
   }
 };
 var NextAfterTokenWalker = class extends AbstractNextPossibleTokensWalker {
-  constructor(topProd, path4) {
-    super(topProd, path4);
-    this.path = path4;
+  constructor(topProd, path2) {
+    super(topProd, path2);
+    this.path = path2;
     this.nextTerminalName = "";
     this.nextTerminalOccurrence = 0;
     this.nextTerminalName = this.path.lastTok.name;
@@ -39895,10 +39408,10 @@ function initializeArrayOfArrays(size) {
   }
   return result;
 }
-function pathToHashKeys(path4) {
+function pathToHashKeys(path2) {
   let keys2 = [""];
-  for (let i = 0; i < path4.length; i++) {
-    const tokType = path4[i];
+  for (let i = 0; i < path2.length; i++) {
+    const tokType = path2[i];
     const longerKeys = [];
     for (let j = 0; j < keys2.length; j++) {
       const currShorterKey = keys2[j];
@@ -40138,7 +39651,7 @@ function validateRuleIsOverridden(ruleName, definedRulesNames, className) {
   }
   return errors;
 }
-function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path4 = []) {
+function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path2 = []) {
   const errors = [];
   const nextNonTerminals = getFirstNoneTerminal(currRule.definition);
   if (isEmpty_default(nextNonTerminals)) {
@@ -40150,15 +39663,15 @@ function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path4 = []) 
       errors.push({
         message: errMsgProvider.buildLeftRecursionError({
           topLevelRule: topRule,
-          leftRecursionPath: path4
+          leftRecursionPath: path2
         }),
         type: ParserDefinitionErrorType.LEFT_RECURSION,
         ruleName
       });
     }
-    const validNextSteps = difference_default(nextNonTerminals, path4.concat([topRule]));
+    const validNextSteps = difference_default(nextNonTerminals, path2.concat([topRule]));
     const errorsFromNextSteps = flatMap_default(validNextSteps, (currRefRule) => {
-      const newPath = clone_default(path4);
+      const newPath = clone_default(path2);
       newPath.push(currRefRule);
       return validateNoLeftRecursion(topRule, currRefRule, errMsgProvider, newPath);
     });
@@ -43018,7 +42531,7 @@ var LLStarLookaheadStrategy = class extends LLkLookaheadStrategy {
       occurrence: prodOccurrence,
       prodType: "Alternation",
       rule
-    }), (currAlt) => map_default(currAlt, (path4) => path4[0]));
+    }), (currAlt) => map_default(currAlt, (path2) => path2[0]));
     if (isLL1Sequence(partialAlts, false) && !dynamicTokensEnabled) {
       const choiceToAlt = reduce_default(partialAlts, (result, currAlt, idx) => {
         forEach_default(currAlt, (currTokType) => {
@@ -43163,7 +42676,7 @@ function adaptivePredict(dfaCaches, decision, predicateSet, logging) {
 function performLookahead(dfa, s0, predicateSet, logging) {
   let previousD = s0;
   let i = 1;
-  const path4 = [];
+  const path2 = [];
   let t = this.LA(i++);
   while (true) {
     let d = getExistingTargetState(previousD, t);
@@ -43171,13 +42684,13 @@ function performLookahead(dfa, s0, predicateSet, logging) {
       d = computeLookaheadTarget.apply(this, [dfa, previousD, t, i, predicateSet, logging]);
     }
     if (d === DFA_ERROR) {
-      return buildAdaptivePredictError(path4, previousD, t);
+      return buildAdaptivePredictError(path2, previousD, t);
     }
     if (d.isAcceptState === true) {
       return d.prediction;
     }
     previousD = d;
-    path4.push(t);
+    path2.push(t);
     t = this.LA(i++);
   }
 }
@@ -43250,13 +42763,13 @@ function getProductionDslName2(prod) {
     throw Error("non exhaustive match");
   }
 }
-function buildAdaptivePredictError(path4, previous, current) {
+function buildAdaptivePredictError(path2, previous, current) {
   const nextTransitions = flatMap_default(previous.configs.elements, (e) => e.state.transitions);
   const nextTokenTypes = uniqBy_default(nextTransitions.filter((e) => e instanceof AtomTransition).map((e) => e.tokenType), (e) => e.tokenTypeIdx);
   return {
     actualToken: current,
     possibleTokenTypes: nextTokenTypes,
-    tokenPath: path4
+    tokenPath: path2
   };
 }
 function getExistingTargetState(state, token) {
@@ -44840,8 +44353,8 @@ var DefaultJsonSerializer = class {
       return void 0;
     }
   }
-  getRefNode(root2, path4) {
-    return this.astNodeLocator.getAstNode(root2, path4.substring(1));
+  getRefNode(root2, path2) {
+    return this.astNodeLocator.getAstNode(root2, path2.substring(1));
   }
 };
 
@@ -44902,9 +44415,9 @@ var DefaultAstNodeDescriptionProvider = class {
   }
   createDescription(node, name, document = getDocument(node)) {
     name !== null && name !== void 0 ? name : name = this.nameProvider.getName(node);
-    const path4 = this.astNodeLocator.getAstNodePath(node);
+    const path2 = this.astNodeLocator.getAstNodePath(node);
     if (!name) {
-      throw new Error(`Node at path ${path4} has no name.`);
+      throw new Error(`Node at path ${path2} has no name.`);
     }
     let nameNodeSegment;
     const nameSegmentGetter = () => {
@@ -44920,7 +44433,7 @@ var DefaultAstNodeDescriptionProvider = class {
       selectionSegment: toDocumentSegment(node.$cstNode),
       type: node.$type,
       documentUri: document.uri,
-      path: path4
+      path: path2
     };
   }
 };
@@ -44984,8 +44497,8 @@ var DefaultAstNodeLocator = class {
     }
     return $containerProperty;
   }
-  getAstNode(node, path4) {
-    const segments = path4.split(this.segmentSeparator);
+  getAstNode(node, path2) {
+    const segments = path2.split(this.segmentSeparator);
     return segments.reduce((previousValue, currentValue) => {
       if (!previousValue || currentValue.length === 0) {
         return previousValue;
@@ -45422,8 +44935,8 @@ var DefaultWorkspaceManager = class {
     if (entry.isDirectory) {
       return name !== "node_modules" && name !== "out";
     } else if (entry.isFile) {
-      const extname2 = UriUtils.extname(entry.uri);
-      return fileExtensions.includes(extname2);
+      const extname = UriUtils.extname(entry.uri);
+      return fileExtensions.includes(extname);
     }
     return false;
   }
@@ -47121,6 +46634,40 @@ var JavaScriptPropositionalLaboratoryFormatGeneratedModule = {
   parser: {}
 };
 
+// src/util/modelUtil.ts
+function getReferenceablesInBinaryExpression(expression, output) {
+  getReferencablesInExpression(expression.left, output);
+  getReferencablesInExpression(expression.right, output);
+}
+function getReferenceablesInStatement(statement, output) {
+  let reference = statement.reference.ref;
+  if (reference !== void 0)
+    output.add(reference);
+}
+function getReferencablesInExpression(expression, output) {
+  switch (expression.$type) {
+    case "OrExpression":
+      getReferenceablesInBinaryExpression(expression, output);
+      break;
+    case "AndExpression":
+      getReferenceablesInBinaryExpression(expression, output);
+      break;
+    case "Negation":
+      getReferencablesInExpression(expression.inner, output);
+      break;
+    case "Group":
+      getReferencablesInExpression(expression.inner, output);
+    case "Statement":
+      getReferenceablesInStatement(expression, output);
+      break;
+  }
+}
+function getReferencablesInWhenCondition(condition) {
+  let result = /* @__PURE__ */ new Set();
+  getReferencablesInExpression(condition.expression, result);
+  return result;
+}
+
 // src/language/java-script-propositional-laboratory-format-validator.ts
 function registerValidationChecks2(services) {
   const registry = services.validation.ValidationRegistry;
@@ -47130,7 +46677,8 @@ function registerValidationChecks2(services) {
       validator.uniqueConcernIdentifiers,
       validator.uniqueReferenceableIdentifiers
     ],
-    Proposition: validator.propositionHasExactlyOneDefaultOrJustOneValue
+    Proposition: validator.propositionHasExactlyOneDefaultOrJustOneValue,
+    Condition: validator.noRecursionInConditions
   };
   registry.register(checks, validator);
 }
@@ -47204,6 +46752,14 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       return;
     }
   }
+  noRecursionInConditions(condition, accept) {
+    const name = condition.name;
+    const referenceablesInCondition = getReferencablesInWhenCondition(condition.condition);
+    referenceablesInCondition.forEach((referenceable) => {
+      if (referenceable.name === name)
+        accept("error", `Recursion is not allowed here.`, { node: condition, property: "name" });
+    });
+  }
 };
 
 // src/language/java-script-propositional-laboratory-format-module.ts
@@ -47227,8 +46783,495 @@ function createJavaScriptPropositionalLaboratoryFormatServices(context) {
   return { shared, JavaScriptPropositionalLaboratoryFormat };
 }
 
-// src/cli/cli-util.ts
-var path = __toESM(require("path"), 1);
+// node_modules/chalk/source/vendor/ansi-styles/index.js
+var ANSI_BACKGROUND_OFFSET = 10;
+var wrapAnsi16 = (offset = 0) => (code) => `\x1B[${code + offset}m`;
+var wrapAnsi256 = (offset = 0) => (code) => `\x1B[${38 + offset};5;${code}m`;
+var wrapAnsi16m = (offset = 0) => (red, green, blue) => `\x1B[${38 + offset};2;${red};${green};${blue}m`;
+var styles = {
+  modifier: {
+    reset: [0, 0],
+    // 21 isn't widely supported and 22 does the same thing
+    bold: [1, 22],
+    dim: [2, 22],
+    italic: [3, 23],
+    underline: [4, 24],
+    overline: [53, 55],
+    inverse: [7, 27],
+    hidden: [8, 28],
+    strikethrough: [9, 29]
+  },
+  color: {
+    black: [30, 39],
+    red: [31, 39],
+    green: [32, 39],
+    yellow: [33, 39],
+    blue: [34, 39],
+    magenta: [35, 39],
+    cyan: [36, 39],
+    white: [37, 39],
+    // Bright color
+    blackBright: [90, 39],
+    gray: [90, 39],
+    // Alias of `blackBright`
+    grey: [90, 39],
+    // Alias of `blackBright`
+    redBright: [91, 39],
+    greenBright: [92, 39],
+    yellowBright: [93, 39],
+    blueBright: [94, 39],
+    magentaBright: [95, 39],
+    cyanBright: [96, 39],
+    whiteBright: [97, 39]
+  },
+  bgColor: {
+    bgBlack: [40, 49],
+    bgRed: [41, 49],
+    bgGreen: [42, 49],
+    bgYellow: [43, 49],
+    bgBlue: [44, 49],
+    bgMagenta: [45, 49],
+    bgCyan: [46, 49],
+    bgWhite: [47, 49],
+    // Bright color
+    bgBlackBright: [100, 49],
+    bgGray: [100, 49],
+    // Alias of `bgBlackBright`
+    bgGrey: [100, 49],
+    // Alias of `bgBlackBright`
+    bgRedBright: [101, 49],
+    bgGreenBright: [102, 49],
+    bgYellowBright: [103, 49],
+    bgBlueBright: [104, 49],
+    bgMagentaBright: [105, 49],
+    bgCyanBright: [106, 49],
+    bgWhiteBright: [107, 49]
+  }
+};
+var modifierNames = Object.keys(styles.modifier);
+var foregroundColorNames = Object.keys(styles.color);
+var backgroundColorNames = Object.keys(styles.bgColor);
+var colorNames = [...foregroundColorNames, ...backgroundColorNames];
+function assembleStyles() {
+  const codes = /* @__PURE__ */ new Map();
+  for (const [groupName, group] of Object.entries(styles)) {
+    for (const [styleName, style] of Object.entries(group)) {
+      styles[styleName] = {
+        open: `\x1B[${style[0]}m`,
+        close: `\x1B[${style[1]}m`
+      };
+      group[styleName] = styles[styleName];
+      codes.set(style[0], style[1]);
+    }
+    Object.defineProperty(styles, groupName, {
+      value: group,
+      enumerable: false
+    });
+  }
+  Object.defineProperty(styles, "codes", {
+    value: codes,
+    enumerable: false
+  });
+  styles.color.close = "\x1B[39m";
+  styles.bgColor.close = "\x1B[49m";
+  styles.color.ansi = wrapAnsi16();
+  styles.color.ansi256 = wrapAnsi256();
+  styles.color.ansi16m = wrapAnsi16m();
+  styles.bgColor.ansi = wrapAnsi16(ANSI_BACKGROUND_OFFSET);
+  styles.bgColor.ansi256 = wrapAnsi256(ANSI_BACKGROUND_OFFSET);
+  styles.bgColor.ansi16m = wrapAnsi16m(ANSI_BACKGROUND_OFFSET);
+  Object.defineProperties(styles, {
+    rgbToAnsi256: {
+      value(red, green, blue) {
+        if (red === green && green === blue) {
+          if (red < 8) {
+            return 16;
+          }
+          if (red > 248) {
+            return 231;
+          }
+          return Math.round((red - 8) / 247 * 24) + 232;
+        }
+        return 16 + 36 * Math.round(red / 255 * 5) + 6 * Math.round(green / 255 * 5) + Math.round(blue / 255 * 5);
+      },
+      enumerable: false
+    },
+    hexToRgb: {
+      value(hex) {
+        const matches = /[a-f\d]{6}|[a-f\d]{3}/i.exec(hex.toString(16));
+        if (!matches) {
+          return [0, 0, 0];
+        }
+        let [colorString] = matches;
+        if (colorString.length === 3) {
+          colorString = [...colorString].map((character) => character + character).join("");
+        }
+        const integer2 = Number.parseInt(colorString, 16);
+        return [
+          /* eslint-disable no-bitwise */
+          integer2 >> 16 & 255,
+          integer2 >> 8 & 255,
+          integer2 & 255
+          /* eslint-enable no-bitwise */
+        ];
+      },
+      enumerable: false
+    },
+    hexToAnsi256: {
+      value: (hex) => styles.rgbToAnsi256(...styles.hexToRgb(hex)),
+      enumerable: false
+    },
+    ansi256ToAnsi: {
+      value(code) {
+        if (code < 8) {
+          return 30 + code;
+        }
+        if (code < 16) {
+          return 90 + (code - 8);
+        }
+        let red;
+        let green;
+        let blue;
+        if (code >= 232) {
+          red = ((code - 232) * 10 + 8) / 255;
+          green = red;
+          blue = red;
+        } else {
+          code -= 16;
+          const remainder = code % 36;
+          red = Math.floor(code / 36) / 5;
+          green = Math.floor(remainder / 6) / 5;
+          blue = remainder % 6 / 5;
+        }
+        const value = Math.max(red, green, blue) * 2;
+        if (value === 0) {
+          return 30;
+        }
+        let result = 30 + (Math.round(blue) << 2 | Math.round(green) << 1 | Math.round(red));
+        if (value === 2) {
+          result += 60;
+        }
+        return result;
+      },
+      enumerable: false
+    },
+    rgbToAnsi: {
+      value: (red, green, blue) => styles.ansi256ToAnsi(styles.rgbToAnsi256(red, green, blue)),
+      enumerable: false
+    },
+    hexToAnsi: {
+      value: (hex) => styles.ansi256ToAnsi(styles.hexToAnsi256(hex)),
+      enumerable: false
+    }
+  });
+  return styles;
+}
+var ansiStyles = assembleStyles();
+var ansi_styles_default = ansiStyles;
+
+// node_modules/chalk/source/vendor/supports-color/index.js
+var import_node_process = __toESM(require("process"), 1);
+var import_node_os = __toESM(require("os"), 1);
+var import_node_tty = __toESM(require("tty"), 1);
+function hasFlag(flag, argv = globalThis.Deno ? globalThis.Deno.args : import_node_process.default.argv) {
+  const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
+  const position = argv.indexOf(prefix + flag);
+  const terminatorPosition = argv.indexOf("--");
+  return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
+}
+var { env } = import_node_process.default;
+var flagForceColor;
+if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false") || hasFlag("color=never")) {
+  flagForceColor = 0;
+} else if (hasFlag("color") || hasFlag("colors") || hasFlag("color=true") || hasFlag("color=always")) {
+  flagForceColor = 1;
+}
+function envForceColor() {
+  if ("FORCE_COLOR" in env) {
+    if (env.FORCE_COLOR === "true") {
+      return 1;
+    }
+    if (env.FORCE_COLOR === "false") {
+      return 0;
+    }
+    return env.FORCE_COLOR.length === 0 ? 1 : Math.min(Number.parseInt(env.FORCE_COLOR, 10), 3);
+  }
+}
+function translateLevel(level) {
+  if (level === 0) {
+    return false;
+  }
+  return {
+    level,
+    hasBasic: true,
+    has256: level >= 2,
+    has16m: level >= 3
+  };
+}
+function _supportsColor(haveStream, { streamIsTTY, sniffFlags = true } = {}) {
+  const noFlagForceColor = envForceColor();
+  if (noFlagForceColor !== void 0) {
+    flagForceColor = noFlagForceColor;
+  }
+  const forceColor = sniffFlags ? flagForceColor : noFlagForceColor;
+  if (forceColor === 0) {
+    return 0;
+  }
+  if (sniffFlags) {
+    if (hasFlag("color=16m") || hasFlag("color=full") || hasFlag("color=truecolor")) {
+      return 3;
+    }
+    if (hasFlag("color=256")) {
+      return 2;
+    }
+  }
+  if ("TF_BUILD" in env && "AGENT_NAME" in env) {
+    return 1;
+  }
+  if (haveStream && !streamIsTTY && forceColor === void 0) {
+    return 0;
+  }
+  const min2 = forceColor || 0;
+  if (env.TERM === "dumb") {
+    return min2;
+  }
+  if (import_node_process.default.platform === "win32") {
+    const osRelease = import_node_os.default.release().split(".");
+    if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
+      return Number(osRelease[2]) >= 14931 ? 3 : 2;
+    }
+    return 1;
+  }
+  if ("CI" in env) {
+    if ("GITHUB_ACTIONS" in env || "GITEA_ACTIONS" in env) {
+      return 3;
+    }
+    if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "BUILDKITE", "DRONE"].some((sign) => sign in env) || env.CI_NAME === "codeship") {
+      return 1;
+    }
+    return min2;
+  }
+  if ("TEAMCITY_VERSION" in env) {
+    return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
+  }
+  if (env.COLORTERM === "truecolor") {
+    return 3;
+  }
+  if (env.TERM === "xterm-kitty") {
+    return 3;
+  }
+  if ("TERM_PROGRAM" in env) {
+    const version = Number.parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
+    switch (env.TERM_PROGRAM) {
+      case "iTerm.app": {
+        return version >= 3 ? 3 : 2;
+      }
+      case "Apple_Terminal": {
+        return 2;
+      }
+    }
+  }
+  if (/-256(color)?$/i.test(env.TERM)) {
+    return 2;
+  }
+  if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
+    return 1;
+  }
+  if ("COLORTERM" in env) {
+    return 1;
+  }
+  return min2;
+}
+function createSupportsColor(stream2, options = {}) {
+  const level = _supportsColor(stream2, __spreadValues({
+    streamIsTTY: stream2 && stream2.isTTY
+  }, options));
+  return translateLevel(level);
+}
+var supportsColor = {
+  stdout: createSupportsColor({ isTTY: import_node_tty.default.isatty(1) }),
+  stderr: createSupportsColor({ isTTY: import_node_tty.default.isatty(2) })
+};
+var supports_color_default = supportsColor;
+
+// node_modules/chalk/source/utilities.js
+function stringReplaceAll(string, substring, replacer) {
+  let index = string.indexOf(substring);
+  if (index === -1) {
+    return string;
+  }
+  const substringLength = substring.length;
+  let endIndex = 0;
+  let returnValue = "";
+  do {
+    returnValue += string.slice(endIndex, index) + substring + replacer;
+    endIndex = index + substringLength;
+    index = string.indexOf(substring, endIndex);
+  } while (index !== -1);
+  returnValue += string.slice(endIndex);
+  return returnValue;
+}
+function stringEncaseCRLFWithFirstIndex(string, prefix, postfix, index) {
+  let endIndex = 0;
+  let returnValue = "";
+  do {
+    const gotCR = string[index - 1] === "\r";
+    returnValue += string.slice(endIndex, gotCR ? index - 1 : index) + prefix + (gotCR ? "\r\n" : "\n") + postfix;
+    endIndex = index + 1;
+    index = string.indexOf("\n", endIndex);
+  } while (index !== -1);
+  returnValue += string.slice(endIndex);
+  return returnValue;
+}
+
+// node_modules/chalk/source/index.js
+var { stdout: stdoutColor, stderr: stderrColor } = supports_color_default;
+var GENERATOR = Symbol("GENERATOR");
+var STYLER = Symbol("STYLER");
+var IS_EMPTY = Symbol("IS_EMPTY");
+var levelMapping = [
+  "ansi",
+  "ansi",
+  "ansi256",
+  "ansi16m"
+];
+var styles2 = /* @__PURE__ */ Object.create(null);
+var applyOptions = (object, options = {}) => {
+  if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
+    throw new Error("The `level` option should be an integer from 0 to 3");
+  }
+  const colorLevel = stdoutColor ? stdoutColor.level : 0;
+  object.level = options.level === void 0 ? colorLevel : options.level;
+};
+var chalkFactory = (options) => {
+  const chalk2 = (...strings) => strings.join(" ");
+  applyOptions(chalk2, options);
+  Object.setPrototypeOf(chalk2, createChalk.prototype);
+  return chalk2;
+};
+function createChalk(options) {
+  return chalkFactory(options);
+}
+Object.setPrototypeOf(createChalk.prototype, Function.prototype);
+for (const [styleName, style] of Object.entries(ansi_styles_default)) {
+  styles2[styleName] = {
+    get() {
+      const builder = createBuilder(this, createStyler(style.open, style.close, this[STYLER]), this[IS_EMPTY]);
+      Object.defineProperty(this, styleName, { value: builder });
+      return builder;
+    }
+  };
+}
+styles2.visible = {
+  get() {
+    const builder = createBuilder(this, this[STYLER], true);
+    Object.defineProperty(this, "visible", { value: builder });
+    return builder;
+  }
+};
+var getModelAnsi = (model, level, type, ...arguments_) => {
+  if (model === "rgb") {
+    if (level === "ansi16m") {
+      return ansi_styles_default[type].ansi16m(...arguments_);
+    }
+    if (level === "ansi256") {
+      return ansi_styles_default[type].ansi256(ansi_styles_default.rgbToAnsi256(...arguments_));
+    }
+    return ansi_styles_default[type].ansi(ansi_styles_default.rgbToAnsi(...arguments_));
+  }
+  if (model === "hex") {
+    return getModelAnsi("rgb", level, type, ...ansi_styles_default.hexToRgb(...arguments_));
+  }
+  return ansi_styles_default[type][model](...arguments_);
+};
+var usedModels = ["rgb", "hex", "ansi256"];
+for (const model of usedModels) {
+  styles2[model] = {
+    get() {
+      const { level } = this;
+      return function(...arguments_) {
+        const styler = createStyler(getModelAnsi(model, levelMapping[level], "color", ...arguments_), ansi_styles_default.color.close, this[STYLER]);
+        return createBuilder(this, styler, this[IS_EMPTY]);
+      };
+    }
+  };
+  const bgModel = "bg" + model[0].toUpperCase() + model.slice(1);
+  styles2[bgModel] = {
+    get() {
+      const { level } = this;
+      return function(...arguments_) {
+        const styler = createStyler(getModelAnsi(model, levelMapping[level], "bgColor", ...arguments_), ansi_styles_default.bgColor.close, this[STYLER]);
+        return createBuilder(this, styler, this[IS_EMPTY]);
+      };
+    }
+  };
+}
+var proto = Object.defineProperties(() => {
+}, __spreadProps(__spreadValues({}, styles2), {
+  level: {
+    enumerable: true,
+    get() {
+      return this[GENERATOR].level;
+    },
+    set(level) {
+      this[GENERATOR].level = level;
+    }
+  }
+}));
+var createStyler = (open, close, parent) => {
+  let openAll;
+  let closeAll;
+  if (parent === void 0) {
+    openAll = open;
+    closeAll = close;
+  } else {
+    openAll = parent.openAll + open;
+    closeAll = close + parent.closeAll;
+  }
+  return {
+    open,
+    close,
+    openAll,
+    closeAll,
+    parent
+  };
+};
+var createBuilder = (self2, _styler, _isEmpty) => {
+  const builder = (...arguments_) => applyStyle(builder, arguments_.length === 1 ? "" + arguments_[0] : arguments_.join(" "));
+  Object.setPrototypeOf(builder, proto);
+  builder[GENERATOR] = self2;
+  builder[STYLER] = _styler;
+  builder[IS_EMPTY] = _isEmpty;
+  return builder;
+};
+var applyStyle = (self2, string) => {
+  if (self2.level <= 0 || !string) {
+    return self2[IS_EMPTY] ? "" : string;
+  }
+  let styler = self2[STYLER];
+  if (styler === void 0) {
+    return string;
+  }
+  const { openAll, closeAll } = styler;
+  if (string.includes("\x1B")) {
+    while (styler !== void 0) {
+      string = stringReplaceAll(string, styler.close, styler.open);
+      styler = styler.parent;
+    }
+  }
+  const lfIndex = string.indexOf("\n");
+  if (lfIndex !== -1) {
+    string = stringEncaseCRLFWithFirstIndex(string, closeAll, openAll, lfIndex);
+  }
+  return openAll + string + closeAll;
+};
+Object.defineProperties(createChalk.prototype, styles2);
+var chalk = createChalk();
+var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
+var source_default = chalk;
+
+// src/util/cli-util.ts
+var import_node_path = require("path");
 var fs = __toESM(require("fs"), 1);
 function getInputExtensionsAsSet() {
   return new Set(JavaScriptPropositionalLaboratoryFormatLanguageMetaData.fileExtensions);
@@ -47236,13 +47279,10 @@ function getInputExtensionsAsSet() {
 function getInputExtensionsAsString() {
   return JavaScriptPropositionalLaboratoryFormatLanguageMetaData.fileExtensions.join(", ");
 }
-function extractFileExtension(fileName) {
-  return fileName.slice((Math.max(0, fileName.lastIndexOf(".")) || Infinity) + 1);
-}
 async function extractDocument(fileName, services) {
   var _a;
   const extensions = services.LanguageMetaData.fileExtensions;
-  if (!extensions.includes(path.extname(fileName))) {
+  if (!extensions.includes((0, import_node_path.extname)(fileName))) {
     console.error(source_default.yellow(`Please choose a file with one of these extensions: ${extensions}.`));
     process.exit(1);
   }
@@ -47250,7 +47290,7 @@ async function extractDocument(fileName, services) {
     console.error(source_default.red(`File ${fileName} does not exist.`));
     process.exit(1);
   }
-  const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
+  const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file((0, import_node_path.resolve)(fileName)));
   await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
   const validationErrors = ((_a = document.diagnostics) != null ? _a : []).filter((e) => e.severity === 1);
   if (validationErrors.length > 0) {
@@ -47269,9 +47309,9 @@ async function extractAstNode(fileName, services) {
   return (_a = (await extractDocument(fileName, services)).parseResult) == null ? void 0 : _a.value;
 }
 
-// src/cli/labGenerator.ts
-var fs2 = __toESM(require("fs"), 1);
-var import_node_path = __toESM(require("path"), 1);
+// src/generators/labGenerator.ts
+var import_node_fs = require("fs");
+var import_node_path2 = __toESM(require("path"), 1);
 var LAB_TEMPLATE_CONCERNS_MARKER = {
   START: "//???TEMPLATE-MARKER-CONCERNS-START???",
   END: "//???TEMPLATE-MARKER-CONCERNS-END???"
@@ -47290,40 +47330,40 @@ var RESOURCES_TO_COPY = [
   "github.png"
 ];
 function generateLaboratory(model, outputDirectory, templateDirectory) {
-  const labTemplatePath = import_node_path.default.join(templateDirectory, "lab.js");
-  const outputJavaScript = import_node_path.default.join(outputDirectory, "lab.js");
-  const outputResources = import_node_path.default.join(outputDirectory, "res");
-  if (!fs2.existsSync(outputResources))
-    fs2.mkdirSync(outputResources);
+  const labTemplatePath = import_node_path2.default.join(templateDirectory, "lab.js");
+  const outputJavaScript = import_node_path2.default.join(outputDirectory, "lab.js");
+  const outputResources = import_node_path2.default.join(outputDirectory, "res");
+  if (!(0, import_node_fs.existsSync)(outputResources))
+    (0, import_node_fs.mkdirSync)(outputResources);
   ROOT_FILES_TO_COPY.forEach((fileName) => {
-    fs2.copyFileSync(
-      import_node_path.default.join(templateDirectory, fileName),
-      import_node_path.default.join(outputDirectory, fileName)
+    (0, import_node_fs.copyFileSync)(
+      import_node_path2.default.join(templateDirectory, fileName),
+      import_node_path2.default.join(outputDirectory, fileName)
     );
   });
   RESOURCES_TO_COPY.forEach((fileName) => {
-    fs2.copyFileSync(
-      import_node_path.default.join(templateDirectory, fileName),
-      import_node_path.default.join(outputResources, fileName)
+    (0, import_node_fs.copyFileSync)(
+      import_node_path2.default.join(templateDirectory, fileName),
+      import_node_path2.default.join(outputResources, fileName)
     );
   });
   const labTemplate = readLabTemplate(labTemplatePath);
-  fs2.writeFileSync(outputJavaScript, "");
-  fs2.appendFileSync(outputJavaScript, labTemplate.prefix);
+  (0, import_node_fs.writeFileSync)(outputJavaScript, "");
+  (0, import_node_fs.appendFileSync)(outputJavaScript, labTemplate.prefix);
   const concernsNode = new CompositeGeneratorNode();
   generateConcerns(model.concerns, concernsNode);
-  fs2.appendFileSync(outputJavaScript, toString2(concernsNode));
-  fs2.appendFileSync(outputJavaScript, labTemplate.infix);
+  (0, import_node_fs.appendFileSync)(outputJavaScript, toString2(concernsNode));
+  (0, import_node_fs.appendFileSync)(outputJavaScript, labTemplate.infix);
   const conditionsNode = new CompositeGeneratorNode();
   generateConditions(model.conditions, conditionsNode);
-  fs2.appendFileSync(outputJavaScript, toString2(conditionsNode));
+  (0, import_node_fs.appendFileSync)(outputJavaScript, toString2(conditionsNode));
   const givensNode = new CompositeGeneratorNode();
   generateGivens(model.propositions, givensNode);
-  fs2.appendFileSync(outputJavaScript, toString2(givensNode));
+  (0, import_node_fs.appendFileSync)(outputJavaScript, toString2(givensNode));
   const tweakablesNode = new CompositeGeneratorNode();
   generateTweakables(model.propositions, tweakablesNode);
-  fs2.appendFileSync(outputJavaScript, toString2(tweakablesNode));
-  fs2.appendFileSync(outputJavaScript, labTemplate.postfix);
+  (0, import_node_fs.appendFileSync)(outputJavaScript, toString2(tweakablesNode));
+  (0, import_node_fs.appendFileSync)(outputJavaScript, labTemplate.postfix);
   return outputDirectory;
 }
 function splitByStartAndEndMarker(input, markers) {
@@ -47334,7 +47374,7 @@ function splitByStartAndEndMarker(input, markers) {
   };
 }
 function readLabTemplate(labTemplateFile) {
-  const template = fs2.readFileSync(labTemplateFile, `utf-8`);
+  const template = (0, import_node_fs.readFileSync)(labTemplateFile, `utf-8`);
   const splitByConcernsMarkers = splitByStartAndEndMarker(template, LAB_TEMPLATE_CONCERNS_MARKER);
   const splitByPropositionsMarkers = splitByStartAndEndMarker(splitByConcernsMarkers.AFTER, LAB_TEMPLATE_PROPOSITIONS_MARKER);
   return {
@@ -47521,8 +47561,8 @@ function generateTweakables(propositions, node) {
 `);
 }
 
-// src/cli/graphvizGenerator.ts
-var fs3 = __toESM(require("fs"), 1);
+// src/generators/graphvizGenerator.ts
+var import_node_fs2 = require("fs");
 var GRAPHVIZ_COLORS = {
   red: '"#9d0208"',
   yellow: '"#ffba08"'
@@ -47532,46 +47572,14 @@ var GRAPHVIZ_POSTFIX = "}\n";
 var GRAPHVIZ_PROPOSITIONS_NODE_STYLE = "shape=oval, color=black";
 var GRAPHVIZ_PROPOSITIONS_DISABLE_EDGE_STYLE = `labelfontcolor=${GRAPHVIZ_COLORS.red}, color=${GRAPHVIZ_COLORS.red}`;
 var GRAPHVIZ_PROPOSITIONS_RAISE_EDGE_STYLE = `labelfontcolor=${GRAPHVIZ_COLORS.yellow}, color=${GRAPHVIZ_COLORS.yellow}`;
-function generateGraphviz(model, filePath, destination) {
+function generateGraphviz(model, destination) {
   const generatedFilePath = destination;
   const propositionsNode = new CompositeGeneratorNode();
   graphvizPropositions(model.propositions, propositionsNode);
-  fs3.writeFileSync(generatedFilePath, GRAPHVIZ_PREFIX);
-  fs3.appendFileSync(generatedFilePath, toString2(propositionsNode));
-  fs3.appendFileSync(generatedFilePath, GRAPHVIZ_POSTFIX);
+  (0, import_node_fs2.writeFileSync)(generatedFilePath, GRAPHVIZ_PREFIX);
+  (0, import_node_fs2.appendFileSync)(generatedFilePath, toString2(propositionsNode));
+  (0, import_node_fs2.appendFileSync)(generatedFilePath, GRAPHVIZ_POSTFIX);
   return generatedFilePath;
-}
-function getReferenceablesInBinaryExpression(expression, output) {
-  getReferencablesInExpression(expression.left, output);
-  getReferencablesInExpression(expression.right, output);
-}
-function getReferenceablesInStatement(statement, output) {
-  let reference = statement.reference.ref;
-  if (reference !== void 0)
-    output.add(reference);
-}
-function getReferencablesInExpression(expression, output) {
-  switch (expression.$type) {
-    case "OrExpression":
-      getReferenceablesInBinaryExpression(expression, output);
-      break;
-    case "AndExpression":
-      getReferenceablesInBinaryExpression(expression, output);
-      break;
-    case "Negation":
-      getReferencablesInExpression(expression.inner, output);
-      break;
-    case "Group":
-      getReferencablesInExpression(expression.inner, output);
-    case "Statement":
-      getReferenceablesInStatement(expression, output);
-      break;
-  }
-}
-function getReferencableInWhenCondition(condition) {
-  let result = /* @__PURE__ */ new Set();
-  getReferencablesInExpression(condition.expression, result);
-  return result;
 }
 function graphvizPropositions(propositions, fileNode) {
   propositions.forEach((proposition) => {
@@ -47583,7 +47591,7 @@ function graphvizPropositions(propositions, fileNode) {
       valueDescription.raises.forEach((raise) => {
         if (raise.condition === void 0)
           return;
-        let referenceables = getReferencableInWhenCondition(raise.condition);
+        let referenceables = getReferencablesInWhenCondition(raise.condition);
         referenceables.forEach((referenceable) => {
           fileNode.append(`${indentation}${referenceable.name} -> ${proposition.name} [${GRAPHVIZ_PROPOSITIONS_RAISE_EDGE_STYLE}];
 `);
@@ -47592,7 +47600,7 @@ function graphvizPropositions(propositions, fileNode) {
     });
     if (proposition.disable !== void 0) {
       proposition.disable.statements.forEach((statement) => {
-        let referenceables = getReferencableInWhenCondition(statement.condition);
+        let referenceables = getReferencablesInWhenCondition(statement.condition);
         referenceables.forEach((referenceable) => {
           fileNode.append(`${indentation}${referenceable.name} -> ${proposition.name} [${GRAPHVIZ_PROPOSITIONS_DISABLE_EDGE_STYLE}];
 `);
@@ -47603,19 +47611,19 @@ function graphvizPropositions(propositions, fileNode) {
 }
 
 // node_modules/langium/lib/node/node-file-system-provider.js
-var fs4 = __toESM(require("fs"), 1);
+var fs2 = __toESM(require("fs"), 1);
 var NodeFileSystemProvider = class {
   constructor() {
     this.encoding = "utf-8";
   }
   readFile(uri) {
-    return fs4.promises.readFile(uri.fsPath, this.encoding);
+    return fs2.promises.readFile(uri.fsPath, this.encoding);
   }
   readFileSync(uri) {
-    return fs4.readFileSync(uri.fsPath, this.encoding);
+    return fs2.readFileSync(uri.fsPath, this.encoding);
   }
   async readDirectory(folderPath) {
-    const dirents = await fs4.promises.readdir(folderPath.fsPath, { withFileTypes: true });
+    const dirents = await fs2.promises.readdir(folderPath.fsPath, { withFileTypes: true });
     return dirents.map((dirent) => ({
       dirent,
       isFile: dirent.isFile(),
@@ -47628,38 +47636,54 @@ var NodeFileSystem = {
   fileSystemProvider: () => new NodeFileSystemProvider()
 };
 
-// src/cli/actions.ts
-var fs5 = __toESM(require("fs"), 1);
+// src/generators/actions.ts
+var import_node_fs3 = require("fs");
+var import_vscode = require("vscode");
+var import_node_path3 = require("path");
 var TEMPLATES_DIRECTORY = "./templates/laboratory-template";
-var generateLaboratoryAction = async (inputFile, destination, templatePath = TEMPLATES_DIRECTORY) => {
+function getModel(inputFile) {
+  const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
+  return extractAstNode(inputFile, services);
+}
+function checkJSPLInput(inputFile) {
   const fileExtensions = getInputExtensionsAsSet();
-  fs5.stat(inputFile, (err, stats) => {
-    if (err)
-      throw new Error(err.message);
-    if (!stats.isFile())
-      throw new Error(`The specified input file (${inputFile}) is not a file.`);
-  });
-  if (!fileExtensions.has("." + extractFileExtension(inputFile)))
-    throw new Error(`The specified input file (${inputFile}) does not have one of the allowed file extensions (${getInputExtensionsAsString()}).`);
-  if (!fs5.existsSync(destination))
-    fs5.mkdirSync(destination);
-  fs5.stat(destination, (err, stats) => {
-    if (err)
-      throw new Error(err.message);
-    if (!stats.isDirectory())
-      throw new Error(`The specified output directory (${destination}) is not a directory.`);
-  });
-  const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
-  const model = await extractAstNode(inputFile, services);
+  const inputStats = (0, import_node_fs3.statSync)(inputFile);
+  if (!inputStats.isFile())
+    throw new import_vscode.FileSystemError(`The specified input file (${inputFile}) is not a file.`);
+  if (!fileExtensions.has((0, import_node_path3.extname)(inputFile)))
+    throw new import_vscode.FileSystemError(`The specified input file (${inputFile}) does not have one of the allowed file extensions (${getInputExtensionsAsString()}).`);
+}
+function checkLaboratoryOutputDirectory(outputDirectoryPath) {
+  if (!(0, import_node_fs3.existsSync)(outputDirectoryPath))
+    (0, import_node_fs3.mkdirSync)(outputDirectoryPath);
+  const outputStats = (0, import_node_fs3.statSync)(outputDirectoryPath);
+  if (!outputStats.isDirectory())
+    throw new import_vscode.FileSystemError(`The specified output directory (${outputDirectoryPath}) is not a directory.`);
+}
+var generateLaboratoryAction = async (inputFile, destination, templatePath = TEMPLATES_DIRECTORY) => {
+  try {
+    checkJSPLInput(inputFile);
+  } catch (error) {
+    return Promise.reject(`Something went wrong while checking the input file. (Error: ${error})`);
+  }
+  try {
+    checkLaboratoryOutputDirectory(destination);
+  } catch (error) {
+    return Promise.reject(`Something went wrong while checking the output directory. (Error: ${error})`);
+  }
+  const model = await getModel(inputFile);
   const generatedLabPath = generateLaboratory(model, destination, templatePath);
-  console.log(source_default.green(`JavaScript code generated successfully: ${generatedLabPath}`));
-  return generatedLabPath;
+  return Promise.resolve(generatedLabPath);
 };
-var generateGraphvizAction = async (fileName, destination) => {
-  const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
-  const model = await extractAstNode(fileName, services);
-  const generatedFilePath = generateGraphviz(model, fileName, destination);
-  console.log(source_default.green(`Graphviz Visualization generated successfully: ${generatedFilePath}`));
+var generateGraphvizAction = async (inputFile, destination) => {
+  try {
+    checkJSPLInput(inputFile);
+  } catch (error) {
+    return Promise.reject(`Something went wrong while reading the input file. (Error: ${error})`);
+  }
+  const model = await getModel(inputFile);
+  const generatedFilePath = generateGraphviz(model, destination);
+  return Promise.resolve(generatedFilePath);
 };
 
 // src/extension/main.ts
@@ -47676,19 +47700,19 @@ var DIRECTORY_PICKER_DIALOG_OPTIONS = {
 };
 function activate(context) {
   client = startLanguageClient(context);
-  vscode.commands.registerCommand(
+  import_vscode2.commands.registerCommand(
     GENERATE_WEB_PAGE_COMMAND_IDENTIFIER,
     () => {
       generateWebpageCommand(context);
     }
   );
-  vscode.commands.registerCommand(
+  import_vscode2.commands.registerCommand(
     GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER,
     () => {
       generateGraphvizCommand(context);
     }
   );
-  vscode.commands.registerCommand(
+  import_vscode2.commands.registerCommand(
     GENERATE_JSON_COMMAND_IDENTIFIER,
     () => {
       generateJSONCommand(context);
@@ -47703,11 +47727,11 @@ function deactivate() {
 }
 async function generateWebpageCommand(context) {
   var _a;
-  const currentFilePath = (_a = vscode.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
-  const laboratoryTemplatePath = context.asAbsolutePath(path3.join("templates", "laboratory-template"));
-  const selectedUris = await vscode.window.showOpenDialog(DIRECTORY_PICKER_DIALOG_OPTIONS);
+  const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
+  const laboratoryTemplatePath = context.asAbsolutePath((0, import_node_path4.join)("templates", "laboratory-template"));
+  const selectedUris = await import_vscode2.window.showOpenDialog(DIRECTORY_PICKER_DIALOG_OPTIONS);
   if (selectedUris === void 0) {
-    vscode.window.showErrorMessage("No Directory selected.");
+    import_vscode2.window.showErrorMessage("No Directory selected.");
     return;
   }
   const outputDirectoryPath = selectedUris[0].fsPath;
@@ -47717,30 +47741,30 @@ async function generateWebpageCommand(context) {
     laboratoryTemplatePath
   ).then(
     (value) => {
-      vscode.window.showInformationMessage("Successfully created Laboratory at: " + value);
+      import_vscode2.window.showInformationMessage("Successfully created Laboratory at: " + value);
     }
   ).catch(
     (reason) => {
-      vscode.window.showErrorMessage("Couldn't create laboratory. Reason: " + reason);
+      import_vscode2.window.showErrorMessage("Couldn't create laboratory. " + reason);
     }
   );
 }
 async function generateGraphvizCommand(context) {
   var _a;
-  const currentFilePath = (_a = vscode.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
-  const outputFilePath = path3.join(vscode.workspace.workspaceFolders[0].uri.fsPath, "graphviz.dot");
+  const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
+  const outputFilePath = (0, import_node_path4.join)(import_vscode2.workspace.workspaceFolders[0].uri.fsPath, "graphviz.dot");
   generateGraphvizAction(currentFilePath, outputFilePath);
 }
 async function generateJSONCommand(context) {
 }
 function startLanguageClient(context) {
-  const serverModule = context.asAbsolutePath(path3.join("out", "language", "main.cjs"));
+  const serverModule = context.asAbsolutePath((0, import_node_path4.join)("out", "language", "main.cjs"));
   const debugOptions = { execArgv: ["--nolazy", `--inspect${process.env.DEBUG_BREAK ? "-brk" : ""}=${process.env.DEBUG_SOCKET || "6009"}`] };
   const serverOptions = {
     run: { module: serverModule, transport: import_node2.TransportKind.ipc },
     debug: { module: serverModule, transport: import_node2.TransportKind.ipc, options: debugOptions }
   };
-  const fileSystemWatcher = vscode.workspace.createFileSystemWatcher("**/*.jspl");
+  const fileSystemWatcher = import_vscode2.workspace.createFileSystemWatcher("**/*.jspl");
   context.subscriptions.push(fileSystemWatcher);
   const clientOptions = {
     documentSelector: [{ scheme: "file", language: "java-script-propositional-laboratory-format" }],

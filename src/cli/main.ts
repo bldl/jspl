@@ -1,13 +1,29 @@
 import { Command } from 'commander';
-import * as url from 'node:url';
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
-import { getInputExtensionsAsString } from './cli-util.js';
-import { generateLaboratoryAction, generateGraphvizAction } from './actions.js';
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+import { fileURLToPath } from 'node:url';
+import { readFile } from 'node:fs/promises';
+import { resolve as pathResolve } from 'node:path';
+import { getInputExtensionsAsString } from '../util/cli-util.js';
+import { generateLaboratoryAction, generateGraphvizAction } from '../generators/actions.js';
+import chalk from 'chalk';
 
-const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
-const packageContent = await fs.readFile(packagePath, 'utf-8');
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
+const packagePath = pathResolve(__dirname, '..', '..', 'package.json');
+const packageContent = await readFile(packagePath, 'utf-8');
+
+async function generateLaboratoryCLI(...args: any[]) {
+    const inputFilePath: string = args[0];
+    const outputDirectoryPath: string = args[1];
+    const generatedLabPath = await generateLaboratoryAction(inputFilePath, outputDirectoryPath);
+    console.log(chalk.green(`JavaScript code generated successfully: ${generatedLabPath}`));
+}
+
+async function generateGraphvizCLI(...args: any[]) {
+    const inputFilePath: string = args[0];
+    const outputFilePath: string = args[1];
+    const generatedFilePath = await generateGraphvizAction(inputFilePath, outputFilePath);
+    console.log(chalk.green(`Graphviz Visualization generated successfully: ${generatedFilePath}`));
+}
 
 export default function(): void {
     const program = new Command();
@@ -21,16 +37,14 @@ export default function(): void {
         .argument('<input-file>', `source file (possible file extensions: ${fileExtensions})`)
         .argument('<output-directory>', `destination directory`)
         .description('generates the laboratory backend from the source code')
-        .action((...args: any[]) => {
-            generateLaboratoryAction(args[0], args[1])
-        });
+        .action(generateLaboratoryCLI);
 
     program
         .command('graphviz')
         .argument('<input-file>', `source file (possible file extensions: ${fileExtensions})`)
         .argument('<output-file>', `destination file (possible file extensions: .dot)`)
         .description('generates a ".dot" file, that can be used to display a graph of the laboratory structure.')
-        .action(generateGraphvizAction);
+        .action(generateGraphvizCLI);
 
     program.parse(process.argv);
 }

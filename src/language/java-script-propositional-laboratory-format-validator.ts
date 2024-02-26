@@ -1,7 +1,8 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
 //import type { JavaScriptPropositionalLaboratoryFormatAstType, Person } from './generated/ast.js';
-import { type JavaScriptPropositionalLaboratoryFormatAstType, Proposition, Model} from './generated/ast.js';
+import { type JavaScriptPropositionalLaboratoryFormatAstType, Proposition, Model, Condition} from './generated/ast.js';
 import type { JavaScriptPropositionalLaboratoryFormatServices } from './java-script-propositional-laboratory-format-module.js';
+import { getReferencablesInWhenCondition } from '../util/modelUtil.js';
 
 /**
  * Register custom validation checks.
@@ -14,7 +15,8 @@ export function registerValidationChecks(services: JavaScriptPropositionalLabora
             validator.uniqueConcernIdentifiers, 
             validator.uniqueReferenceableIdentifiers
         ],
-        Proposition: validator.propositionHasExactlyOneDefaultOrJustOneValue
+        Proposition: validator.propositionHasExactlyOneDefaultOrJustOneValue,
+        Condition: validator.noRecursionInConditions,
     };
     registry.register(checks, validator);
 }
@@ -106,5 +108,15 @@ export class JavaScriptPropositionalLaboratoryFormatValidator {
             accept('error', `Proposition has no default value.`, {node: proposition, property: 'name'})
             return;
         }
+    }
+
+    noRecursionInConditions(condition: Condition, accept: ValidationAcceptor): void {
+        const name = condition.name;
+        const referenceablesInCondition = getReferencablesInWhenCondition(condition.condition);
+
+        referenceablesInCondition.forEach(referenceable => {
+            if (referenceable.name === name)
+                accept('error', `Recursion is not allowed here.`, {node: condition, property: 'name'});
+        });
     }
 }

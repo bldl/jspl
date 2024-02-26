@@ -34713,6 +34713,40 @@ var JavaScriptPropositionalLaboratoryFormatGeneratedModule = {
   parser: {}
 };
 
+// src/util/modelUtil.ts
+function getReferenceablesInBinaryExpression(expression, output) {
+  getReferencablesInExpression(expression.left, output);
+  getReferencablesInExpression(expression.right, output);
+}
+function getReferenceablesInStatement(statement, output) {
+  let reference = statement.reference.ref;
+  if (reference !== void 0)
+    output.add(reference);
+}
+function getReferencablesInExpression(expression, output) {
+  switch (expression.$type) {
+    case "OrExpression":
+      getReferenceablesInBinaryExpression(expression, output);
+      break;
+    case "AndExpression":
+      getReferenceablesInBinaryExpression(expression, output);
+      break;
+    case "Negation":
+      getReferencablesInExpression(expression.inner, output);
+      break;
+    case "Group":
+      getReferencablesInExpression(expression.inner, output);
+    case "Statement":
+      getReferenceablesInStatement(expression, output);
+      break;
+  }
+}
+function getReferencablesInWhenCondition(condition) {
+  let result = /* @__PURE__ */ new Set();
+  getReferencablesInExpression(condition.expression, result);
+  return result;
+}
+
 // src/language/java-script-propositional-laboratory-format-validator.ts
 function registerValidationChecks2(services) {
   const registry = services.validation.ValidationRegistry;
@@ -34722,7 +34756,8 @@ function registerValidationChecks2(services) {
       validator.uniqueConcernIdentifiers,
       validator.uniqueReferenceableIdentifiers
     ],
-    Proposition: validator.propositionHasExactlyOneDefaultOrJustOneValue
+    Proposition: validator.propositionHasExactlyOneDefaultOrJustOneValue,
+    Condition: validator.noRecursionInConditions
   };
   registry.register(checks, validator);
 }
@@ -34795,6 +34830,14 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       accept("error", `Proposition has no default value.`, { node: proposition, property: "name" });
       return;
     }
+  }
+  noRecursionInConditions(condition, accept) {
+    const name = condition.name;
+    const referenceablesInCondition = getReferencablesInWhenCondition(condition.condition);
+    referenceablesInCondition.forEach((referenceable) => {
+      if (referenceable.name === name)
+        accept("error", `Recursion is not allowed here.`, { node: condition, property: "name" });
+    });
   }
 };
 

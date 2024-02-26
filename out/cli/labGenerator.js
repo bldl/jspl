@@ -1,4 +1,5 @@
-import * as fs from 'node:fs';
+import { existsSync, mkdirSync, copyFileSync, writeFileSync, appendFileSync, readFileSync } from 'node:fs';
+//import { workspace, Uri } from 'vscode'; // TODO: replace node:fs with workspace.fs
 import { CompositeGeneratorNode, toString } from 'langium';
 import path from 'node:path';
 //const TEMPLATES_DIRECTORY: string = "./templates/laboratory-template";
@@ -24,41 +25,41 @@ export function generateLaboratory(model, outputDirectory, templateDirectory) {
     const outputJavaScript = path.join(outputDirectory, "lab.js");
     const outputResources = path.join(outputDirectory, "res");
     // make sure Resources Folder exists
-    if (!fs.existsSync(outputResources))
-        fs.mkdirSync(outputResources);
+    if (!existsSync(outputResources))
+        mkdirSync(outputResources);
     // Copy static files to output (index.html, LICENSE, README.md, res/favicon.svg, res/github.png)
     ROOT_FILES_TO_COPY.forEach(fileName => {
-        fs.copyFileSync(path.join(templateDirectory, fileName), path.join(outputDirectory, fileName));
+        copyFileSync(path.join(templateDirectory, fileName), path.join(outputDirectory, fileName));
     });
     RESOURCES_TO_COPY.forEach(fileName => {
-        fs.copyFileSync(path.join(templateDirectory, fileName), path.join(outputResources, fileName));
+        copyFileSync(path.join(templateDirectory, fileName), path.join(outputResources, fileName));
     });
     const labTemplate = readLabTemplate(labTemplatePath);
     // Clear lab.js file
-    fs.writeFileSync(outputJavaScript, "");
+    writeFileSync(outputJavaScript, "");
     // Create lab.js (by appending to file?)
     // 1. Write Prefix
-    fs.appendFileSync(outputJavaScript, labTemplate.prefix);
+    appendFileSync(outputJavaScript, labTemplate.prefix);
     // 2. Write Concerns
     const concernsNode = new CompositeGeneratorNode();
     generateConcerns(model.concerns, concernsNode);
-    fs.appendFileSync(outputJavaScript, toString(concernsNode));
+    appendFileSync(outputJavaScript, toString(concernsNode));
     // 3. Write Infix
-    fs.appendFileSync(outputJavaScript, labTemplate.infix);
+    appendFileSync(outputJavaScript, labTemplate.infix);
     // 4. Write Conditions
     const conditionsNode = new CompositeGeneratorNode();
     generateConditions(model.conditions, conditionsNode);
-    fs.appendFileSync(outputJavaScript, toString(conditionsNode));
+    appendFileSync(outputJavaScript, toString(conditionsNode));
     // 5. Write Givens
     const givensNode = new CompositeGeneratorNode();
     generateGivens(model.propositions, givensNode);
-    fs.appendFileSync(outputJavaScript, toString(givensNode));
+    appendFileSync(outputJavaScript, toString(givensNode));
     // 6. Write Tweakables
     const tweakablesNode = new CompositeGeneratorNode();
     generateTweakables(model.propositions, tweakablesNode);
-    fs.appendFileSync(outputJavaScript, toString(tweakablesNode));
+    appendFileSync(outputJavaScript, toString(tweakablesNode));
     // 7. Write Postfix
-    fs.appendFileSync(outputJavaScript, labTemplate.postfix);
+    appendFileSync(outputJavaScript, labTemplate.postfix);
     return outputDirectory;
 }
 function splitByStartAndEndMarker(input, markers) {
@@ -70,7 +71,7 @@ function splitByStartAndEndMarker(input, markers) {
 }
 ;
 function readLabTemplate(labTemplateFile) {
-    const template = fs.readFileSync(labTemplateFile, `utf-8`);
+    const template = readFileSync(labTemplateFile, `utf-8`);
     const splitByConcernsMarkers = splitByStartAndEndMarker(template, LAB_TEMPLATE_CONCERNS_MARKER);
     const splitByPropositionsMarkers = splitByStartAndEndMarker(splitByConcernsMarkers.AFTER, LAB_TEMPLATE_PROPOSITIONS_MARKER);
     return {
@@ -98,7 +99,7 @@ function generateConditions(conditions, node) {
     node.append(`const conditions = {\n`);
     conditions.forEach(condition => {
         node.append(`\t${condition.name}: () => {\n`);
-        node.append(`\t\treturn ${extractJSCondition.fromExpression(condition.condition.expression)};\n`); // TODO:
+        node.append(`\t\treturn ${extractJSCondition.fromExpression(condition.condition.expression)};\n`);
         node.append(`\t},\n`);
     });
     node.append(`};\n`);
@@ -160,7 +161,6 @@ const extractJSCondition = {
 };
 function generateConcernFunction(proposition, node, baseIndent) {
     const indent = (level) => baseIndent + "\t".repeat(level);
-    // TODO: make this return a list of concerns that all get listed, instead of the first found
     node.append(`(self) => {\n`);
     node.append(indent(1) + `let result = [];\n`);
     proposition.valueClauses.forEach(clause => {
@@ -168,11 +168,11 @@ function generateConcernFunction(proposition, node, baseIndent) {
         clause.raises.forEach(raise => {
             var _a, _b;
             if (raise.condition === undefined) {
-                node.append(indent(2) + `result.push(concerns.${(_a = raise.concern.ref) === null || _a === void 0 ? void 0 : _a.name});\n`); // TODO:
+                node.append(indent(2) + `result.push(concerns.${(_a = raise.concern.ref) === null || _a === void 0 ? void 0 : _a.name});\n`);
             }
             else {
                 node.append(indent(2) + `if (${extractJSCondition.fromExpression(raise.condition.expression)}) {\n`);
-                node.append(indent(3) + `result.push(concerns.${(_b = raise.concern.ref) === null || _b === void 0 ? void 0 : _b.name});\n`); // TODO:
+                node.append(indent(3) + `result.push(concerns.${(_b = raise.concern.ref) === null || _b === void 0 ? void 0 : _b.name});\n`);
                 node.append(indent(2) + "}\n");
             }
         });

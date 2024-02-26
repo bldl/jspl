@@ -1,8 +1,8 @@
 import type { LanguageClientOptions, ServerOptions} from 'vscode-languageclient/node.js';
-import * as vscode from 'vscode';
-import * as path from 'node:path';
+import { OpenDialogOptions, ExtensionContext, commands, window, workspace } from 'vscode';
+import { join as pathJoin } from 'node:path';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { generateGraphvizAction, generateLaboratoryAction } from '../cli/actions.js';
+import { generateGraphvizAction, generateLaboratoryAction } from '../generators/actions.js';
 
 let client: LanguageClient;
 
@@ -10,7 +10,7 @@ const GENERATE_WEB_PAGE_COMMAND_IDENTIFIER: string = "jspl.generate-webpage";
 const GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER: string = "jspl.generate-graphviz";
 const GENERATE_JSON_COMMAND_IDENTIFIER: string = "jspl.generate-json";
 
-const DIRECTORY_PICKER_DIALOG_OPTIONS: vscode.OpenDialogOptions = {
+const DIRECTORY_PICKER_DIALOG_OPTIONS: OpenDialogOptions = {
     canSelectMany: false,
     title: 'Select Output Directory',
     openLabel: 'Select',
@@ -20,20 +20,20 @@ const DIRECTORY_PICKER_DIALOG_OPTIONS: vscode.OpenDialogOptions = {
 
 
 // This function is called when the extension is activated.
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(context: ExtensionContext): void {
     client = startLanguageClient(context);
 
-    vscode.commands.registerCommand(
+    commands.registerCommand(
         GENERATE_WEB_PAGE_COMMAND_IDENTIFIER, 
         () => {generateWebpageCommand(context);}
     );
 
-    vscode.commands.registerCommand(
+    commands.registerCommand(
         GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER,
         () => {generateGraphvizCommand(context);}
     );
 
-    vscode.commands.registerCommand(
+    commands.registerCommand(
         GENERATE_JSON_COMMAND_IDENTIFIER,
         () => {generateJSONCommand(context);}
     );
@@ -47,14 +47,14 @@ export function deactivate(): Thenable<void> | undefined {
     return undefined;
 }
 
-async function generateWebpageCommand(context: vscode.ExtensionContext) {
-    const currentFilePath: string = vscode.window.activeTextEditor?.document.uri.fsPath!;
-    const laboratoryTemplatePath = context.asAbsolutePath(path.join("templates", "laboratory-template"));
+async function generateWebpageCommand(context: ExtensionContext) {
+    const currentFilePath: string = window.activeTextEditor?.document.uri.fsPath!;
+    const laboratoryTemplatePath = context.asAbsolutePath(pathJoin("templates", "laboratory-template"));
 
     // Let user pick directory
-    const selectedUris = await vscode.window.showOpenDialog(DIRECTORY_PICKER_DIALOG_OPTIONS)
+    const selectedUris = await window.showOpenDialog(DIRECTORY_PICKER_DIALOG_OPTIONS)
     if (selectedUris === undefined) {
-        vscode.window.showErrorMessage("No Directory selected.");
+        window.showErrorMessage("No Directory selected.");
         return;
     }
     const outputDirectoryPath: string = selectedUris[0].fsPath;
@@ -65,28 +65,28 @@ async function generateWebpageCommand(context: vscode.ExtensionContext) {
         laboratoryTemplatePath
     ).then((value: string) => {
             // message user that the lab was created successfully
-            vscode.window.showInformationMessage("Successfully created Laboratory at: " + value);
+            window.showInformationMessage("Successfully created Laboratory at: " + value);
         }
     ).catch((reason: any) => {
             // message user about error
-            vscode.window.showErrorMessage("Couldn't create laboratory. Reason: " + reason);
+            window.showErrorMessage("Couldn't create laboratory. " + reason);
         }
     );
 }
 
-async function generateGraphvizCommand(context: vscode.ExtensionContext) {
-    const currentFilePath = vscode.window.activeTextEditor?.document.uri.fsPath!;
-    const outputFilePath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, "graphviz.dot");
+async function generateGraphvizCommand(context: ExtensionContext) {
+    const currentFilePath = window.activeTextEditor?.document.uri.fsPath!;
+    const outputFilePath = pathJoin(workspace.workspaceFolders![0].uri.fsPath, "graphviz.dot");
     generateGraphvizAction(currentFilePath, outputFilePath); // TODO: messages
 }
 
-async function generateJSONCommand(context: vscode.ExtensionContext) {
+async function generateJSONCommand(context: ExtensionContext) {
     //const currentFilePath = vscode.window.activeTextEditor?.document.uri.fsPath!;
     // TODO: 
 }
 
-function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
-    const serverModule = context.asAbsolutePath(path.join('out', 'language', 'main.cjs'));
+function startLanguageClient(context: ExtensionContext): LanguageClient {
+    const serverModule = context.asAbsolutePath(pathJoin('out', 'language', 'main.cjs'));
     // The debug options for the server
     // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
     // By setting `process.env.DEBUG_BREAK` to a truthy value, the language server will wait until a debugger is attached.
@@ -99,7 +99,7 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
         debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
     };
 
-    const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.jspl');
+    const fileSystemWatcher = workspace.createFileSystemWatcher('**/*.jspl');
     context.subscriptions.push(fileSystemWatcher);
 
     // Options to control the language client
