@@ -46390,7 +46390,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
         "elements": [
           {
             "$type": "Keyword",
-            "value": "throw"
+            "value": "message"
           },
           {
             "$type": "Assignment",

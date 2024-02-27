@@ -673,7 +673,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaSc
         "elements": [
           {
             "$type": "Keyword",
-            "value": "throw"
+            "value": "message"
           },
           {
             "$type": "Assignment",

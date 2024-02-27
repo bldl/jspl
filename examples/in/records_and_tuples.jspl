@@ -475,7 +475,7 @@ proposition typeofBoxInstance {
     }
     value "object" {}
     disabled {
-        throw "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when noBox is True
     }
 }
 
@@ -487,7 +487,7 @@ proposition typeOfTupleWithBox {
     }
     value "object" {}
     disabled {
-        throw "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when noBox is True
     }
 }
 
@@ -500,7 +500,7 @@ proposition boxConstructorWithPrimitives {
         raise storingPrimitiveInBox
     }
     disabled {
-        throw "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when noBox is True
     }
 }
 
@@ -511,7 +511,7 @@ proposition addingTuplesWithBoxesToWeakSets {
     }
     value False {}
     disabled {
-        throw "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when noBox is True
     }
 }
 
@@ -524,7 +524,7 @@ proposition tupleWithBoxAsArgumentForNewProxy {
         raise recordProxies
     }
     disabled {
-        throw "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when noBox is True
     }
 }
 

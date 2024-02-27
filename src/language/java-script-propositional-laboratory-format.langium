@@ -51,7 +51,7 @@ ValueClause:
 ;
 
 DisableStatement:
-    "throw" (message=STRING) (condition=WhenCondition)
+    "message" (message=STRING) (condition=WhenCondition)
 ;
 
 DisableClause:

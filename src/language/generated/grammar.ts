@@ -676,7 +676,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
         "elements": [
           {
             "$type": "Keyword",
-            "value": "throw"
+            "value": "message"
           },
           {
             "$type": "Assignment",

@@ -20,7 +20,7 @@ proposition name {
     }
     value "some custom value"
     disabled {
-        throw "message" when someCondition is True and someOtherProposition is "undefined"
+        message "this is disabled, because ..." when someCondition is True and someOtherProposition is "undefined"
     }
 }
 
