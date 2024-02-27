@@ -1,1 +1,0 @@
-{"version":3,"file":"grammar-config.d.ts","sourceRoot":"","sources":["../../src/grammar/grammar-config.ts"],"names":[],"mappings":"AAAA;;;;gFAIgF;AAEhF,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,gBAAgB,CAAC;AAOtD,MAAM,WAAW,aAAa;IAC1B;;OAEG;IACH,qBAAqB,EAAE,MAAM,EAAE,CAAA;IAC/B;;OAEG;IACH,UAAU,EAAE,MAAM,CAAA;CACrB;AAED,wBAAgB,mBAAmB,CAAC,QAAQ,EAAE,eAAe,GAAG,aAAa,CAY5E"}
