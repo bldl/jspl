@@ -60,6 +60,9 @@ DisableClause:
     "}" 
 ;
 
+Import:
+    "import" import+= ;
+
 Proposition:
     "proposition" name=ID "{"
         "expression" expression=STRING
