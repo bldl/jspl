@@ -1,7 +1,7 @@
-import { Model, Proposition, } from '../language/generated/ast.js';
+import { Model, Proposition, } from '../../language/generated/ast.js';
 import { writeFileSync, appendFileSync  } from 'node:fs';
 import { CompositeGeneratorNode, toString } from 'langium';
-import { getReferencablesInWhenCondition } from '../util/modelUtil.js';
+import { getReferencablesInWhenCondition } from '../../util/modelUtil.js';
 
 const GRAPHVIZ_COLORS = {
     red: "\"#9d0208\"",

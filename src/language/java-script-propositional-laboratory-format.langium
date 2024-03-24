@@ -1,15 +1,48 @@
 grammar JavaScriptPropositionalLaboratoryFormat
 
 entry Model:
-    (concerns+=Concern | conditions+=Condition | propositions+=Proposition)*;
+    ( // Optional Header
+        laboratory=LaboratoryInformation
+    )?
+    ( // Main Body
+        concerns+=Concern 
+        | conditions+=Condition 
+        | propositions+=Proposition
+    )*
+;
+
+// Terminals
+
+terminal BOOLEAN returns boolean: /True|False/;
+terminal ID: /[_a-zA-Z][\w_]*/;
+//terminal INT returns number: /[0-9]+/;
+//terminal CODE_STRING: /`(\\.|[^`\\])*`/;
+terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
+
+hidden terminal WS: /\s+/;
+hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
+hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+
+FormattedString:
+    (format=("MD"|"HTML"))? contents=STRING
+;
+
+
+LaboratoryInformation: // TODO: What about browser header information, favicon, etc...
+    "laboratory" "{" 
+        ( // allow only one field to be used multiple times via validators
+            ("title" titles+=STRING)
+            | ("description" descriptions+=FormattedString)
+            | ("icon" icons+=STRING)
+        )*
+    "}"
+;
 
 // Concerns
-
 Concern:
     "concern" name=ID "{"
         "summary" summary=STRING
-        "description" description=STRING
-        //"assumes_using" assumes="==="
+        "description" description=FormattedString
     "}"
 ;
 
@@ -60,9 +93,6 @@ DisableClause:
     "}" 
 ;
 
-Import:
-    "import" import+= ;
-
 Proposition:
     "proposition" name=ID "{"
         "expression" expression=STRING
@@ -71,15 +101,3 @@ Proposition:
         (disable=DisableClause)?
     "}"
 ;
-
-// Terminals
-
-hidden terminal WS: /\s+/;
-terminal BOOLEAN returns boolean: /True|False/;
-terminal ID: /[_a-zA-Z][\w_]*/;
-//terminal INT returns number: /[0-9]+/;
-//terminal CODE_STRING: /`(\\.|[^`\\])*`/;
-terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
-
-hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
-hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;

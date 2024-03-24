@@ -1,4 +1,4 @@
-import { AndExpression, OrExpression, PropositionalExpression, Referenceable, Statement, WhenCondition } from '../language/generated/ast.js';
+import { AndExpression, Concern, Model, OrExpression, PropositionalExpression, Referenceable, Statement, WhenCondition } from '../language/generated/ast.js';
 
 
 function getReferenceablesInBinaryExpression(expression: OrExpression | AndExpression, output: Set<Referenceable>): void {
@@ -35,6 +35,49 @@ export function getReferencablesInWhenCondition(condition: WhenCondition): Set<R
     let result = new Set<Referenceable>();
 
     getReferencablesInExpression(condition.expression, result);
+
+    return result;
+}
+
+export function getAllUsedConcerns(model: Model): Set<Concern> {
+    let result = new Set<Concern>();
+
+    model.propositions.forEach(proposition => {
+        proposition.valueClauses.forEach(valueClause => {
+            valueClause.raises.forEach(raisingConcern => {
+                if (raisingConcern.concern.ref == undefined)
+                    return
+                result.add(raisingConcern.concern.ref);
+            });
+        });
+    });
+
+    return result;
+}
+
+export function getAllUsedReferenceables(model: Model): Set<Referenceable> {
+    let result = new Set<Referenceable>();
+
+    model.propositions.forEach(proposition => {
+        proposition.valueClauses.forEach(valueClause => {
+            valueClause.raises.forEach(raisingConcern => {
+                if (raisingConcern.condition == undefined)
+                    return;
+                getReferencablesInWhenCondition(raisingConcern.condition).forEach(referenceable => {
+                    result.add(referenceable);
+                });
+            });
+        });
+
+        if (proposition.disable == undefined)
+            return;
+
+        proposition.disable.statements.forEach(disableStatement => {
+            getReferencablesInWhenCondition(disableStatement.condition).forEach(referenceable => {
+                result.add(referenceable);
+            });
+        });
+    });
 
     return result;
 }

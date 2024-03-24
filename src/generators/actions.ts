@@ -1,8 +1,8 @@
 import type { Model } from '../language/generated/ast.js';
 import { createJavaScriptPropositionalLaboratoryFormatServices } from '../language/java-script-propositional-laboratory-format-module.js';
 import { extractAstNode, getInputExtensionsAsSet, getInputExtensionsAsString } from '../util/cli-util.js';
-import { generateLaboratory } from './labGenerator.js';
-import { generateGraphviz } from './graphvizGenerator.js';
+import { generateLaboratory } from './lab/main.js';
+import { generateGraphviz } from './graphviz/main.js';
 import { NodeFileSystem } from 'langium/node';
 import { statSync, existsSync, mkdirSync } from 'node:fs';
 import { FileSystemError } from 'vscode';

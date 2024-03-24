@@ -1,9 +1,3 @@
-laboratory {
-	title "Records and Tuples Laboratory 🔬 (v2)"
-	description "🏗 Work in progress - [raise issue](https://github.com/acutmore/record-tuple-laboratory/issues/new)"
-	icon "https://philipp-riemer.de/wp-content/uploads/2024/01/logo.svg"
-}
-
 concern withoutBox {
     summary 
         "complexity moved to ecosystem"
@@ -315,31 +309,6 @@ concern tuplePrototypeEquality {
 	Propositions
 */
 
-proposition typeofArray {
-    expression "typeof []"
-    default value "object"
-}
-
-proposition typeofNan {
-    expression "typeof NaN"
-    default value "number"
-}
-
-proposition zeroTripleEqualsNegativZero {
-    expression "+0 === -0"
-    default value True
-}
-
-proposition zeroObjectIsNegativeZero {
-    expression "Object.is(+0, -0)"
-    default value False
-}
-
-proposition arrayWithNegativeZeroIncludesZero {
-    expression "[-0].includes(+0)"
-    default value True {}
-}
-
 proposition nanTripleEqualsNan {
     expression "NaN === NaN"
     default value False
@@ -350,48 +319,9 @@ proposition nanObjectIsNan {
     default value True
 }
 
-proposition arrayWithNanIncludesNan {
-    expression "[NaN].includes(NaN)"
-    default value True
-}
-
-proposition arrayWithZeroTripleEqualsArrayWithZero {
-    expression "[0] === [0]"
-    default value False
-}
-
-proposition tupleWithZeroTripleEqualsTupleWithZero {
-    expression "#[0] === #[0]"
-    default value True 
-}
-
-proposition objectIsFrozenTupleWithZero {
-    expression "Object.isFrozen(#[0])"
-    default value True {}
-}
-
 /*
     Tweakables
 */
-
-proposition storeNegativeZero {
-    expression "Object.is(#[-0].at(0), -0)"
-    default value True {}
-    value False {
-        raise noNegativeZero
-    }
-}
-
-proposition zerosAreTripleEqual {
-    expression "#[+0] === #[-0]"
-    default value True {
-        raise canNotAlwaysIntern when storeNegativeZero is True
-    }
-    value False {
-        raise zerosNotTripleEqual when storeNegativeZero is True
-        raise impossibleEqualityOfZeros when storeNegativeZero is False
-    }
-}
 
 proposition tupleNaNAreTripleEqual {
     expression "#[NaN] === #[NaN]"
@@ -401,167 +331,15 @@ proposition tupleNaNAreTripleEqual {
     }
 }
 
-proposition tupleWithZeroObjectIsTupleWithNegativeZero {
-    expression "Object.is(#[+0], #[-0])"
-    default value False {
-        raise impossibleEqualityOfZeros when storeNegativeZero is False
-        raise differenceBetweenEqualityForTypeofObject when typeofTuple is "object" and zerosAreTripleEqual is True
-    }
-    value True {
-        raise observableDifferentButIsEqual when storeNegativeZero is True
-    }
-}
-
 proposition tupleWithNanObjectIsTupleWithNan {
     expression "Object.is(#[NaN], #[NaN])"
-    default value True {}
+    default value True {raise thereMightBeProblems}
     value False {
         raise nanNotIsNan when tupleNaNAreTripleEqual is True
     }
 }
 
-proposition typeofTuple {
-    expression "typeof #[]"
-    default value "tuple" {
-        raise slotSensitiveTypeof when typeOfTupleWithBox is "tuple" and typeofBoxConstructor is "function"
-    }
-    value "object" {
-        raise slotSensitiveTypeof when typeOfTupleWithBox is "object" and typeofBoxConstructor is "function"
-        raise tuplePrototypeEquality
-    }
+concern thereMightBeProblems {
+	summary "short description"
+	description "more detailed description"
 }
-
-proposition tupleWrappedInObjectTripleEqualsTuple {
-    expression "Object(#[]) === #[]"
-    default value False {
-        raise objectsDontHaveWrappers when typeofTuple is "object"
-        raise objectWrappers
-    }
-    value True {
-        raise objectWrapperInConsistency when typeofTuple is "tuple"
-    }
-}
-
-proposition addingTupleToWeakSetThrows {
-    expression "new WeakSet().add(#[]) // throws?"
-    default value True {
-        raise validWeakValue when typeofTuple is "object"
-    }
-    value False {
-        raise weakSetLeak
-    }
-}
-
-proposition tupleAsArgumentOfNewProxyThrows {
-    expression "new Proxy(#[]) // throws?"
-    default value True {
-        raise proxyThrowTypeofObject when typeofTuple is "object"
-    }
-    value False {
-        raise recordProxies
-    }
-}
-
-proposition typeofBoxConstructor {
-    expression "typeof Box"
-    default value "undefined" {
-        raise withoutBox 
-    }
-    value "function" {
-        raise boxType
-    }
-}
-
-condition noBox holds when typeofBoxConstructor is "undefined"
-
-proposition typeofBoxInstance {
-    expression "typeof Box({})"
-    default value "box" {
-        raise typeofPowerfulObjectIsNotObject
-    }
-    value "object" {}
-    disabled {
-        message "typeof Box === 'undefined'" when noBox is True
-    }
-}
-
-proposition typeOfTupleWithBox {
-    expression "typeof #[Box({})]"
-    default value "tuple" {
-        raise confusingTypeof when typeofTuple is "object"
-        raise typeofPowerfulObjectIsNotObject when typeofBoxInstance is "object"
-    }
-    value "object" {}
-    disabled {
-        message "typeof Box === 'undefined'" when noBox is True
-    }
-}
-
-proposition boxConstructorWithPrimitives {
-    expression "Box(42) // throws?"
-    default value True {
-        raise noPrimitivesInBox
-    }
-    value False {
-        raise storingPrimitiveInBox
-    }
-    disabled {
-        message "typeof Box === 'undefined'" when noBox is True
-    }
-}
-
-proposition addingTuplesWithBoxesToWeakSets {
-    expression "new WeakSet().add(#[Box({})]) // throws?"
-    default value True {
-        raise noBoxesInWeakSets
-    }
-    value False {}
-    disabled {
-        message "typeof Box === 'undefined'" when noBox is True
-    }
-}
-
-proposition tupleWithBoxAsArgumentForNewProxy {
-    expression "new Proxy(#[Box({})]) // throws?"
-    default value True {
-        raise proxyThrowTypeofObject when typeOfTupleWithBox is "object"
-    }
-    value False {
-        raise recordProxies
-    }
-    disabled {
-        message "typeof Box === 'undefined'" when noBox is True
-    }
-}
-
-proposition testingThisAndTHAT {
-	expression "Run you fools!!!!!"
-	default value True
-}
-
-proposition testingThisAndTHAT2 {
-	expression "Keep RUNNING!!!!"
-	default value True
-	value False
-}
-
-proposition testingThisAndTHAT3 {
-	expression "Keep RUNNING!!!!"
-	default value True
-	value False
-}
-
-proposition testForMultipleConcerns {
-	expression "Multiple Concerns?"
-	value True
-	default value False {
-		raise recordProxies
-		raise proxyThrowTypeofObject
-	}
-}
-
-// concern thereMightBeProblems {
-// 	summary "short description"
-// 	description "more detailed description"
-// }
-

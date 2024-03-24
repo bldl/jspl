@@ -8,10 +8,10 @@ import type { AstNode, Reference, ReferenceInfo, TypeMetaData } from 'langium';
 import { AbstractAstReflection } from 'langium';
 
 export const JavaScriptPropositionalLaboratoryFormatTerminals = {
-    WS: /\s+/,
     BOOLEAN: /True|False/,
     ID: /[_a-zA-Z][\w_]*/,
     STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/,
+    WS: /\s+/,
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
 };
@@ -48,7 +48,7 @@ export function isAndExpression(item: unknown): item is AndExpression {
 export interface Concern extends AstNode {
     readonly $container: Model;
     readonly $type: 'Concern';
-    description: string
+    description: FormattedString
     name: string
     summary: string
 }
@@ -97,6 +97,19 @@ export function isDisableStatement(item: unknown): item is DisableStatement {
     return reflection.isInstance(item, DisableStatement);
 }
 
+export interface FormattedString extends AstNode {
+    readonly $container: Concern | LaboratoryInformation;
+    readonly $type: 'FormattedString';
+    contents: string
+    format?: 'HTML' | 'MD'
+}
+
+export const FormattedString = 'FormattedString';
+
+export function isFormattedString(item: unknown): item is FormattedString {
+    return reflection.isInstance(item, FormattedString);
+}
+
 export interface Group extends AstNode {
     readonly $container: AndExpression | Group | Negation | OrExpression | WhenCondition;
     readonly $type: 'Group';
@@ -109,10 +122,25 @@ export function isGroup(item: unknown): item is Group {
     return reflection.isInstance(item, Group);
 }
 
+export interface LaboratoryInformation extends AstNode {
+    readonly $container: Model;
+    readonly $type: 'LaboratoryInformation';
+    descriptions: Array<FormattedString>
+    icons: Array<string>
+    titles: Array<string>
+}
+
+export const LaboratoryInformation = 'LaboratoryInformation';
+
+export function isLaboratoryInformation(item: unknown): item is LaboratoryInformation {
+    return reflection.isInstance(item, LaboratoryInformation);
+}
+
 export interface Model extends AstNode {
     readonly $type: 'Model';
     concerns: Array<Concern>
     conditions: Array<Condition>
+    laboratory?: LaboratoryInformation
     propositions: Array<Proposition>
 }
 
@@ -221,7 +249,9 @@ export type JavaScriptPropositionalLaboratoryFormatAstType = {
     Condition: Condition
     DisableClause: DisableClause
     DisableStatement: DisableStatement
+    FormattedString: FormattedString
     Group: Group
+    LaboratoryInformation: LaboratoryInformation
     Model: Model
     Negation: Negation
     OrExpression: OrExpression
@@ -237,7 +267,7 @@ export type JavaScriptPropositionalLaboratoryFormatAstType = {
 export class JavaScriptPropositionalLaboratoryFormatAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['AndExpression', 'Concern', 'Condition', 'DisableClause', 'DisableStatement', 'Group', 'Model', 'Negation', 'OrExpression', 'Proposition', 'PropositionalExpression', 'RaisingConcern', 'Referenceable', 'Statement', 'ValueClause', 'WhenCondition'];
+        return ['AndExpression', 'Concern', 'Condition', 'DisableClause', 'DisableStatement', 'FormattedString', 'Group', 'LaboratoryInformation', 'Model', 'Negation', 'OrExpression', 'Proposition', 'PropositionalExpression', 'RaisingConcern', 'Referenceable', 'Statement', 'ValueClause', 'WhenCondition'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -281,6 +311,16 @@ export class JavaScriptPropositionalLaboratoryFormatAstReflection extends Abstra
                     name: 'DisableClause',
                     mandatory: [
                         { name: 'statements', type: 'array' }
+                    ]
+                };
+            }
+            case 'LaboratoryInformation': {
+                return {
+                    name: 'LaboratoryInformation',
+                    mandatory: [
+                        { name: 'descriptions', type: 'array' },
+                        { name: 'icons', type: 'array' },
+                        { name: 'titles', type: 'array' }
                     ]
                 };
             }

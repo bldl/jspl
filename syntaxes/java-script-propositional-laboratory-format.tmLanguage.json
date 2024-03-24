@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.java-script-propositional-laboratory-format",
-      "match": "\\b(and|concern|condition|default|description|disabled|expression|holds|is|message|not|or|proposition|raise|summary|value|when)\\b"
+      "match": "\\b(HTML|MD|and|concern|condition|default|description|disabled|expression|holds|icon|is|laboratory|message|not|or|proposition|raise|summary|title|value|when)\\b"
     },
     {
       "name": "string.quoted.double.java-script-propositional-laboratory-format",

@@ -1,14 +1,85 @@
-concern test {
-    summary "CONCERN!"
-    description "This is concerning."
+laboratory {
+    //title "This is a title"
+    title "Different title"
+    description "
+    This is a laboratory for the proposal x and there is a lot to talk about...
+
+    Example Code:
+    
+        int i = 0;
+        i++;
+    
+    ## Subsection:
+
+    Testing
+    "
+    //description "This is not allowed"
+    //description "Testing third"
+    icon "some url" 
+    //icon "test"
 }
 
-//condition recursion holds when recursion is True
+concern unused {
+    summary "nothing"
+    description "nothing at all"
+}
+
+concern test { // Multiline strings cant be indented?...
+    summary "CONCERN!"
+    description "
+    
+# This is concerning.
+    
+**Very concerning!** 
+
+*Or is it?*
+
+    {
+        int i = 0;
+        i++;
+        return i;
+    }
+"
+}
+
+concern test2 { // using dedent-js to remove leading tabs/spaces
+    summary "CONCERN!"
+    description HTML"
+    
+    # This is concerning.
+    
+    **Very concerning!** 
+        
+    *Or is it?*
+
+        {
+            int i = 0;
+            i++;
+            return i;
+        }
+    "
+}
+
+condition usedCondition holds when test is True
+condition unusedCondition holds when test is False
 
 proposition test {
     expression "a === b"
     default value True {
         raise test 
     }
-    value False
+    value False {
+        raise test2
+    }
+}
+
+proposition test22 {
+    expression "a === 2"
+    default value "test" {
+
+    }
+    value "object"
+    disabled {
+        message "something" when usedCondition is True
+    }
 }
