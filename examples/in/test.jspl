@@ -17,6 +17,9 @@ laboratory {
     //description "Testing third"
     icon "some url" 
     //icon "test"
+    // TODO: default format 
+    // TODO: Maybe add version / authors / proposal
+    // TODO: 
 }
 
 concern unused {
@@ -24,22 +27,23 @@ concern unused {
     description "nothing at all"
 }
 
+// TODO: add deprecated tags? with warnings concern deprecated test {...}
 concern test { // Multiline strings cant be indented?...
     summary "CONCERN!"
     description "
     
-# This is concerning.
-    
-**Very concerning!** 
+    # This is concerning.
+            
+    **Very concerning!** 
 
-*Or is it?*
+    *Or is it?*
 
-    {
-        int i = 0;
-        i++;
-        return i;
-    }
-"
+        \{
+            int i = 0;
+            i++;
+            return i;
+        \}
+    "
 }
 
 concern test2 { // using dedent-js to remove leading tabs/spaces
@@ -47,9 +51,9 @@ concern test2 { // using dedent-js to remove leading tabs/spaces
     description HTML"
     
     # This is concerning.
-    
-    **Very concerning!** 
         
+    **Very concerning!** 
+            
     *Or is it?*
 
         {
@@ -63,6 +67,7 @@ concern test2 { // using dedent-js to remove leading tabs/spaces
 condition usedCondition holds when test is True
 condition unusedCondition holds when test is False
 
+// TODO: deprecated for proposition? add markers in html webpage
 proposition test {
     expression "a === b"
     default value True {
