@@ -1,7 +1,7 @@
 laboratory {
 	title "Records and Tuples Laboratory 🔬 (v2)"
 	description "🏗 Work in progress - [raise issue](https://github.com/acutmore/record-tuple-laboratory/issues/new)"
-	icon "https://philipp-riemer.de/wp-content/uploads/2024/01/logo.svg"
+	icon "./res/favicon.svg"
 }
 
 concern withoutBox {
