@@ -2,8 +2,8 @@
     "name": "jspl-javascript-propositional-laboratory",
     "displayName": "JSPL: JavaScript Propositional Laboratory",
     "description": "Support for writing JavaScript Proposal Laboratories",
-    "version": "0.5.0",
-    "publisher": "Philipp Riemer",
+    "version": "0.5.1",
+    "publisher": "PhilippRiemer",
     "license": "SEE LICENSE IN LICENSE.txt",
     "icon": "icon.png",
     "galleryBanner": {
