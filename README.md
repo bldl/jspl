@@ -1,4 +1,6 @@
 # JavaScript Propositional Laboratory
+Provides support for the JavaScript Propositional Laboratory Format (JSPL), a format developed for Ecma-/JS-Developers, to be used for discussing contentious features of proposals.
+
 Based on [Langium](https://langium.org)
 
 ## Getting started
