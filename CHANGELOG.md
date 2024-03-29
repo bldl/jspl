@@ -1,0 +1,22 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [0.5.0] - 2024-03-29
+
+- Updated `laboratory`-field to include the following fields:
+    - `format`: specifies the default format to be used in description texts.
+    - `author`: specifies the author of the laboratory.
+    - `version`: specifies the version number of the laboratory.
+
+## [0.4.0] - 2024-03-25
+ 
+- Added warnings for unused concerns and conditions
+- Added `laboratory`-field to the top of documents to specify information for the laboratory. Supported (sub-)fields:
+    - `title`: Specify a title to be displayed on the top of the laboratory.
+    - `description`: Specify a description text to be displayed on the top of the laboratory.
+    - `icon`: Specify an icon for the laboratory (e.g. favicon for browsers). This is a string, that will be copied straight to the html. Therefore this can be a local path to an image or a web-url.
+- Added Markdown support:
+    - `description` fields are now formatted in Markdown by default
+    - HTML-Formatting can be specified per `description` by putting `HTML` before the string
+    

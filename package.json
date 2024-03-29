@@ -5,9 +5,8 @@
     "version": "0.5.0",
     "publisher": "Philipp Riemer",
     "icon": "icon.png",
-    "repository": {
-        "url": "https://gitlab.com/phirie/jspl"
-    },
+    "repository": "https://gitlab.com/phirie/jspl",
+    "categories": ["Programming Languages"],
     "files": [
         "bin",
         "templates"
@@ -46,9 +45,6 @@
         "vscode": "^1.67.0",
         "node": ">=16.0.0"
     },
-    "categories": [
-        "Programming Languages"
-    ],
     "contributes": {
         "languages": [
             {
