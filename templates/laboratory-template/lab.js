@@ -67,6 +67,8 @@ function tweakable({name, input, output, concern, default: _default, disabled}) 
 //???TEMPLATE-MARKER-START???
 const appTitle = "Laboratory Title";
 const appDescriptionHtml = "<p>Laboratory Description</p>";
+const appAuthor = "Ada Lovelace";
+const appVersion = "1.0";
 
 const concerns = {};
 
@@ -134,8 +136,11 @@ function shuffle() {
 function App() {
 	return html`
 		<h1 class="text-center">
-			${appTitle}
+			${appTitle} (v${appVersion})
 		</h1>
+		<p class="text-center">
+			by ${appAuthor}
+		</p>
 		<div class="description-block-outer">
 			<div class="description-block-inner">
 			${appDescriptionHtml}

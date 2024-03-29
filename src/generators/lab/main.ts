@@ -2,11 +2,12 @@ import { existsSync, mkdirSync, copyFileSync, writeFileSync, appendFileSync } fr
 //import { workspace, Uri } from 'vscode'; // TODO: replace node:fs with workspace.fs
 import { CompositeGeneratorNode, toString } from 'langium';
 import path from 'node:path';
-import { LaboratoryInformation, Model } from '../../language/generated/ast.js';
+import { Model } from '../../language/generated/ast.js';
 import { generateConcerns } from './concerns.js';
 import { generateConditions } from './conditions.js';
 import { generateGivens, generateTweakables } from './propositions.js';
-import { extractLaboratoryInformation, readTemplatedFile } from './util.js';
+import { readTemplatedFile } from './util.js';
+import { ExtractedLaboratoryInformation, extractLaboratoryInformation } from '../../util/modelUtil.js';
 
 type TemplateMarker = {
     START: string,
@@ -53,14 +54,19 @@ export function generateLaboratory(model: Model, outputDirectory: string, templa
         );
     });
 
+    // extract laboratory information from model
+    const laboratoryInformation = extractLaboratoryInformation(model.laboratory);
+
     generateIndex(
         model,
+        laboratoryInformation,
         path.join(templateDirectory, "index.html"),
         path.join(outputDirectory, "index.html")
     );
 
     generateLabJS(
         model, 
+        laboratoryInformation,
         path.join(templateDirectory, "lab.js"), 
         path.join(outputDirectory, "lab.js")
     );
@@ -68,7 +74,7 @@ export function generateLaboratory(model: Model, outputDirectory: string, templa
     return outputDirectory;
 }
 
-function generateIndex(model: Model, indexTemplatePath: string, outputIndexPath: string): void {
+function generateIndex(model: Model, laboratoryInformation: ExtractedLaboratoryInformation, indexTemplatePath: string, outputIndexPath: string): void {
     const indexTemplate = readTemplatedFile(indexTemplatePath, INDEX_TEMPLATE_MARKER);
 
     // Clear index.html file
@@ -78,15 +84,14 @@ function generateIndex(model: Model, indexTemplatePath: string, outputIndexPath:
     appendFileSync(outputIndexPath, indexTemplate.prefix);
 
     // 2. Write Header Data
-    const extracted = extractLaboratoryInformation(model.laboratory);
-    const headerData: string = `<title>${extracted.title}</title>\n\t<link rel="icon" href="${extracted.icon}"/>`;
+    const headerData: string = `<title>${laboratoryInformation.title}</title>\n\t<link rel="icon" href="${laboratoryInformation.icon}"/>`;
     appendFileSync(outputIndexPath, headerData);
 
     // 3. Write Postfix
     appendFileSync(outputIndexPath, indexTemplate.postfix);
 }
 
-function generateLabJS(model: Model, labTemplatePath: string, outputJavaScript: string): void {
+function generateLabJS(model: Model, laboratoryInformation: ExtractedLaboratoryInformation, labTemplatePath: string, outputJavaScript: string): void {
     const labTemplate = readTemplatedFile(labTemplatePath, LAB_TEMPLATE_MARKER);
 
     // Clear lab.js file
@@ -98,12 +103,12 @@ function generateLabJS(model: Model, labTemplatePath: string, outputJavaScript: 
 
     // 2. Write Laboratory Information
     const laboratoryInformationNode = new CompositeGeneratorNode();
-    generateLaboratoryInformation(model.laboratory, laboratoryInformationNode)
+    generateLaboratoryInformation(laboratoryInformation, laboratoryInformationNode)
     appendFileSync(outputJavaScript, toString(laboratoryInformationNode));
 
     // 3. Write Concerns
     const concernsNode = new CompositeGeneratorNode();
-    generateConcerns(model.concerns, concernsNode);
+    generateConcerns(model.concerns, concernsNode, laboratoryInformation);
     appendFileSync(outputJavaScript, toString(concernsNode))
 
     // 4. Write Conditions
@@ -125,8 +130,9 @@ function generateLabJS(model: Model, labTemplatePath: string, outputJavaScript: 
     appendFileSync(outputJavaScript, labTemplate.postfix);
 }
 
-function generateLaboratoryInformation(information: LaboratoryInformation | undefined, node: CompositeGeneratorNode) {
-    const extracted = extractLaboratoryInformation(information);
-    node.append(`const appTitle = "${extracted.title}";\n`);
-    node.append(`const appDescriptionHtml = html\`${extracted.description}\`;\n`);
+function generateLaboratoryInformation(laboratoryInformation: ExtractedLaboratoryInformation, node: CompositeGeneratorNode) {
+    node.append(`const appTitle = "${laboratoryInformation.title}";\n`);
+    node.append(`const appDescriptionHtml = html\`${laboratoryInformation.description}\`;\n`);
+    node.append(`const appAuthor = "${laboratoryInformation.author}";\n`);
+    node.append(`const appVersion = "${laboratoryInformation.version}";\n`);
 }

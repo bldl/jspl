@@ -26,7 +26,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@8"
+                "$ref": "#/rules@9"
               },
               "arguments": []
             },
@@ -42,7 +42,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@9"
+                    "$ref": "#/rules@10"
                   },
                   "arguments": []
                 }
@@ -54,7 +54,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@19"
+                    "$ref": "#/rules@20"
                   },
                   "arguments": []
                 }
@@ -66,7 +66,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@24"
+                    "$ref": "#/rules@25"
                   },
                   "arguments": []
                 }
@@ -92,6 +92,20 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
       "definition": {
         "$type": "RegexToken",
         "regex": "/True|False/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "ML_STRING_FORMAT",
+      "type": {
+        "$type": "ReturnType",
+        "name": "string"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/MD|HTML/"
       },
       "fragment": false,
       "hidden": false
@@ -157,17 +171,11 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "feature": "format",
             "operator": "=",
             "terminal": {
-              "$type": "Alternatives",
-              "elements": [
-                {
-                  "$type": "Keyword",
-                  "value": "MD"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "HTML"
-                }
-              ]
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
             },
             "cardinality": "?"
           },
@@ -178,7 +186,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -223,7 +231,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@3"
+                        "$ref": "#/rules@4"
                       },
                       "arguments": []
                     }
@@ -244,7 +252,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@7"
+                        "$ref": "#/rules@8"
                       },
                       "arguments": []
                     }
@@ -265,7 +273,70 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@3"
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "format"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "formats",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@2"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "author"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "authors",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "version"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "versions",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
                       },
                       "arguments": []
                     }
@@ -305,7 +376,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -325,7 +396,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -341,7 +412,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@7"
+                "$ref": "#/rules@8"
               },
               "arguments": []
             }
@@ -365,7 +436,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
       "definition": {
         "$type": "RuleCall",
         "rule": {
-          "$ref": "#/rules@11"
+          "$ref": "#/rules@12"
         },
         "arguments": []
       },
@@ -389,7 +460,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@12"
+              "$ref": "#/rules@13"
             },
             "arguments": []
           },
@@ -416,7 +487,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@12"
+                    "$ref": "#/rules@13"
                   },
                   "arguments": []
                 }
@@ -446,7 +517,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@13"
+              "$ref": "#/rules@14"
             },
             "arguments": []
           },
@@ -473,7 +544,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@13"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -503,14 +574,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@17"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@14"
+              "$ref": "#/rules@18"
             },
             "arguments": []
           },
@@ -518,6 +582,13 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@15"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@16"
             },
             "arguments": []
           }
@@ -547,7 +618,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -578,7 +649,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -605,14 +676,14 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@19"
+              "$ref": "#/rules@20"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@24"
+              "$ref": "#/rules@25"
             },
             "arguments": []
           }
@@ -638,7 +709,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@16"
+                "$ref": "#/rules@17"
               },
               "deprecatedSyntax": false
             }
@@ -674,7 +745,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@3"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -707,7 +778,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -738,7 +809,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -754,7 +825,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -785,7 +856,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@9"
+                "$ref": "#/rules@10"
               },
               "deprecatedSyntax": false
             }
@@ -797,7 +868,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             },
@@ -849,7 +920,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@3"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -870,7 +941,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@21"
                   },
                   "arguments": []
                 },
@@ -909,7 +980,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -921,7 +992,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -956,7 +1027,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@22"
+                "$ref": "#/rules@23"
               },
               "arguments": []
             },
@@ -992,7 +1063,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -1012,7 +1083,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -1024,7 +1095,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             },
@@ -1037,7 +1108,7 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@23"
+                "$ref": "#/rules@24"
               },
               "arguments": []
             },

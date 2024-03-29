@@ -1,5 +1,4 @@
 laboratory {
-    //title "This is a title"
     title "Different title"
     description "
     This is a laboratory for the proposal x and there is a lot to talk about...
@@ -13,13 +12,10 @@ laboratory {
 
     Testing
     "
-    //description "This is not allowed"
-    //description "Testing third"
     icon "some url" 
-    //icon "test"
-    // TODO: default format 
-    // TODO: Maybe add version / authors / proposal
-    // TODO: 
+    author "Philipp Riemer"
+    version "1.0"
+    format MD
 }
 
 concern unused {

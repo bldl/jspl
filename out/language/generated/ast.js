@@ -5,6 +5,7 @@
 import { AbstractAstReflection } from 'langium';
 export const JavaScriptPropositionalLaboratoryFormatTerminals = {
     BOOLEAN: /True|False/,
+    ML_STRING_FORMAT: /MD|HTML/,
     ID: /[_a-zA-Z][\w_]*/,
     STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/,
     WS: /\s+/,
@@ -133,9 +134,12 @@ export class JavaScriptPropositionalLaboratoryFormatAstReflection extends Abstra
                 return {
                     name: 'LaboratoryInformation',
                     mandatory: [
+                        { name: 'authors', type: 'array' },
                         { name: 'descriptions', type: 'array' },
+                        { name: 'formats', type: 'array' },
                         { name: 'icons', type: 'array' },
-                        { name: 'titles', type: 'array' }
+                        { name: 'titles', type: 'array' },
+                        { name: 'versions', type: 'array' }
                     ]
                 };
             }

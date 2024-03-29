@@ -1,4 +1,5 @@
 # JavaScript Propositional Laboratory
+Based on [Langium](https://langium.org)
 
 ## Getting started
 
@@ -8,6 +9,9 @@ laboratory {
     title "The title of the generated laboratory"
     description "This laboratory is for x"
     icon "./path/to/favicon.svg or some url" 
+    format MD
+    author "Philipp Riemer"
+    version "1.0"
 }
 ```
 

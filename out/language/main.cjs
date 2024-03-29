@@ -8924,6 +8924,42 @@ var require_node3 = __commonJS({
   }
 });
 
+// node_modules/dedent-js/lib/index.js
+var require_lib = __commonJS({
+  "node_modules/dedent-js/lib/index.js"(exports2, module2) {
+    module2.exports = function dedent2(templateStrings) {
+      var values2 = [];
+      for (var _i = 1; _i < arguments.length; _i++) {
+        values2[_i - 1] = arguments[_i];
+      }
+      var matches = [];
+      var strings = typeof templateStrings === "string" ? [templateStrings] : templateStrings.slice();
+      strings[strings.length - 1] = strings[strings.length - 1].replace(/\r?\n([\t ]*)$/, "");
+      for (var i = 0; i < strings.length; i++) {
+        var match = void 0;
+        if (match = strings[i].match(/\n[\t ]+/g)) {
+          matches.push.apply(matches, match);
+        }
+      }
+      if (matches.length) {
+        var size = Math.min.apply(Math, matches.map(function(value) {
+          return value.length - 1;
+        }));
+        var pattern = new RegExp("\n[	 ]{" + size + "}", "g");
+        for (var i = 0; i < strings.length; i++) {
+          strings[i] = strings[i].replace(pattern, "\n");
+        }
+      }
+      strings[0] = strings[0].replace(/^\r?\n/, "");
+      var string = strings[0];
+      for (var i = 0; i < values2.length; i++) {
+        string += values2[i] + strings[i + 1];
+      }
+      return string;
+    };
+  }
+});
+
 // node_modules/langium/lib/default-module.js
 var import_vscode_languageserver28 = __toESM(require_main4(), 1);
 
@@ -33754,9 +33790,12 @@ var JavaScriptPropositionalLaboratoryFormatAstReflection = class extends Abstrac
         return {
           name: "LaboratoryInformation",
           mandatory: [
+            { name: "authors", type: "array" },
             { name: "descriptions", type: "array" },
+            { name: "formats", type: "array" },
             { name: "icons", type: "array" },
-            { name: "titles", type: "array" }
+            { name: "titles", type: "array" },
+            { name: "versions", type: "array" }
           ]
         };
       }
@@ -33829,7 +33868,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@8"
+                "$ref": "#/rules@9"
               },
               "arguments": []
             },
@@ -33845,7 +33884,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@9"
+                    "$ref": "#/rules@10"
                   },
                   "arguments": []
                 }
@@ -33857,7 +33896,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@19"
+                    "$ref": "#/rules@20"
                   },
                   "arguments": []
                 }
@@ -33869,7 +33908,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@24"
+                    "$ref": "#/rules@25"
                   },
                   "arguments": []
                 }
@@ -33895,6 +33934,20 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "definition": {
         "$type": "RegexToken",
         "regex": "/True|False/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "ML_STRING_FORMAT",
+      "type": {
+        "$type": "ReturnType",
+        "name": "string"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/MD|HTML/"
       },
       "fragment": false,
       "hidden": false
@@ -33960,17 +34013,11 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "feature": "format",
             "operator": "=",
             "terminal": {
-              "$type": "Alternatives",
-              "elements": [
-                {
-                  "$type": "Keyword",
-                  "value": "MD"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "HTML"
-                }
-              ]
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
             },
             "cardinality": "?"
           },
@@ -33981,7 +34028,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -34026,7 +34073,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@3"
+                        "$ref": "#/rules@4"
                       },
                       "arguments": []
                     }
@@ -34047,7 +34094,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@7"
+                        "$ref": "#/rules@8"
                       },
                       "arguments": []
                     }
@@ -34068,7 +34115,70 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@3"
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "format"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "formats",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@2"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "author"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "authors",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "version"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "versions",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
                       },
                       "arguments": []
                     }
@@ -34108,7 +34218,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -34128,7 +34238,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -34144,7 +34254,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@7"
+                "$ref": "#/rules@8"
               },
               "arguments": []
             }
@@ -34168,7 +34278,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "definition": {
         "$type": "RuleCall",
         "rule": {
-          "$ref": "#/rules@11"
+          "$ref": "#/rules@12"
         },
         "arguments": []
       },
@@ -34192,7 +34302,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@12"
+              "$ref": "#/rules@13"
             },
             "arguments": []
           },
@@ -34219,7 +34329,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@12"
+                    "$ref": "#/rules@13"
                   },
                   "arguments": []
                 }
@@ -34249,7 +34359,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@13"
+              "$ref": "#/rules@14"
             },
             "arguments": []
           },
@@ -34276,7 +34386,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@13"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -34306,14 +34416,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@17"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@14"
+              "$ref": "#/rules@18"
             },
             "arguments": []
           },
@@ -34321,6 +34424,13 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@15"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@16"
             },
             "arguments": []
           }
@@ -34350,7 +34460,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -34381,7 +34491,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -34408,14 +34518,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@19"
+              "$ref": "#/rules@20"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@24"
+              "$ref": "#/rules@25"
             },
             "arguments": []
           }
@@ -34441,7 +34551,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@16"
+                "$ref": "#/rules@17"
               },
               "deprecatedSyntax": false
             }
@@ -34477,7 +34587,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@3"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -34510,7 +34620,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -34541,7 +34651,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -34557,7 +34667,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -34588,7 +34698,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@9"
+                "$ref": "#/rules@10"
               },
               "deprecatedSyntax": false
             }
@@ -34600,7 +34710,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             },
@@ -34652,7 +34762,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@3"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -34673,7 +34783,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@21"
                   },
                   "arguments": []
                 },
@@ -34712,7 +34822,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -34724,7 +34834,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -34759,7 +34869,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@22"
+                "$ref": "#/rules@23"
               },
               "arguments": []
             },
@@ -34795,7 +34905,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -34815,7 +34925,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -34827,7 +34937,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             },
@@ -34840,7 +34950,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@23"
+                "$ref": "#/rules@24"
               },
               "arguments": []
             },
@@ -34884,6 +34994,7 @@ var JavaScriptPropositionalLaboratoryFormatGeneratedModule = {
 };
 
 // src/util/modelUtil.ts
+var import_dedent_js = __toESM(require_lib(), 1);
 function getReferenceablesInBinaryExpression(expression, output) {
   getReferencablesInExpression(expression.left, output);
   getReferencablesInExpression(expression.right, output);
@@ -35076,6 +35187,12 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       accept("error", "Multiple titles for one laboratory are not allowed.", { node: information });
     if (information.icons.length > 1)
       accept("error", "Multiple icons for one laboratory are not allowed.", { node: information });
+    if (information.formats.length > 1)
+      accept("error", "Multiple default formats for one laboratory are not allowed.", { node: information });
+    if (information.authors.length > 1)
+      accept("error", "Multiple authors for one laboratory are not allowed.", { node: information });
+    if (information.versions.length > 1)
+      accept("error", "Multiple versions for one laboratory are not allowed.", { node: information });
   }
 };
 

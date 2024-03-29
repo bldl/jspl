@@ -45711,9 +45711,12 @@ var JavaScriptPropositionalLaboratoryFormatAstReflection = class extends Abstrac
         return {
           name: "LaboratoryInformation",
           mandatory: [
+            { name: "authors", type: "array" },
             { name: "descriptions", type: "array" },
+            { name: "formats", type: "array" },
             { name: "icons", type: "array" },
-            { name: "titles", type: "array" }
+            { name: "titles", type: "array" },
+            { name: "versions", type: "array" }
           ]
         };
       }
@@ -45786,7 +45789,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@8"
+                "$ref": "#/rules@9"
               },
               "arguments": []
             },
@@ -45802,7 +45805,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@9"
+                    "$ref": "#/rules@10"
                   },
                   "arguments": []
                 }
@@ -45814,7 +45817,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@19"
+                    "$ref": "#/rules@20"
                   },
                   "arguments": []
                 }
@@ -45826,7 +45829,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@24"
+                    "$ref": "#/rules@25"
                   },
                   "arguments": []
                 }
@@ -45852,6 +45855,20 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "definition": {
         "$type": "RegexToken",
         "regex": "/True|False/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "ML_STRING_FORMAT",
+      "type": {
+        "$type": "ReturnType",
+        "name": "string"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/MD|HTML/"
       },
       "fragment": false,
       "hidden": false
@@ -45917,17 +45934,11 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "feature": "format",
             "operator": "=",
             "terminal": {
-              "$type": "Alternatives",
-              "elements": [
-                {
-                  "$type": "Keyword",
-                  "value": "MD"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "HTML"
-                }
-              ]
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
             },
             "cardinality": "?"
           },
@@ -45938,7 +45949,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -45983,7 +45994,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@3"
+                        "$ref": "#/rules@4"
                       },
                       "arguments": []
                     }
@@ -46004,7 +46015,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@7"
+                        "$ref": "#/rules@8"
                       },
                       "arguments": []
                     }
@@ -46025,7 +46036,70 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@3"
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "format"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "formats",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@2"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "author"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "authors",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "version"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "versions",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
                       },
                       "arguments": []
                     }
@@ -46065,7 +46139,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -46085,7 +46159,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -46101,7 +46175,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@7"
+                "$ref": "#/rules@8"
               },
               "arguments": []
             }
@@ -46125,7 +46199,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "definition": {
         "$type": "RuleCall",
         "rule": {
-          "$ref": "#/rules@11"
+          "$ref": "#/rules@12"
         },
         "arguments": []
       },
@@ -46149,7 +46223,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@12"
+              "$ref": "#/rules@13"
             },
             "arguments": []
           },
@@ -46176,7 +46250,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@12"
+                    "$ref": "#/rules@13"
                   },
                   "arguments": []
                 }
@@ -46206,7 +46280,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@13"
+              "$ref": "#/rules@14"
             },
             "arguments": []
           },
@@ -46233,7 +46307,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@13"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -46263,14 +46337,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@17"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@14"
+              "$ref": "#/rules@18"
             },
             "arguments": []
           },
@@ -46278,6 +46345,13 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@15"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@16"
             },
             "arguments": []
           }
@@ -46307,7 +46381,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -46338,7 +46412,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -46365,14 +46439,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@19"
+              "$ref": "#/rules@20"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@24"
+              "$ref": "#/rules@25"
             },
             "arguments": []
           }
@@ -46398,7 +46472,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@16"
+                "$ref": "#/rules@17"
               },
               "deprecatedSyntax": false
             }
@@ -46434,7 +46508,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@3"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -46467,7 +46541,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -46498,7 +46572,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -46514,7 +46588,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -46545,7 +46619,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@9"
+                "$ref": "#/rules@10"
               },
               "deprecatedSyntax": false
             }
@@ -46557,7 +46631,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             },
@@ -46609,7 +46683,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@3"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -46630,7 +46704,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@21"
                   },
                   "arguments": []
                 },
@@ -46669,7 +46743,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -46681,7 +46755,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -46716,7 +46790,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@22"
+                "$ref": "#/rules@23"
               },
               "arguments": []
             },
@@ -46752,7 +46826,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -46772,7 +46846,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -46784,7 +46858,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             },
@@ -46797,7 +46871,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@23"
+                "$ref": "#/rules@24"
               },
               "arguments": []
             },
@@ -46841,754 +46915,7 @@ var JavaScriptPropositionalLaboratoryFormatGeneratedModule = {
 };
 
 // src/util/modelUtil.ts
-function getReferenceablesInBinaryExpression(expression, output) {
-  getReferencablesInExpression(expression.left, output);
-  getReferencablesInExpression(expression.right, output);
-}
-function getReferenceablesInStatement(statement, output) {
-  let reference = statement.reference.ref;
-  if (reference !== void 0)
-    output.add(reference);
-}
-function getReferencablesInExpression(expression, output) {
-  switch (expression.$type) {
-    case "OrExpression":
-      getReferenceablesInBinaryExpression(expression, output);
-      break;
-    case "AndExpression":
-      getReferenceablesInBinaryExpression(expression, output);
-      break;
-    case "Negation":
-      getReferencablesInExpression(expression.inner, output);
-      break;
-    case "Group":
-      getReferencablesInExpression(expression.inner, output);
-    case "Statement":
-      getReferenceablesInStatement(expression, output);
-      break;
-  }
-}
-function getReferencablesInWhenCondition(condition) {
-  let result = /* @__PURE__ */ new Set();
-  getReferencablesInExpression(condition.expression, result);
-  return result;
-}
-function getAllUsedConcerns(model) {
-  let result = /* @__PURE__ */ new Set();
-  model.propositions.forEach((proposition) => {
-    proposition.valueClauses.forEach((valueClause) => {
-      valueClause.raises.forEach((raisingConcern) => {
-        if (raisingConcern.concern.ref == void 0)
-          return;
-        result.add(raisingConcern.concern.ref);
-      });
-    });
-  });
-  return result;
-}
-function getAllUsedReferenceables(model) {
-  let result = /* @__PURE__ */ new Set();
-  model.propositions.forEach((proposition) => {
-    proposition.valueClauses.forEach((valueClause) => {
-      valueClause.raises.forEach((raisingConcern) => {
-        if (raisingConcern.condition == void 0)
-          return;
-        getReferencablesInWhenCondition(raisingConcern.condition).forEach((referenceable) => {
-          result.add(referenceable);
-        });
-      });
-    });
-    if (proposition.disable == void 0)
-      return;
-    proposition.disable.statements.forEach((disableStatement) => {
-      getReferencablesInWhenCondition(disableStatement.condition).forEach((referenceable) => {
-        result.add(referenceable);
-      });
-    });
-  });
-  return result;
-}
-
-// src/language/java-script-propositional-laboratory-format-validator.ts
-function registerValidationChecks2(services) {
-  const registry = services.validation.ValidationRegistry;
-  const validator = services.validation.JavaScriptPropositionalLaboratoryFormatValidator;
-  const checks = {
-    Model: [
-      validator.uniqueConcernIdentifiers,
-      validator.uniqueReferenceableIdentifiers,
-      validator.checkForUnusedConcerns,
-      validator.checkForUnusedConditions
-    ],
-    Proposition: [
-      validator.propositionHasExactlyOneDefaultOrJustOneValue
-    ],
-    Condition: [
-      validator.noRecursionInConditions
-    ],
-    LaboratoryInformation: [
-      validator.noDuplicateFieldsInLaboratoryInformation
-    ]
-  };
-  registry.register(checks, validator);
-}
-var JavaScriptPropositionalLaboratoryFormatValidator = class {
-  uniqueConcernIdentifiers(model, accept) {
-    const reported = /* @__PURE__ */ new Set();
-    model.concerns.forEach((concern) => {
-      if (reported.has(concern.name)) {
-        accept("error", `Concern has non-unique name '${concern.name}'.`, { node: concern, property: "name" });
-      }
-      reported.add(concern.name);
-    });
-  }
-  uniqueReferenceableIdentifiers(model, accept) {
-    const reported = /* @__PURE__ */ new Map();
-    model.conditions.forEach((condition) => {
-      if (reported.has(condition.name)) {
-        accept(
-          "error",
-          `Condition has non-unique name '${condition.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
-          { node: condition, property: "name" }
-        );
-        let original = reported.get(condition.name);
-        accept(
-          "error",
-          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
-          { node: original, property: "name" }
-        );
-      }
-      reported.set(condition.name, condition);
-    });
-    model.propositions.forEach((proposition) => {
-      if (reported.has(proposition.name)) {
-        accept(
-          "error",
-          `Proposition has non-unique name '${proposition.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
-          { node: proposition, property: "name" }
-        );
-        let original = reported.get(proposition.name);
-        accept(
-          "error",
-          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
-          { node: original, property: "name" }
-        );
-      }
-      reported.set(proposition.name, proposition);
-    });
-  }
-  checkForUnusedConcerns(model, accept) {
-    const usedConcerns = getAllUsedConcerns(model);
-    model.concerns.forEach((concern) => {
-      if (usedConcerns.has(concern))
-        return;
-      accept("warning", "Concern is defined, but never used.", { node: concern, property: "name" });
-    });
-  }
-  checkForUnusedConditions(model, accept) {
-    const usedReferenceables = getAllUsedReferenceables(model);
-    model.conditions.forEach((condition) => {
-      if (usedReferenceables.has(condition))
-        return;
-      accept("warning", "Condition is defined, but never used.", { node: condition, property: "name" });
-    });
-  }
-  propositionHasExactlyOneDefaultOrJustOneValue(proposition, accept) {
-    if (proposition.valueClauses.length == 1 && !proposition.valueClauses[0].default) {
-      accept(
-        "info",
-        `Singleton value ${proposition.valueClauses[0].value} of proposition ${proposition.name} will be assumed to be default value.`,
-        { node: proposition.valueClauses[0], property: "default" }
-      );
-      return;
-    }
-    let foundDefault = false;
-    proposition.valueClauses.forEach((valueDescription) => {
-      if (!foundDefault && valueDescription.default) {
-        foundDefault = true;
-        return;
-      }
-      if (valueDescription.default) {
-        accept("error", `Proposition has multiple default values.`, { node: valueDescription, property: "default" });
-        return;
-      }
-    });
-    if (!foundDefault) {
-      accept("error", `Proposition has no default value.`, { node: proposition, property: "name" });
-      return;
-    }
-  }
-  noRecursionInConditions(condition, accept) {
-    const name = condition.name;
-    const referenceablesInCondition = getReferencablesInWhenCondition(condition.condition);
-    referenceablesInCondition.forEach((referenceable) => {
-      if (referenceable.name === name)
-        accept("error", `Recursion is not allowed here.`, { node: condition, property: "name" });
-    });
-  }
-  noDuplicateFieldsInLaboratoryInformation(information, accept) {
-    if (information.descriptions.length > 1)
-      accept("error", "Multiple descriptions for one laboratory are not allowed.", { node: information });
-    if (information.titles.length > 1)
-      accept("error", "Multiple titles for one laboratory are not allowed.", { node: information });
-    if (information.icons.length > 1)
-      accept("error", "Multiple icons for one laboratory are not allowed.", { node: information });
-  }
-};
-
-// src/language/java-script-propositional-laboratory-format-module.ts
-var JavaScriptPropositionalLaboratoryFormatModule = {
-  validation: {
-    JavaScriptPropositionalLaboratoryFormatValidator: () => new JavaScriptPropositionalLaboratoryFormatValidator()
-  }
-};
-function createJavaScriptPropositionalLaboratoryFormatServices(context) {
-  const shared = inject(
-    createDefaultSharedModule(context),
-    JavaScriptPropositionalLaboratoryFormatGeneratedSharedModule
-  );
-  const JavaScriptPropositionalLaboratoryFormat = inject(
-    createDefaultModule({ shared }),
-    JavaScriptPropositionalLaboratoryFormatGeneratedModule,
-    JavaScriptPropositionalLaboratoryFormatModule
-  );
-  shared.ServiceRegistry.register(JavaScriptPropositionalLaboratoryFormat);
-  registerValidationChecks2(JavaScriptPropositionalLaboratoryFormat);
-  return { shared, JavaScriptPropositionalLaboratoryFormat };
-}
-
-// node_modules/chalk/source/vendor/ansi-styles/index.js
-var ANSI_BACKGROUND_OFFSET = 10;
-var wrapAnsi16 = (offset = 0) => (code) => `\x1B[${code + offset}m`;
-var wrapAnsi256 = (offset = 0) => (code) => `\x1B[${38 + offset};5;${code}m`;
-var wrapAnsi16m = (offset = 0) => (red, green, blue) => `\x1B[${38 + offset};2;${red};${green};${blue}m`;
-var styles = {
-  modifier: {
-    reset: [0, 0],
-    // 21 isn't widely supported and 22 does the same thing
-    bold: [1, 22],
-    dim: [2, 22],
-    italic: [3, 23],
-    underline: [4, 24],
-    overline: [53, 55],
-    inverse: [7, 27],
-    hidden: [8, 28],
-    strikethrough: [9, 29]
-  },
-  color: {
-    black: [30, 39],
-    red: [31, 39],
-    green: [32, 39],
-    yellow: [33, 39],
-    blue: [34, 39],
-    magenta: [35, 39],
-    cyan: [36, 39],
-    white: [37, 39],
-    // Bright color
-    blackBright: [90, 39],
-    gray: [90, 39],
-    // Alias of `blackBright`
-    grey: [90, 39],
-    // Alias of `blackBright`
-    redBright: [91, 39],
-    greenBright: [92, 39],
-    yellowBright: [93, 39],
-    blueBright: [94, 39],
-    magentaBright: [95, 39],
-    cyanBright: [96, 39],
-    whiteBright: [97, 39]
-  },
-  bgColor: {
-    bgBlack: [40, 49],
-    bgRed: [41, 49],
-    bgGreen: [42, 49],
-    bgYellow: [43, 49],
-    bgBlue: [44, 49],
-    bgMagenta: [45, 49],
-    bgCyan: [46, 49],
-    bgWhite: [47, 49],
-    // Bright color
-    bgBlackBright: [100, 49],
-    bgGray: [100, 49],
-    // Alias of `bgBlackBright`
-    bgGrey: [100, 49],
-    // Alias of `bgBlackBright`
-    bgRedBright: [101, 49],
-    bgGreenBright: [102, 49],
-    bgYellowBright: [103, 49],
-    bgBlueBright: [104, 49],
-    bgMagentaBright: [105, 49],
-    bgCyanBright: [106, 49],
-    bgWhiteBright: [107, 49]
-  }
-};
-var modifierNames = Object.keys(styles.modifier);
-var foregroundColorNames = Object.keys(styles.color);
-var backgroundColorNames = Object.keys(styles.bgColor);
-var colorNames = [...foregroundColorNames, ...backgroundColorNames];
-function assembleStyles() {
-  const codes = /* @__PURE__ */ new Map();
-  for (const [groupName, group] of Object.entries(styles)) {
-    for (const [styleName, style] of Object.entries(group)) {
-      styles[styleName] = {
-        open: `\x1B[${style[0]}m`,
-        close: `\x1B[${style[1]}m`
-      };
-      group[styleName] = styles[styleName];
-      codes.set(style[0], style[1]);
-    }
-    Object.defineProperty(styles, groupName, {
-      value: group,
-      enumerable: false
-    });
-  }
-  Object.defineProperty(styles, "codes", {
-    value: codes,
-    enumerable: false
-  });
-  styles.color.close = "\x1B[39m";
-  styles.bgColor.close = "\x1B[49m";
-  styles.color.ansi = wrapAnsi16();
-  styles.color.ansi256 = wrapAnsi256();
-  styles.color.ansi16m = wrapAnsi16m();
-  styles.bgColor.ansi = wrapAnsi16(ANSI_BACKGROUND_OFFSET);
-  styles.bgColor.ansi256 = wrapAnsi256(ANSI_BACKGROUND_OFFSET);
-  styles.bgColor.ansi16m = wrapAnsi16m(ANSI_BACKGROUND_OFFSET);
-  Object.defineProperties(styles, {
-    rgbToAnsi256: {
-      value(red, green, blue) {
-        if (red === green && green === blue) {
-          if (red < 8) {
-            return 16;
-          }
-          if (red > 248) {
-            return 231;
-          }
-          return Math.round((red - 8) / 247 * 24) + 232;
-        }
-        return 16 + 36 * Math.round(red / 255 * 5) + 6 * Math.round(green / 255 * 5) + Math.round(blue / 255 * 5);
-      },
-      enumerable: false
-    },
-    hexToRgb: {
-      value(hex) {
-        const matches = /[a-f\d]{6}|[a-f\d]{3}/i.exec(hex.toString(16));
-        if (!matches) {
-          return [0, 0, 0];
-        }
-        let [colorString] = matches;
-        if (colorString.length === 3) {
-          colorString = [...colorString].map((character) => character + character).join("");
-        }
-        const integer2 = Number.parseInt(colorString, 16);
-        return [
-          /* eslint-disable no-bitwise */
-          integer2 >> 16 & 255,
-          integer2 >> 8 & 255,
-          integer2 & 255
-          /* eslint-enable no-bitwise */
-        ];
-      },
-      enumerable: false
-    },
-    hexToAnsi256: {
-      value: (hex) => styles.rgbToAnsi256(...styles.hexToRgb(hex)),
-      enumerable: false
-    },
-    ansi256ToAnsi: {
-      value(code) {
-        if (code < 8) {
-          return 30 + code;
-        }
-        if (code < 16) {
-          return 90 + (code - 8);
-        }
-        let red;
-        let green;
-        let blue;
-        if (code >= 232) {
-          red = ((code - 232) * 10 + 8) / 255;
-          green = red;
-          blue = red;
-        } else {
-          code -= 16;
-          const remainder = code % 36;
-          red = Math.floor(code / 36) / 5;
-          green = Math.floor(remainder / 6) / 5;
-          blue = remainder % 6 / 5;
-        }
-        const value = Math.max(red, green, blue) * 2;
-        if (value === 0) {
-          return 30;
-        }
-        let result = 30 + (Math.round(blue) << 2 | Math.round(green) << 1 | Math.round(red));
-        if (value === 2) {
-          result += 60;
-        }
-        return result;
-      },
-      enumerable: false
-    },
-    rgbToAnsi: {
-      value: (red, green, blue) => styles.ansi256ToAnsi(styles.rgbToAnsi256(red, green, blue)),
-      enumerable: false
-    },
-    hexToAnsi: {
-      value: (hex) => styles.ansi256ToAnsi(styles.hexToAnsi256(hex)),
-      enumerable: false
-    }
-  });
-  return styles;
-}
-var ansiStyles = assembleStyles();
-var ansi_styles_default = ansiStyles;
-
-// node_modules/chalk/source/vendor/supports-color/index.js
-var import_node_process = __toESM(require("process"), 1);
-var import_node_os = __toESM(require("os"), 1);
-var import_node_tty = __toESM(require("tty"), 1);
-function hasFlag(flag, argv = globalThis.Deno ? globalThis.Deno.args : import_node_process.default.argv) {
-  const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
-  const position = argv.indexOf(prefix + flag);
-  const terminatorPosition = argv.indexOf("--");
-  return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
-}
-var { env } = import_node_process.default;
-var flagForceColor;
-if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false") || hasFlag("color=never")) {
-  flagForceColor = 0;
-} else if (hasFlag("color") || hasFlag("colors") || hasFlag("color=true") || hasFlag("color=always")) {
-  flagForceColor = 1;
-}
-function envForceColor() {
-  if ("FORCE_COLOR" in env) {
-    if (env.FORCE_COLOR === "true") {
-      return 1;
-    }
-    if (env.FORCE_COLOR === "false") {
-      return 0;
-    }
-    return env.FORCE_COLOR.length === 0 ? 1 : Math.min(Number.parseInt(env.FORCE_COLOR, 10), 3);
-  }
-}
-function translateLevel(level) {
-  if (level === 0) {
-    return false;
-  }
-  return {
-    level,
-    hasBasic: true,
-    has256: level >= 2,
-    has16m: level >= 3
-  };
-}
-function _supportsColor(haveStream, { streamIsTTY, sniffFlags = true } = {}) {
-  const noFlagForceColor = envForceColor();
-  if (noFlagForceColor !== void 0) {
-    flagForceColor = noFlagForceColor;
-  }
-  const forceColor = sniffFlags ? flagForceColor : noFlagForceColor;
-  if (forceColor === 0) {
-    return 0;
-  }
-  if (sniffFlags) {
-    if (hasFlag("color=16m") || hasFlag("color=full") || hasFlag("color=truecolor")) {
-      return 3;
-    }
-    if (hasFlag("color=256")) {
-      return 2;
-    }
-  }
-  if ("TF_BUILD" in env && "AGENT_NAME" in env) {
-    return 1;
-  }
-  if (haveStream && !streamIsTTY && forceColor === void 0) {
-    return 0;
-  }
-  const min2 = forceColor || 0;
-  if (env.TERM === "dumb") {
-    return min2;
-  }
-  if (import_node_process.default.platform === "win32") {
-    const osRelease = import_node_os.default.release().split(".");
-    if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
-      return Number(osRelease[2]) >= 14931 ? 3 : 2;
-    }
-    return 1;
-  }
-  if ("CI" in env) {
-    if ("GITHUB_ACTIONS" in env || "GITEA_ACTIONS" in env) {
-      return 3;
-    }
-    if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "BUILDKITE", "DRONE"].some((sign) => sign in env) || env.CI_NAME === "codeship") {
-      return 1;
-    }
-    return min2;
-  }
-  if ("TEAMCITY_VERSION" in env) {
-    return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
-  }
-  if (env.COLORTERM === "truecolor") {
-    return 3;
-  }
-  if (env.TERM === "xterm-kitty") {
-    return 3;
-  }
-  if ("TERM_PROGRAM" in env) {
-    const version = Number.parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
-    switch (env.TERM_PROGRAM) {
-      case "iTerm.app": {
-        return version >= 3 ? 3 : 2;
-      }
-      case "Apple_Terminal": {
-        return 2;
-      }
-    }
-  }
-  if (/-256(color)?$/i.test(env.TERM)) {
-    return 2;
-  }
-  if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
-    return 1;
-  }
-  if ("COLORTERM" in env) {
-    return 1;
-  }
-  return min2;
-}
-function createSupportsColor(stream2, options = {}) {
-  const level = _supportsColor(stream2, __spreadValues({
-    streamIsTTY: stream2 && stream2.isTTY
-  }, options));
-  return translateLevel(level);
-}
-var supportsColor = {
-  stdout: createSupportsColor({ isTTY: import_node_tty.default.isatty(1) }),
-  stderr: createSupportsColor({ isTTY: import_node_tty.default.isatty(2) })
-};
-var supports_color_default = supportsColor;
-
-// node_modules/chalk/source/utilities.js
-function stringReplaceAll(string, substring, replacer) {
-  let index = string.indexOf(substring);
-  if (index === -1) {
-    return string;
-  }
-  const substringLength = substring.length;
-  let endIndex = 0;
-  let returnValue = "";
-  do {
-    returnValue += string.slice(endIndex, index) + substring + replacer;
-    endIndex = index + substringLength;
-    index = string.indexOf(substring, endIndex);
-  } while (index !== -1);
-  returnValue += string.slice(endIndex);
-  return returnValue;
-}
-function stringEncaseCRLFWithFirstIndex(string, prefix, postfix, index) {
-  let endIndex = 0;
-  let returnValue = "";
-  do {
-    const gotCR = string[index - 1] === "\r";
-    returnValue += string.slice(endIndex, gotCR ? index - 1 : index) + prefix + (gotCR ? "\r\n" : "\n") + postfix;
-    endIndex = index + 1;
-    index = string.indexOf("\n", endIndex);
-  } while (index !== -1);
-  returnValue += string.slice(endIndex);
-  return returnValue;
-}
-
-// node_modules/chalk/source/index.js
-var { stdout: stdoutColor, stderr: stderrColor } = supports_color_default;
-var GENERATOR = Symbol("GENERATOR");
-var STYLER = Symbol("STYLER");
-var IS_EMPTY = Symbol("IS_EMPTY");
-var levelMapping = [
-  "ansi",
-  "ansi",
-  "ansi256",
-  "ansi16m"
-];
-var styles2 = /* @__PURE__ */ Object.create(null);
-var applyOptions = (object, options = {}) => {
-  if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
-    throw new Error("The `level` option should be an integer from 0 to 3");
-  }
-  const colorLevel = stdoutColor ? stdoutColor.level : 0;
-  object.level = options.level === void 0 ? colorLevel : options.level;
-};
-var chalkFactory = (options) => {
-  const chalk2 = (...strings) => strings.join(" ");
-  applyOptions(chalk2, options);
-  Object.setPrototypeOf(chalk2, createChalk.prototype);
-  return chalk2;
-};
-function createChalk(options) {
-  return chalkFactory(options);
-}
-Object.setPrototypeOf(createChalk.prototype, Function.prototype);
-for (const [styleName, style] of Object.entries(ansi_styles_default)) {
-  styles2[styleName] = {
-    get() {
-      const builder = createBuilder(this, createStyler(style.open, style.close, this[STYLER]), this[IS_EMPTY]);
-      Object.defineProperty(this, styleName, { value: builder });
-      return builder;
-    }
-  };
-}
-styles2.visible = {
-  get() {
-    const builder = createBuilder(this, this[STYLER], true);
-    Object.defineProperty(this, "visible", { value: builder });
-    return builder;
-  }
-};
-var getModelAnsi = (model, level, type, ...arguments_) => {
-  if (model === "rgb") {
-    if (level === "ansi16m") {
-      return ansi_styles_default[type].ansi16m(...arguments_);
-    }
-    if (level === "ansi256") {
-      return ansi_styles_default[type].ansi256(ansi_styles_default.rgbToAnsi256(...arguments_));
-    }
-    return ansi_styles_default[type].ansi(ansi_styles_default.rgbToAnsi(...arguments_));
-  }
-  if (model === "hex") {
-    return getModelAnsi("rgb", level, type, ...ansi_styles_default.hexToRgb(...arguments_));
-  }
-  return ansi_styles_default[type][model](...arguments_);
-};
-var usedModels = ["rgb", "hex", "ansi256"];
-for (const model of usedModels) {
-  styles2[model] = {
-    get() {
-      const { level } = this;
-      return function(...arguments_) {
-        const styler = createStyler(getModelAnsi(model, levelMapping[level], "color", ...arguments_), ansi_styles_default.color.close, this[STYLER]);
-        return createBuilder(this, styler, this[IS_EMPTY]);
-      };
-    }
-  };
-  const bgModel = "bg" + model[0].toUpperCase() + model.slice(1);
-  styles2[bgModel] = {
-    get() {
-      const { level } = this;
-      return function(...arguments_) {
-        const styler = createStyler(getModelAnsi(model, levelMapping[level], "bgColor", ...arguments_), ansi_styles_default.bgColor.close, this[STYLER]);
-        return createBuilder(this, styler, this[IS_EMPTY]);
-      };
-    }
-  };
-}
-var proto = Object.defineProperties(() => {
-}, __spreadProps(__spreadValues({}, styles2), {
-  level: {
-    enumerable: true,
-    get() {
-      return this[GENERATOR].level;
-    },
-    set(level) {
-      this[GENERATOR].level = level;
-    }
-  }
-}));
-var createStyler = (open, close, parent) => {
-  let openAll;
-  let closeAll;
-  if (parent === void 0) {
-    openAll = open;
-    closeAll = close;
-  } else {
-    openAll = parent.openAll + open;
-    closeAll = close + parent.closeAll;
-  }
-  return {
-    open,
-    close,
-    openAll,
-    closeAll,
-    parent
-  };
-};
-var createBuilder = (self2, _styler, _isEmpty) => {
-  const builder = (...arguments_) => applyStyle(builder, arguments_.length === 1 ? "" + arguments_[0] : arguments_.join(" "));
-  Object.setPrototypeOf(builder, proto);
-  builder[GENERATOR] = self2;
-  builder[STYLER] = _styler;
-  builder[IS_EMPTY] = _isEmpty;
-  return builder;
-};
-var applyStyle = (self2, string) => {
-  if (self2.level <= 0 || !string) {
-    return self2[IS_EMPTY] ? "" : string;
-  }
-  let styler = self2[STYLER];
-  if (styler === void 0) {
-    return string;
-  }
-  const { openAll, closeAll } = styler;
-  if (string.includes("\x1B")) {
-    while (styler !== void 0) {
-      string = stringReplaceAll(string, styler.close, styler.open);
-      styler = styler.parent;
-    }
-  }
-  const lfIndex = string.indexOf("\n");
-  if (lfIndex !== -1) {
-    string = stringEncaseCRLFWithFirstIndex(string, closeAll, openAll, lfIndex);
-  }
-  return openAll + string + closeAll;
-};
-Object.defineProperties(createChalk.prototype, styles2);
-var chalk = createChalk();
-var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
-var source_default = chalk;
-
-// src/util/cli-util.ts
-var import_node_path = require("path");
-var fs = __toESM(require("fs"), 1);
-function getInputExtensionsAsSet() {
-  return new Set(JavaScriptPropositionalLaboratoryFormatLanguageMetaData.fileExtensions);
-}
-function getInputExtensionsAsString() {
-  return JavaScriptPropositionalLaboratoryFormatLanguageMetaData.fileExtensions.join(", ");
-}
-async function extractDocument(fileName, services) {
-  var _a;
-  const extensions = services.LanguageMetaData.fileExtensions;
-  if (!extensions.includes((0, import_node_path.extname)(fileName))) {
-    console.error(source_default.yellow(`Please choose a file with one of these extensions: ${extensions}.`));
-    process.exit(1);
-  }
-  if (!fs.existsSync(fileName)) {
-    console.error(source_default.red(`File ${fileName} does not exist.`));
-    process.exit(1);
-  }
-  const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file((0, import_node_path.resolve)(fileName)));
-  await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
-  const validationErrors = ((_a = document.diagnostics) != null ? _a : []).filter((e) => e.severity === 1);
-  if (validationErrors.length > 0) {
-    console.error(source_default.red("There are validation errors:"));
-    for (const validationError of validationErrors) {
-      console.error(source_default.red(
-        `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(validationError.range)}]`
-      ));
-    }
-    process.exit(1);
-  }
-  return document;
-}
-async function extractAstNode(fileName, services) {
-  var _a;
-  return (_a = (await extractDocument(fileName, services)).parseResult) == null ? void 0 : _a.value;
-}
-
-// src/generators/lab/main.ts
-var import_node_fs2 = require("fs");
-var import_node_path2 = __toESM(require("path"), 1);
-
-// src/generators/lab/util.ts
-var import_node_fs = require("fs");
+var import_dedent_js = __toESM(require_lib(), 1);
 
 // node_modules/@ts-stack/markdown/fesm2022/ts-stack-markdown.mjs
 var ExtendRegexp = class {
@@ -48639,23 +47966,821 @@ __publicField(BlockLexer, "rulesGfm", null);
  */
 __publicField(BlockLexer, "rulesTables", null);
 
-// src/generators/lab/util.ts
-var import_dedent_js = __toESM(require_lib(), 1);
+// src/util/modelUtil.ts
+function getReferenceablesInBinaryExpression(expression, output) {
+  getReferencablesInExpression(expression.left, output);
+  getReferencablesInExpression(expression.right, output);
+}
+function getReferenceablesInStatement(statement, output) {
+  let reference = statement.reference.ref;
+  if (reference !== void 0)
+    output.add(reference);
+}
+function getReferencablesInExpression(expression, output) {
+  switch (expression.$type) {
+    case "OrExpression":
+      getReferenceablesInBinaryExpression(expression, output);
+      break;
+    case "AndExpression":
+      getReferenceablesInBinaryExpression(expression, output);
+      break;
+    case "Negation":
+      getReferencablesInExpression(expression.inner, output);
+      break;
+    case "Group":
+      getReferencablesInExpression(expression.inner, output);
+    case "Statement":
+      getReferenceablesInStatement(expression, output);
+      break;
+  }
+}
+function getReferencablesInWhenCondition(condition) {
+  let result = /* @__PURE__ */ new Set();
+  getReferencablesInExpression(condition.expression, result);
+  return result;
+}
+function getAllUsedConcerns(model) {
+  let result = /* @__PURE__ */ new Set();
+  model.propositions.forEach((proposition) => {
+    proposition.valueClauses.forEach((valueClause) => {
+      valueClause.raises.forEach((raisingConcern) => {
+        if (raisingConcern.concern.ref == void 0)
+          return;
+        result.add(raisingConcern.concern.ref);
+      });
+    });
+  });
+  return result;
+}
+function getAllUsedReferenceables(model) {
+  let result = /* @__PURE__ */ new Set();
+  model.propositions.forEach((proposition) => {
+    proposition.valueClauses.forEach((valueClause) => {
+      valueClause.raises.forEach((raisingConcern) => {
+        if (raisingConcern.condition == void 0)
+          return;
+        getReferencablesInWhenCondition(raisingConcern.condition).forEach((referenceable) => {
+          result.add(referenceable);
+        });
+      });
+    });
+    if (proposition.disable == void 0)
+      return;
+    proposition.disable.statements.forEach((disableStatement) => {
+      getReferencablesInWhenCondition(disableStatement.condition).forEach((referenceable) => {
+        result.add(referenceable);
+      });
+    });
+  });
+  return result;
+}
 function extractValueAsString(value) {
   return typeof value === "string" ? `"${value}"` : toString2(value);
 }
-function formattedStringToHTML(formattedString) {
-  const preprocessed = (0, import_dedent_js.default)(formattedString.contents);
+function formattedStringToHTML(formattedString, default_format = "MD") {
   let format = formattedString.format;
   if (format == void 0)
-    format = "MD";
+    format = default_format;
+  const preprocessed = (0, import_dedent_js.default)(formattedString.contents);
   switch (format) {
     case "HTML":
       return preprocessed;
     case "MD":
       return Marked.parse(preprocessed);
+    default:
+      return Marked.parse(preprocessed);
   }
 }
+var DEFAULT_APP_INFORMATION = {
+  title: "Laboratory Title",
+  description: "<p>Laboratory Description</p>",
+  icon: "./res/favicon.svg",
+  format: "MD",
+  author: "Ada Lovelace",
+  version: "1.0"
+};
+function extractLaboratoryInformation(information) {
+  let result = DEFAULT_APP_INFORMATION;
+  if (information != void 0) {
+    if (information.titles.length > 0)
+      result.title = information.titles[0];
+    if (information.descriptions.length > 0)
+      result.description = formattedStringToHTML(information.descriptions[0]);
+    if (information.icons.length > 0)
+      result.icon = information.icons[0];
+    if (information.formats.length > 0)
+      result.format = information.formats[0];
+    if (information.authors.length > 0)
+      result.author = information.authors[0];
+    if (information.versions.length > 0)
+      result.version = information.versions[0];
+  }
+  return result;
+}
+
+// src/language/java-script-propositional-laboratory-format-validator.ts
+function registerValidationChecks2(services) {
+  const registry = services.validation.ValidationRegistry;
+  const validator = services.validation.JavaScriptPropositionalLaboratoryFormatValidator;
+  const checks = {
+    Model: [
+      validator.uniqueConcernIdentifiers,
+      validator.uniqueReferenceableIdentifiers,
+      validator.checkForUnusedConcerns,
+      validator.checkForUnusedConditions
+    ],
+    Proposition: [
+      validator.propositionHasExactlyOneDefaultOrJustOneValue
+    ],
+    Condition: [
+      validator.noRecursionInConditions
+    ],
+    LaboratoryInformation: [
+      validator.noDuplicateFieldsInLaboratoryInformation
+    ]
+  };
+  registry.register(checks, validator);
+}
+var JavaScriptPropositionalLaboratoryFormatValidator = class {
+  uniqueConcernIdentifiers(model, accept) {
+    const reported = /* @__PURE__ */ new Set();
+    model.concerns.forEach((concern) => {
+      if (reported.has(concern.name)) {
+        accept("error", `Concern has non-unique name '${concern.name}'.`, { node: concern, property: "name" });
+      }
+      reported.add(concern.name);
+    });
+  }
+  uniqueReferenceableIdentifiers(model, accept) {
+    const reported = /* @__PURE__ */ new Map();
+    model.conditions.forEach((condition) => {
+      if (reported.has(condition.name)) {
+        accept(
+          "error",
+          `Condition has non-unique name '${condition.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
+          { node: condition, property: "name" }
+        );
+        let original = reported.get(condition.name);
+        accept(
+          "error",
+          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
+          { node: original, property: "name" }
+        );
+      }
+      reported.set(condition.name, condition);
+    });
+    model.propositions.forEach((proposition) => {
+      if (reported.has(proposition.name)) {
+        accept(
+          "error",
+          `Proposition has non-unique name '${proposition.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
+          { node: proposition, property: "name" }
+        );
+        let original = reported.get(proposition.name);
+        accept(
+          "error",
+          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
+          { node: original, property: "name" }
+        );
+      }
+      reported.set(proposition.name, proposition);
+    });
+  }
+  checkForUnusedConcerns(model, accept) {
+    const usedConcerns = getAllUsedConcerns(model);
+    model.concerns.forEach((concern) => {
+      if (usedConcerns.has(concern))
+        return;
+      accept("warning", "Concern is defined, but never used.", { node: concern, property: "name" });
+    });
+  }
+  checkForUnusedConditions(model, accept) {
+    const usedReferenceables = getAllUsedReferenceables(model);
+    model.conditions.forEach((condition) => {
+      if (usedReferenceables.has(condition))
+        return;
+      accept("warning", "Condition is defined, but never used.", { node: condition, property: "name" });
+    });
+  }
+  propositionHasExactlyOneDefaultOrJustOneValue(proposition, accept) {
+    if (proposition.valueClauses.length == 1 && !proposition.valueClauses[0].default) {
+      accept(
+        "info",
+        `Singleton value ${proposition.valueClauses[0].value} of proposition ${proposition.name} will be assumed to be default value.`,
+        { node: proposition.valueClauses[0], property: "default" }
+      );
+      return;
+    }
+    let foundDefault = false;
+    proposition.valueClauses.forEach((valueDescription) => {
+      if (!foundDefault && valueDescription.default) {
+        foundDefault = true;
+        return;
+      }
+      if (valueDescription.default) {
+        accept("error", `Proposition has multiple default values.`, { node: valueDescription, property: "default" });
+        return;
+      }
+    });
+    if (!foundDefault) {
+      accept("error", `Proposition has no default value.`, { node: proposition, property: "name" });
+      return;
+    }
+  }
+  noRecursionInConditions(condition, accept) {
+    const name = condition.name;
+    const referenceablesInCondition = getReferencablesInWhenCondition(condition.condition);
+    referenceablesInCondition.forEach((referenceable) => {
+      if (referenceable.name === name)
+        accept("error", `Recursion is not allowed here.`, { node: condition, property: "name" });
+    });
+  }
+  noDuplicateFieldsInLaboratoryInformation(information, accept) {
+    if (information.descriptions.length > 1)
+      accept("error", "Multiple descriptions for one laboratory are not allowed.", { node: information });
+    if (information.titles.length > 1)
+      accept("error", "Multiple titles for one laboratory are not allowed.", { node: information });
+    if (information.icons.length > 1)
+      accept("error", "Multiple icons for one laboratory are not allowed.", { node: information });
+    if (information.formats.length > 1)
+      accept("error", "Multiple default formats for one laboratory are not allowed.", { node: information });
+    if (information.authors.length > 1)
+      accept("error", "Multiple authors for one laboratory are not allowed.", { node: information });
+    if (information.versions.length > 1)
+      accept("error", "Multiple versions for one laboratory are not allowed.", { node: information });
+  }
+};
+
+// src/language/java-script-propositional-laboratory-format-module.ts
+var JavaScriptPropositionalLaboratoryFormatModule = {
+  validation: {
+    JavaScriptPropositionalLaboratoryFormatValidator: () => new JavaScriptPropositionalLaboratoryFormatValidator()
+  }
+};
+function createJavaScriptPropositionalLaboratoryFormatServices(context) {
+  const shared = inject(
+    createDefaultSharedModule(context),
+    JavaScriptPropositionalLaboratoryFormatGeneratedSharedModule
+  );
+  const JavaScriptPropositionalLaboratoryFormat = inject(
+    createDefaultModule({ shared }),
+    JavaScriptPropositionalLaboratoryFormatGeneratedModule,
+    JavaScriptPropositionalLaboratoryFormatModule
+  );
+  shared.ServiceRegistry.register(JavaScriptPropositionalLaboratoryFormat);
+  registerValidationChecks2(JavaScriptPropositionalLaboratoryFormat);
+  return { shared, JavaScriptPropositionalLaboratoryFormat };
+}
+
+// node_modules/chalk/source/vendor/ansi-styles/index.js
+var ANSI_BACKGROUND_OFFSET = 10;
+var wrapAnsi16 = (offset = 0) => (code) => `\x1B[${code + offset}m`;
+var wrapAnsi256 = (offset = 0) => (code) => `\x1B[${38 + offset};5;${code}m`;
+var wrapAnsi16m = (offset = 0) => (red, green, blue) => `\x1B[${38 + offset};2;${red};${green};${blue}m`;
+var styles = {
+  modifier: {
+    reset: [0, 0],
+    // 21 isn't widely supported and 22 does the same thing
+    bold: [1, 22],
+    dim: [2, 22],
+    italic: [3, 23],
+    underline: [4, 24],
+    overline: [53, 55],
+    inverse: [7, 27],
+    hidden: [8, 28],
+    strikethrough: [9, 29]
+  },
+  color: {
+    black: [30, 39],
+    red: [31, 39],
+    green: [32, 39],
+    yellow: [33, 39],
+    blue: [34, 39],
+    magenta: [35, 39],
+    cyan: [36, 39],
+    white: [37, 39],
+    // Bright color
+    blackBright: [90, 39],
+    gray: [90, 39],
+    // Alias of `blackBright`
+    grey: [90, 39],
+    // Alias of `blackBright`
+    redBright: [91, 39],
+    greenBright: [92, 39],
+    yellowBright: [93, 39],
+    blueBright: [94, 39],
+    magentaBright: [95, 39],
+    cyanBright: [96, 39],
+    whiteBright: [97, 39]
+  },
+  bgColor: {
+    bgBlack: [40, 49],
+    bgRed: [41, 49],
+    bgGreen: [42, 49],
+    bgYellow: [43, 49],
+    bgBlue: [44, 49],
+    bgMagenta: [45, 49],
+    bgCyan: [46, 49],
+    bgWhite: [47, 49],
+    // Bright color
+    bgBlackBright: [100, 49],
+    bgGray: [100, 49],
+    // Alias of `bgBlackBright`
+    bgGrey: [100, 49],
+    // Alias of `bgBlackBright`
+    bgRedBright: [101, 49],
+    bgGreenBright: [102, 49],
+    bgYellowBright: [103, 49],
+    bgBlueBright: [104, 49],
+    bgMagentaBright: [105, 49],
+    bgCyanBright: [106, 49],
+    bgWhiteBright: [107, 49]
+  }
+};
+var modifierNames = Object.keys(styles.modifier);
+var foregroundColorNames = Object.keys(styles.color);
+var backgroundColorNames = Object.keys(styles.bgColor);
+var colorNames = [...foregroundColorNames, ...backgroundColorNames];
+function assembleStyles() {
+  const codes = /* @__PURE__ */ new Map();
+  for (const [groupName, group] of Object.entries(styles)) {
+    for (const [styleName, style] of Object.entries(group)) {
+      styles[styleName] = {
+        open: `\x1B[${style[0]}m`,
+        close: `\x1B[${style[1]}m`
+      };
+      group[styleName] = styles[styleName];
+      codes.set(style[0], style[1]);
+    }
+    Object.defineProperty(styles, groupName, {
+      value: group,
+      enumerable: false
+    });
+  }
+  Object.defineProperty(styles, "codes", {
+    value: codes,
+    enumerable: false
+  });
+  styles.color.close = "\x1B[39m";
+  styles.bgColor.close = "\x1B[49m";
+  styles.color.ansi = wrapAnsi16();
+  styles.color.ansi256 = wrapAnsi256();
+  styles.color.ansi16m = wrapAnsi16m();
+  styles.bgColor.ansi = wrapAnsi16(ANSI_BACKGROUND_OFFSET);
+  styles.bgColor.ansi256 = wrapAnsi256(ANSI_BACKGROUND_OFFSET);
+  styles.bgColor.ansi16m = wrapAnsi16m(ANSI_BACKGROUND_OFFSET);
+  Object.defineProperties(styles, {
+    rgbToAnsi256: {
+      value(red, green, blue) {
+        if (red === green && green === blue) {
+          if (red < 8) {
+            return 16;
+          }
+          if (red > 248) {
+            return 231;
+          }
+          return Math.round((red - 8) / 247 * 24) + 232;
+        }
+        return 16 + 36 * Math.round(red / 255 * 5) + 6 * Math.round(green / 255 * 5) + Math.round(blue / 255 * 5);
+      },
+      enumerable: false
+    },
+    hexToRgb: {
+      value(hex) {
+        const matches = /[a-f\d]{6}|[a-f\d]{3}/i.exec(hex.toString(16));
+        if (!matches) {
+          return [0, 0, 0];
+        }
+        let [colorString] = matches;
+        if (colorString.length === 3) {
+          colorString = [...colorString].map((character) => character + character).join("");
+        }
+        const integer2 = Number.parseInt(colorString, 16);
+        return [
+          /* eslint-disable no-bitwise */
+          integer2 >> 16 & 255,
+          integer2 >> 8 & 255,
+          integer2 & 255
+          /* eslint-enable no-bitwise */
+        ];
+      },
+      enumerable: false
+    },
+    hexToAnsi256: {
+      value: (hex) => styles.rgbToAnsi256(...styles.hexToRgb(hex)),
+      enumerable: false
+    },
+    ansi256ToAnsi: {
+      value(code) {
+        if (code < 8) {
+          return 30 + code;
+        }
+        if (code < 16) {
+          return 90 + (code - 8);
+        }
+        let red;
+        let green;
+        let blue;
+        if (code >= 232) {
+          red = ((code - 232) * 10 + 8) / 255;
+          green = red;
+          blue = red;
+        } else {
+          code -= 16;
+          const remainder = code % 36;
+          red = Math.floor(code / 36) / 5;
+          green = Math.floor(remainder / 6) / 5;
+          blue = remainder % 6 / 5;
+        }
+        const value = Math.max(red, green, blue) * 2;
+        if (value === 0) {
+          return 30;
+        }
+        let result = 30 + (Math.round(blue) << 2 | Math.round(green) << 1 | Math.round(red));
+        if (value === 2) {
+          result += 60;
+        }
+        return result;
+      },
+      enumerable: false
+    },
+    rgbToAnsi: {
+      value: (red, green, blue) => styles.ansi256ToAnsi(styles.rgbToAnsi256(red, green, blue)),
+      enumerable: false
+    },
+    hexToAnsi: {
+      value: (hex) => styles.ansi256ToAnsi(styles.hexToAnsi256(hex)),
+      enumerable: false
+    }
+  });
+  return styles;
+}
+var ansiStyles = assembleStyles();
+var ansi_styles_default = ansiStyles;
+
+// node_modules/chalk/source/vendor/supports-color/index.js
+var import_node_process = __toESM(require("process"), 1);
+var import_node_os = __toESM(require("os"), 1);
+var import_node_tty = __toESM(require("tty"), 1);
+function hasFlag(flag, argv = globalThis.Deno ? globalThis.Deno.args : import_node_process.default.argv) {
+  const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
+  const position = argv.indexOf(prefix + flag);
+  const terminatorPosition = argv.indexOf("--");
+  return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
+}
+var { env } = import_node_process.default;
+var flagForceColor;
+if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false") || hasFlag("color=never")) {
+  flagForceColor = 0;
+} else if (hasFlag("color") || hasFlag("colors") || hasFlag("color=true") || hasFlag("color=always")) {
+  flagForceColor = 1;
+}
+function envForceColor() {
+  if ("FORCE_COLOR" in env) {
+    if (env.FORCE_COLOR === "true") {
+      return 1;
+    }
+    if (env.FORCE_COLOR === "false") {
+      return 0;
+    }
+    return env.FORCE_COLOR.length === 0 ? 1 : Math.min(Number.parseInt(env.FORCE_COLOR, 10), 3);
+  }
+}
+function translateLevel(level) {
+  if (level === 0) {
+    return false;
+  }
+  return {
+    level,
+    hasBasic: true,
+    has256: level >= 2,
+    has16m: level >= 3
+  };
+}
+function _supportsColor(haveStream, { streamIsTTY, sniffFlags = true } = {}) {
+  const noFlagForceColor = envForceColor();
+  if (noFlagForceColor !== void 0) {
+    flagForceColor = noFlagForceColor;
+  }
+  const forceColor = sniffFlags ? flagForceColor : noFlagForceColor;
+  if (forceColor === 0) {
+    return 0;
+  }
+  if (sniffFlags) {
+    if (hasFlag("color=16m") || hasFlag("color=full") || hasFlag("color=truecolor")) {
+      return 3;
+    }
+    if (hasFlag("color=256")) {
+      return 2;
+    }
+  }
+  if ("TF_BUILD" in env && "AGENT_NAME" in env) {
+    return 1;
+  }
+  if (haveStream && !streamIsTTY && forceColor === void 0) {
+    return 0;
+  }
+  const min2 = forceColor || 0;
+  if (env.TERM === "dumb") {
+    return min2;
+  }
+  if (import_node_process.default.platform === "win32") {
+    const osRelease = import_node_os.default.release().split(".");
+    if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
+      return Number(osRelease[2]) >= 14931 ? 3 : 2;
+    }
+    return 1;
+  }
+  if ("CI" in env) {
+    if ("GITHUB_ACTIONS" in env || "GITEA_ACTIONS" in env) {
+      return 3;
+    }
+    if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "BUILDKITE", "DRONE"].some((sign) => sign in env) || env.CI_NAME === "codeship") {
+      return 1;
+    }
+    return min2;
+  }
+  if ("TEAMCITY_VERSION" in env) {
+    return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
+  }
+  if (env.COLORTERM === "truecolor") {
+    return 3;
+  }
+  if (env.TERM === "xterm-kitty") {
+    return 3;
+  }
+  if ("TERM_PROGRAM" in env) {
+    const version = Number.parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
+    switch (env.TERM_PROGRAM) {
+      case "iTerm.app": {
+        return version >= 3 ? 3 : 2;
+      }
+      case "Apple_Terminal": {
+        return 2;
+      }
+    }
+  }
+  if (/-256(color)?$/i.test(env.TERM)) {
+    return 2;
+  }
+  if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
+    return 1;
+  }
+  if ("COLORTERM" in env) {
+    return 1;
+  }
+  return min2;
+}
+function createSupportsColor(stream2, options = {}) {
+  const level = _supportsColor(stream2, __spreadValues({
+    streamIsTTY: stream2 && stream2.isTTY
+  }, options));
+  return translateLevel(level);
+}
+var supportsColor = {
+  stdout: createSupportsColor({ isTTY: import_node_tty.default.isatty(1) }),
+  stderr: createSupportsColor({ isTTY: import_node_tty.default.isatty(2) })
+};
+var supports_color_default = supportsColor;
+
+// node_modules/chalk/source/utilities.js
+function stringReplaceAll(string, substring, replacer) {
+  let index = string.indexOf(substring);
+  if (index === -1) {
+    return string;
+  }
+  const substringLength = substring.length;
+  let endIndex = 0;
+  let returnValue = "";
+  do {
+    returnValue += string.slice(endIndex, index) + substring + replacer;
+    endIndex = index + substringLength;
+    index = string.indexOf(substring, endIndex);
+  } while (index !== -1);
+  returnValue += string.slice(endIndex);
+  return returnValue;
+}
+function stringEncaseCRLFWithFirstIndex(string, prefix, postfix, index) {
+  let endIndex = 0;
+  let returnValue = "";
+  do {
+    const gotCR = string[index - 1] === "\r";
+    returnValue += string.slice(endIndex, gotCR ? index - 1 : index) + prefix + (gotCR ? "\r\n" : "\n") + postfix;
+    endIndex = index + 1;
+    index = string.indexOf("\n", endIndex);
+  } while (index !== -1);
+  returnValue += string.slice(endIndex);
+  return returnValue;
+}
+
+// node_modules/chalk/source/index.js
+var { stdout: stdoutColor, stderr: stderrColor } = supports_color_default;
+var GENERATOR = Symbol("GENERATOR");
+var STYLER = Symbol("STYLER");
+var IS_EMPTY = Symbol("IS_EMPTY");
+var levelMapping = [
+  "ansi",
+  "ansi",
+  "ansi256",
+  "ansi16m"
+];
+var styles2 = /* @__PURE__ */ Object.create(null);
+var applyOptions = (object, options = {}) => {
+  if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
+    throw new Error("The `level` option should be an integer from 0 to 3");
+  }
+  const colorLevel = stdoutColor ? stdoutColor.level : 0;
+  object.level = options.level === void 0 ? colorLevel : options.level;
+};
+var chalkFactory = (options) => {
+  const chalk2 = (...strings) => strings.join(" ");
+  applyOptions(chalk2, options);
+  Object.setPrototypeOf(chalk2, createChalk.prototype);
+  return chalk2;
+};
+function createChalk(options) {
+  return chalkFactory(options);
+}
+Object.setPrototypeOf(createChalk.prototype, Function.prototype);
+for (const [styleName, style] of Object.entries(ansi_styles_default)) {
+  styles2[styleName] = {
+    get() {
+      const builder = createBuilder(this, createStyler(style.open, style.close, this[STYLER]), this[IS_EMPTY]);
+      Object.defineProperty(this, styleName, { value: builder });
+      return builder;
+    }
+  };
+}
+styles2.visible = {
+  get() {
+    const builder = createBuilder(this, this[STYLER], true);
+    Object.defineProperty(this, "visible", { value: builder });
+    return builder;
+  }
+};
+var getModelAnsi = (model, level, type, ...arguments_) => {
+  if (model === "rgb") {
+    if (level === "ansi16m") {
+      return ansi_styles_default[type].ansi16m(...arguments_);
+    }
+    if (level === "ansi256") {
+      return ansi_styles_default[type].ansi256(ansi_styles_default.rgbToAnsi256(...arguments_));
+    }
+    return ansi_styles_default[type].ansi(ansi_styles_default.rgbToAnsi(...arguments_));
+  }
+  if (model === "hex") {
+    return getModelAnsi("rgb", level, type, ...ansi_styles_default.hexToRgb(...arguments_));
+  }
+  return ansi_styles_default[type][model](...arguments_);
+};
+var usedModels = ["rgb", "hex", "ansi256"];
+for (const model of usedModels) {
+  styles2[model] = {
+    get() {
+      const { level } = this;
+      return function(...arguments_) {
+        const styler = createStyler(getModelAnsi(model, levelMapping[level], "color", ...arguments_), ansi_styles_default.color.close, this[STYLER]);
+        return createBuilder(this, styler, this[IS_EMPTY]);
+      };
+    }
+  };
+  const bgModel = "bg" + model[0].toUpperCase() + model.slice(1);
+  styles2[bgModel] = {
+    get() {
+      const { level } = this;
+      return function(...arguments_) {
+        const styler = createStyler(getModelAnsi(model, levelMapping[level], "bgColor", ...arguments_), ansi_styles_default.bgColor.close, this[STYLER]);
+        return createBuilder(this, styler, this[IS_EMPTY]);
+      };
+    }
+  };
+}
+var proto = Object.defineProperties(() => {
+}, __spreadProps(__spreadValues({}, styles2), {
+  level: {
+    enumerable: true,
+    get() {
+      return this[GENERATOR].level;
+    },
+    set(level) {
+      this[GENERATOR].level = level;
+    }
+  }
+}));
+var createStyler = (open, close, parent) => {
+  let openAll;
+  let closeAll;
+  if (parent === void 0) {
+    openAll = open;
+    closeAll = close;
+  } else {
+    openAll = parent.openAll + open;
+    closeAll = close + parent.closeAll;
+  }
+  return {
+    open,
+    close,
+    openAll,
+    closeAll,
+    parent
+  };
+};
+var createBuilder = (self2, _styler, _isEmpty) => {
+  const builder = (...arguments_) => applyStyle(builder, arguments_.length === 1 ? "" + arguments_[0] : arguments_.join(" "));
+  Object.setPrototypeOf(builder, proto);
+  builder[GENERATOR] = self2;
+  builder[STYLER] = _styler;
+  builder[IS_EMPTY] = _isEmpty;
+  return builder;
+};
+var applyStyle = (self2, string) => {
+  if (self2.level <= 0 || !string) {
+    return self2[IS_EMPTY] ? "" : string;
+  }
+  let styler = self2[STYLER];
+  if (styler === void 0) {
+    return string;
+  }
+  const { openAll, closeAll } = styler;
+  if (string.includes("\x1B")) {
+    while (styler !== void 0) {
+      string = stringReplaceAll(string, styler.close, styler.open);
+      styler = styler.parent;
+    }
+  }
+  const lfIndex = string.indexOf("\n");
+  if (lfIndex !== -1) {
+    string = stringEncaseCRLFWithFirstIndex(string, closeAll, openAll, lfIndex);
+  }
+  return openAll + string + closeAll;
+};
+Object.defineProperties(createChalk.prototype, styles2);
+var chalk = createChalk();
+var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
+var source_default = chalk;
+
+// src/util/cli-util.ts
+var import_node_path = require("path");
+var fs = __toESM(require("fs"), 1);
+function getInputExtensionsAsSet() {
+  return new Set(JavaScriptPropositionalLaboratoryFormatLanguageMetaData.fileExtensions);
+}
+function getInputExtensionsAsString() {
+  return JavaScriptPropositionalLaboratoryFormatLanguageMetaData.fileExtensions.join(", ");
+}
+async function extractDocument(fileName, services) {
+  var _a;
+  const extensions = services.LanguageMetaData.fileExtensions;
+  if (!extensions.includes((0, import_node_path.extname)(fileName))) {
+    console.error(source_default.yellow(`Please choose a file with one of these extensions: ${extensions}.`));
+    process.exit(1);
+  }
+  if (!fs.existsSync(fileName)) {
+    console.error(source_default.red(`File ${fileName} does not exist.`));
+    process.exit(1);
+  }
+  const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file((0, import_node_path.resolve)(fileName)));
+  await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
+  const validationErrors = ((_a = document.diagnostics) != null ? _a : []).filter((e) => e.severity === 1);
+  if (validationErrors.length > 0) {
+    console.error(source_default.red("There are validation errors:"));
+    for (const validationError of validationErrors) {
+      console.error(source_default.red(
+        `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(validationError.range)}]`
+      ));
+    }
+    process.exit(1);
+  }
+  return document;
+}
+async function extractAstNode(fileName, services) {
+  var _a;
+  return (_a = (await extractDocument(fileName, services)).parseResult) == null ? void 0 : _a.value;
+}
+
+// src/generators/lab/main.ts
+var import_node_fs2 = require("fs");
+var import_node_path2 = __toESM(require("path"), 1);
+
+// src/generators/lab/concerns.ts
+function generateConcernHtml(concern, default_format) {
+  return `<details><summary>\u26A0 ${concern.summary}</summary>
+    ${formattedStringToHTML(concern.description, default_format)}
+    </details>`;
+}
+function generateConcerns(concerns, node, laboratoryInformation) {
+  node.append(`const concerns = {
+`);
+  concerns.forEach((concern) => {
+    node.append(`	${concern.name}: html\`${generateConcernHtml(concern, laboratoryInformation.format)}\`,
+`);
+  });
+  node.append(`};
+`);
+}
+
+// src/generators/lab/util.ts
+var import_node_fs = require("fs");
 var extractJSCondition = {
   fromOrExpression: function(expression) {
     return `${extractJSCondition.fromExpression(expression.left)} || ${extractJSCondition.fromExpression(expression.right)}`;
@@ -48710,40 +48835,6 @@ function readTemplatedFile(templateFilePath, templateMarker) {
     prefix: splitByConcernsMarkers.BEFORE,
     postfix: splitByConcernsMarkers.AFTER
   };
-}
-var DEFAULT_APP_INFORMATION = {
-  title: "Laboratory Title",
-  description: "<p>Laboratory Description</p>",
-  icon: "./res/favicon.svg"
-};
-function extractLaboratoryInformation(information) {
-  let result = DEFAULT_APP_INFORMATION;
-  if (information != void 0) {
-    if (information.titles.length > 0)
-      result.title = information.titles[0];
-    if (information.descriptions.length > 0)
-      result.description = formattedStringToHTML(information.descriptions[0]);
-    if (information.icons.length > 0)
-      result.icon = information.icons[0];
-  }
-  return result;
-}
-
-// src/generators/lab/concerns.ts
-function generateConcernHtml(concern) {
-  return `<details><summary>\u26A0 ${concern.summary}</summary>
-    ${formattedStringToHTML(concern.description)}
-    </details>`;
-}
-function generateConcerns(concerns, node) {
-  node.append(`const concerns = {
-`);
-  concerns.forEach((concern) => {
-    node.append(`	${concern.name}: html\`${generateConcernHtml(concern)}\`,
-`);
-  });
-  node.append(`};
-`);
 }
 
 // src/generators/lab/conditions.ts
@@ -48902,37 +48993,39 @@ function generateLaboratory(model, outputDirectory, templateDirectory) {
       import_node_path2.default.join(outputResourcesPath, fileName)
     );
   });
+  const laboratoryInformation = extractLaboratoryInformation(model.laboratory);
   generateIndex(
     model,
+    laboratoryInformation,
     import_node_path2.default.join(templateDirectory, "index.html"),
     import_node_path2.default.join(outputDirectory, "index.html")
   );
   generateLabJS(
     model,
+    laboratoryInformation,
     import_node_path2.default.join(templateDirectory, "lab.js"),
     import_node_path2.default.join(outputDirectory, "lab.js")
   );
   return outputDirectory;
 }
-function generateIndex(model, indexTemplatePath, outputIndexPath) {
+function generateIndex(model, laboratoryInformation, indexTemplatePath, outputIndexPath) {
   const indexTemplate = readTemplatedFile(indexTemplatePath, INDEX_TEMPLATE_MARKER);
   (0, import_node_fs2.writeFileSync)(outputIndexPath, "");
   (0, import_node_fs2.appendFileSync)(outputIndexPath, indexTemplate.prefix);
-  const extracted = extractLaboratoryInformation(model.laboratory);
-  const headerData = `<title>${extracted.title}</title>
-	<link rel="icon" href="${extracted.icon}"/>`;
+  const headerData = `<title>${laboratoryInformation.title}</title>
+	<link rel="icon" href="${laboratoryInformation.icon}"/>`;
   (0, import_node_fs2.appendFileSync)(outputIndexPath, headerData);
   (0, import_node_fs2.appendFileSync)(outputIndexPath, indexTemplate.postfix);
 }
-function generateLabJS(model, labTemplatePath, outputJavaScript) {
+function generateLabJS(model, laboratoryInformation, labTemplatePath, outputJavaScript) {
   const labTemplate = readTemplatedFile(labTemplatePath, LAB_TEMPLATE_MARKER);
   (0, import_node_fs2.writeFileSync)(outputJavaScript, "");
   (0, import_node_fs2.appendFileSync)(outputJavaScript, labTemplate.prefix);
   const laboratoryInformationNode = new CompositeGeneratorNode();
-  generateLaboratoryInformation(model.laboratory, laboratoryInformationNode);
+  generateLaboratoryInformation(laboratoryInformation, laboratoryInformationNode);
   (0, import_node_fs2.appendFileSync)(outputJavaScript, toString2(laboratoryInformationNode));
   const concernsNode = new CompositeGeneratorNode();
-  generateConcerns(model.concerns, concernsNode);
+  generateConcerns(model.concerns, concernsNode, laboratoryInformation);
   (0, import_node_fs2.appendFileSync)(outputJavaScript, toString2(concernsNode));
   const conditionsNode = new CompositeGeneratorNode();
   generateConditions(model.conditions, conditionsNode);
@@ -48945,11 +49038,14 @@ function generateLabJS(model, labTemplatePath, outputJavaScript) {
   (0, import_node_fs2.appendFileSync)(outputJavaScript, toString2(tweakablesNode));
   (0, import_node_fs2.appendFileSync)(outputJavaScript, labTemplate.postfix);
 }
-function generateLaboratoryInformation(information, node) {
-  const extracted = extractLaboratoryInformation(information);
-  node.append(`const appTitle = "${extracted.title}";
+function generateLaboratoryInformation(laboratoryInformation, node) {
+  node.append(`const appTitle = "${laboratoryInformation.title}";
 `);
-  node.append(`const appDescriptionHtml = html\`${extracted.description}\`;
+  node.append(`const appDescriptionHtml = html\`${laboratoryInformation.description}\`;
+`);
+  node.append(`const appAuthor = "${laboratoryInformation.author}";
+`);
+  node.append(`const appVersion = "${laboratoryInformation.version}";
 `);
 }
 

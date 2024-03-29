@@ -9,6 +9,7 @@ import { AbstractAstReflection } from 'langium';
 
 export const JavaScriptPropositionalLaboratoryFormatTerminals = {
     BOOLEAN: /True|False/,
+    ML_STRING_FORMAT: /MD|HTML/,
     ID: /[_a-zA-Z][\w_]*/,
     STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/,
     WS: /\s+/,
@@ -101,7 +102,7 @@ export interface FormattedString extends AstNode {
     readonly $container: Concern | LaboratoryInformation;
     readonly $type: 'FormattedString';
     contents: string
-    format?: 'HTML' | 'MD'
+    format?: string
 }
 
 export const FormattedString = 'FormattedString';
@@ -125,9 +126,12 @@ export function isGroup(item: unknown): item is Group {
 export interface LaboratoryInformation extends AstNode {
     readonly $container: Model;
     readonly $type: 'LaboratoryInformation';
+    authors: Array<string>
     descriptions: Array<FormattedString>
+    formats: Array<string>
     icons: Array<string>
     titles: Array<string>
+    versions: Array<string>
 }
 
 export const LaboratoryInformation = 'LaboratoryInformation';
@@ -318,9 +322,12 @@ export class JavaScriptPropositionalLaboratoryFormatAstReflection extends Abstra
                 return {
                     name: 'LaboratoryInformation',
                     mandatory: [
+                        { name: 'authors', type: 'array' },
                         { name: 'descriptions', type: 'array' },
+                        { name: 'formats', type: 'array' },
                         { name: 'icons', type: 'array' },
-                        { name: 'titles', type: 'array' }
+                        { name: 'titles', type: 'array' },
+                        { name: 'versions', type: 'array' }
                     ]
                 };
             }

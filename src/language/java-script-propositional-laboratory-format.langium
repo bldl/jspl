@@ -14,6 +14,7 @@ entry Model:
 // Terminals
 
 terminal BOOLEAN returns boolean: /True|False/;
+terminal ML_STRING_FORMAT returns string: /MD|HTML/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 //terminal INT returns number: /[0-9]+/;
 //terminal CODE_STRING: /`(\\.|[^`\\])*`/;
@@ -24,16 +25,19 @@ hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 
 FormattedString:
-    (format=("MD"|"HTML"))? contents=STRING
+    (format=ML_STRING_FORMAT)? contents=STRING
 ;
 
 
-LaboratoryInformation: // TODO: What about browser header information, favicon, etc...
+LaboratoryInformation:
     "laboratory" "{" 
         ( // allow only one field to be used multiple times via validators
             ("title" titles+=STRING)
             | ("description" descriptions+=FormattedString)
             | ("icon" icons+=STRING)
+            | ("format" formats+=ML_STRING_FORMAT)
+            | ("author" authors+=STRING)
+            | ("version" versions+=STRING)
         )*
     "}"
 ;

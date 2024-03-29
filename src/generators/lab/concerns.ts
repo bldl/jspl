@@ -1,23 +1,20 @@
 import { CompositeGeneratorNode } from "langium";
 import { Concern } from "../../language/generated/ast.js";
-import { formattedStringToHTML } from "./util.js";
+import { ExtractedLaboratoryInformation, formattedStringToHTML } from "../../util/modelUtil.js";
 
 
-function generateConcernHtml(concern: Concern): string {
+function generateConcernHtml(concern: Concern, default_format: string): string {
     return `<details><summary>⚠ ${concern.summary}</summary>
-    ${formattedStringToHTML(concern.description)}
+    ${formattedStringToHTML(concern.description, default_format)}
     </details>`;
 }
 
-export function generateConcerns(concerns: Concern[], node: CompositeGeneratorNode) {
+export function generateConcerns(concerns: Concern[], node: CompositeGeneratorNode, laboratoryInformation: ExtractedLaboratoryInformation) {
     // Create JS-Object with concerns as members and string/html values (see original lab)
     node.append(`const concerns = {\n`);
 
     concerns.forEach(concern => {
-        node.append(`\t${concern.name}: html\`${generateConcernHtml(concern)}\`,\n`);
-        //node.append(`\t${concern.name}DescriptionUnprocessed: \`${concern.description.contents}\`,\n`);
-        //node.append(`\t${concern.name}DescriptionPreprocessed: \`${dedent(concern.description.contents)}\`,\n`);
-        //node.append(`\t${concern.name}DescriptionProcessed: \`${formattedStringToHTML(concern.description)}\`,\n`);
+        node.append(`\t${concern.name}: html\`${generateConcernHtml(concern, laboratoryInformation.format)}\`,\n`);
     });
 
     node.append(`};\n`);

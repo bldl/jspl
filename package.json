@@ -2,7 +2,8 @@
     "name": "jspl-javascript-propositional-laboratory",
     "displayName": "JSPL: JavaScript Propositional Laboratory",
     "description": "Provides support for the JavaScript Propositional Laboratory Format (JSPL), a format developed for Ecma-/JS-Developers, to be used for discussing contentious features of proposals.",
-    "version": "0.0.1",
+    "version": "0.5.0",
+    "publisher": "Philipp Riemer",
     "icon": "icon.png",
     "repository": {
         "url": "https://gitlab.com/phirie/jspl"

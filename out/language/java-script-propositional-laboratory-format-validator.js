@@ -118,6 +118,12 @@ export class JavaScriptPropositionalLaboratoryFormatValidator {
             accept('error', 'Multiple titles for one laboratory are not allowed.', { node: information });
         if (information.icons.length > 1)
             accept('error', 'Multiple icons for one laboratory are not allowed.', { node: information });
+        if (information.formats.length > 1)
+            accept('error', 'Multiple default formats for one laboratory are not allowed.', { node: information });
+        if (information.authors.length > 1)
+            accept('error', 'Multiple authors for one laboratory are not allowed.', { node: information });
+        if (information.versions.length > 1)
+            accept('error', 'Multiple versions for one laboratory are not allowed.', { node: information });
     }
 }
 //# sourceMappingURL=java-script-propositional-laboratory-format-validator.js.map

@@ -1,28 +1,6 @@
-import { toString } from "langium";
 import { readFileSync } from 'node:fs';
-import { OrExpression, AndExpression, Negation, Group, Statement, PropositionalExpression, FormattedString, LaboratoryInformation } from "../../language/generated/ast.js";
-import { Marked } from "@ts-stack/markdown";
-import dedent from "dedent-js";
-
-export function extractValueAsString(value: string | boolean): string {
-    return (typeof value) === "string" ? `"${value}"`: toString(value);
-}
-
-export function formattedStringToHTML(formattedString: FormattedString): string {
-    const preprocessed = dedent(formattedString.contents);
-
-    // default to markdown
-    let format = formattedString.format;
-    if (format == undefined)
-        format = "MD";
-
-    switch (format) {
-        case "HTML":
-            return preprocessed;
-        case "MD":
-            return Marked.parse(preprocessed);
-    }
-}
+import { OrExpression, AndExpression, Negation, Group, Statement, PropositionalExpression } from "../../language/generated/ast.js";
+import { extractValueAsString } from "../../util/modelUtil.js";
 
 export const extractJSCondition = {
     fromOrExpression: function (expression: OrExpression): string {
@@ -86,23 +64,3 @@ export function readTemplatedFile(templateFilePath: string, templateMarker: Temp
         postfix: splitByConcernsMarkers.AFTER
     };
 }
-
-export type ExtractedLaboratoryInformation = {title: string, description: string, icon: string}
-const DEFAULT_APP_INFORMATION: ExtractedLaboratoryInformation = {
-    title: "Laboratory Title",
-    description: "<p>Laboratory Description</p>",
-    icon: "./res/favicon.svg"
-}
-export function extractLaboratoryInformation(information: LaboratoryInformation | undefined): ExtractedLaboratoryInformation {
-    let result: ExtractedLaboratoryInformation = DEFAULT_APP_INFORMATION;
-    if (information != undefined) {
-        if (information.titles.length > 0)
-            result.title = information.titles[0];
-        if (information.descriptions.length > 0)
-            result.description = formattedStringToHTML(information.descriptions[0]);
-        if (information.icons.length > 0)
-            result.icon = information.icons[0];
-    }
-
-    return result;
-} 

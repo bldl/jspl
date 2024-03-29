@@ -1,7 +1,8 @@
 import { CompositeGeneratorNode } from "langium";
 import { integer } from "vscode-languageserver";
 import { Proposition } from "../../language/generated/ast.js";
-import { extractJSCondition, extractValueAsString } from "./util.js";
+import { extractJSCondition } from "./util.js";
+import { extractValueAsString } from "../../util/modelUtil.js";
 
 function isGiven(proposition: Proposition) {
     return proposition.valueClauses.length == 1;
