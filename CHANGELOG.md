@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.5.0] - 2024-03-29
 
-- Updated `laboratory`-field to include the following fields:
+- Updated `laboratory`-field to include the following (sub-)fields:
     - `format`: specifies the default format to be used in description texts.
     - `author`: specifies the author of the laboratory.
     - `version`: specifies the version number of the laboratory.
