@@ -1,0 +1,18 @@
+laboratory {
+    title "Simple Laboratory"
+}
+
+concern testConcern {
+    summary ""
+    description ""
+}
+
+condition testCondition holds when testProposition is True
+
+proposition testProposition {
+    expression "a === b"
+    default value True
+    value False {
+        raise  testConcern 
+    }
+}

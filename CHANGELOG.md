@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.3] - 2024-04-01
+
+- Fixed minor validation errors
+
 ## [0.5.2] - 2024-04-01
 
 - Updated the webpage generator, to not use default values, when certain information is not given. Instead the blocks displaying this information are removed from the webpage. These include: `icon`, `author` and `version`. `title` and `description` will still display default values, when not specified.

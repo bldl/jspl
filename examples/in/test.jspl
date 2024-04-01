@@ -14,7 +14,7 @@ laboratory {
     "
     //icon "some url" 
     //author "Philipp Riemer"
-    //version "1.0"
+    version "1.0"
     format MD
 }
 

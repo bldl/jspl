@@ -35024,7 +35024,8 @@ function getReferencablesInExpression(expression, output) {
 }
 function getReferencablesInWhenCondition(condition) {
   let result = /* @__PURE__ */ new Set();
-  getReferencablesInExpression(condition.expression, result);
+  if (condition.expression != void 0)
+    getReferencablesInExpression(condition.expression, result);
   return result;
 }
 function getAllUsedConcerns(model) {
@@ -35032,9 +35033,9 @@ function getAllUsedConcerns(model) {
   model.propositions.forEach((proposition) => {
     proposition.valueClauses.forEach((valueClause) => {
       valueClause.raises.forEach((raisingConcern) => {
-        if (raisingConcern.concern.ref == void 0)
-          return;
-        result.add(raisingConcern.concern.ref);
+        var _a;
+        if (((_a = raisingConcern.concern) == null ? void 0 : _a.ref) != void 0)
+          result.add(raisingConcern.concern.ref);
       });
     });
   });

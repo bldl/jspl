@@ -2,7 +2,7 @@
     "name": "jspl-javascript-propositional-laboratory",
     "displayName": "JSPL: JavaScript Propositional Laboratory",
     "description": "Support for writing JavaScript Proposal Laboratories",
-    "version": "0.5.2",
+    "version": "0.5.3",
     "publisher": "PhilippRiemer",
     "license": "SEE LICENSE IN LICENSE.txt",
     "icon": "icon.png",

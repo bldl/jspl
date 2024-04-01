@@ -24,7 +24,7 @@ function getReferencablesInExpression(expression: PropositionalExpression, outpu
             getReferenceablesInBinaryExpression(expression as AndExpression, output);
             break;
         case 'Negation': 
-        getReferencablesInExpression(expression.inner, output);
+            getReferencablesInExpression(expression.inner, output);
             break;
         case 'Group':
             getReferencablesInExpression(expression.inner, output);
@@ -37,7 +37,8 @@ function getReferencablesInExpression(expression: PropositionalExpression, outpu
 export function getReferencablesInWhenCondition(condition: WhenCondition): Set<Referenceable> {
     let result = new Set<Referenceable>();
 
-    getReferencablesInExpression(condition.expression, result);
+    if (condition.expression != undefined)
+        getReferencablesInExpression(condition.expression, result);
 
     return result;
 }
@@ -48,9 +49,8 @@ export function getAllUsedConcerns(model: Model): Set<Concern> {
     model.propositions.forEach(proposition => {
         proposition.valueClauses.forEach(valueClause => {
             valueClause.raises.forEach(raisingConcern => {
-                if (raisingConcern.concern.ref == undefined)
-                    return
-                result.add(raisingConcern.concern.ref);
+                if (raisingConcern.concern?.ref != undefined)
+                    result.add(raisingConcern.concern.ref);
             });
         });
     });
