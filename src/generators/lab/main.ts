@@ -84,7 +84,8 @@ function generateIndex(model: Model, laboratoryInformation: ExtractedLaboratoryI
     appendFileSync(outputIndexPath, indexTemplate.prefix);
 
     // 2. Write Header Data
-    const headerData: string = `<title>${laboratoryInformation.title}</title>\n\t<link rel="icon" href="${laboratoryInformation.icon}"/>`;
+    const iconString = (laboratoryInformation.icon == undefined) ? "undefined" : laboratoryInformation.icon;
+    const headerData: string = `<title>${laboratoryInformation.title}</title>\n\t<link rel="icon" href="${iconString}"/>`;
     appendFileSync(outputIndexPath, headerData);
 
     // 3. Write Postfix
@@ -131,8 +132,15 @@ function generateLabJS(model: Model, laboratoryInformation: ExtractedLaboratoryI
 }
 
 function generateLaboratoryInformation(laboratoryInformation: ExtractedLaboratoryInformation, node: CompositeGeneratorNode) {
-    node.append(`const appTitle = "${laboratoryInformation.title}";\n`);
-    node.append(`const appDescriptionHtml = html\`${laboratoryInformation.description}\`;\n`);
-    node.append(`const appAuthor = "${laboratoryInformation.author}";\n`);
-    node.append(`const appVersion = "${laboratoryInformation.version}";\n`);
+    const titleString = (laboratoryInformation.title == undefined) ? "undefined" : `"${laboratoryInformation.title}"`;
+    node.append(`const appTitle = ${titleString};\n`);
+
+    const descriptionString = (laboratoryInformation.description == undefined) ? "undefined" : `${laboratoryInformation.description}`;
+    node.append(`const appDescriptionHtml = html\`${descriptionString}\`;\n`);
+
+    const authorString = (laboratoryInformation.author == undefined) ? "undefined" : `"${laboratoryInformation.author}"`;
+    node.append(`const appAuthor = ${authorString};\n`);
+
+    const versionString = (laboratoryInformation.version == undefined) ? "undefined" : `"${laboratoryInformation.version}"`;
+    node.append(`const appVersion = ${versionString};\n`);
 }

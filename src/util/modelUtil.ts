@@ -111,18 +111,18 @@ export function formattedStringToHTML(formattedString: FormattedString, default_
 export type ExtractedLaboratoryInformation = {
     title: string, 
     description: string,
-    icon: string,
+    icon: string | undefined,
     format: string,
-    author: string,
-    version: string
+    author: string | undefined,
+    version: string | undefined
 }
 const DEFAULT_APP_INFORMATION: ExtractedLaboratoryInformation = {
     title: "Laboratory Title",
     description: "<p>Laboratory Description</p>",
-    icon: "./res/favicon.svg",
+    icon: undefined,
     format: "MD",
-    author: "Ada Lovelace",
-    version: "1.0"
+    author: undefined,
+    version: undefined
 }
 export function extractLaboratoryInformation(information: LaboratoryInformation | undefined): ExtractedLaboratoryInformation {
     let result: ExtractedLaboratoryInformation = DEFAULT_APP_INFORMATION;

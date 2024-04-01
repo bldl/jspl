@@ -48054,10 +48054,10 @@ function formattedStringToHTML(formattedString, default_format = "MD") {
 var DEFAULT_APP_INFORMATION = {
   title: "Laboratory Title",
   description: "<p>Laboratory Description</p>",
-  icon: "./res/favicon.svg",
+  icon: void 0,
   format: "MD",
-  author: "Ada Lovelace",
-  version: "1.0"
+  author: void 0,
+  version: void 0
 };
 function extractLaboratoryInformation(information) {
   let result = DEFAULT_APP_INFORMATION;
@@ -49012,8 +49012,9 @@ function generateIndex(model, laboratoryInformation, indexTemplatePath, outputIn
   const indexTemplate = readTemplatedFile(indexTemplatePath, INDEX_TEMPLATE_MARKER);
   (0, import_node_fs2.writeFileSync)(outputIndexPath, "");
   (0, import_node_fs2.appendFileSync)(outputIndexPath, indexTemplate.prefix);
+  const iconString = laboratoryInformation.icon == void 0 ? "undefined" : laboratoryInformation.icon;
   const headerData = `<title>${laboratoryInformation.title}</title>
-	<link rel="icon" href="${laboratoryInformation.icon}"/>`;
+	<link rel="icon" href="${iconString}"/>`;
   (0, import_node_fs2.appendFileSync)(outputIndexPath, headerData);
   (0, import_node_fs2.appendFileSync)(outputIndexPath, indexTemplate.postfix);
 }
@@ -49039,13 +49040,17 @@ function generateLabJS(model, laboratoryInformation, labTemplatePath, outputJava
   (0, import_node_fs2.appendFileSync)(outputJavaScript, labTemplate.postfix);
 }
 function generateLaboratoryInformation(laboratoryInformation, node) {
-  node.append(`const appTitle = "${laboratoryInformation.title}";
+  const titleString = laboratoryInformation.title == void 0 ? "undefined" : `"${laboratoryInformation.title}"`;
+  node.append(`const appTitle = ${titleString};
 `);
-  node.append(`const appDescriptionHtml = html\`${laboratoryInformation.description}\`;
+  const descriptionString = laboratoryInformation.description == void 0 ? "undefined" : `${laboratoryInformation.description}`;
+  node.append(`const appDescriptionHtml = html\`${descriptionString}\`;
 `);
-  node.append(`const appAuthor = "${laboratoryInformation.author}";
+  const authorString = laboratoryInformation.author == void 0 ? "undefined" : `"${laboratoryInformation.author}"`;
+  node.append(`const appAuthor = ${authorString};
 `);
-  node.append(`const appVersion = "${laboratoryInformation.version}";
+  const versionString = laboratoryInformation.version == void 0 ? "undefined" : `"${laboratoryInformation.version}"`;
+  node.append(`const appVersion = ${versionString};
 `);
 }
 

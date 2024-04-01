@@ -136,11 +136,15 @@ function shuffle() {
 function App() {
 	return html`
 		<h1 class="text-center">
-			${appTitle} (v${appVersion})
+			${appTitle} ${appVersion == undefined ? "" : `(v${appVersion})`}
 		</h1>
-		<p class="text-center">
-			by ${appAuthor}
-		</p>
+		${
+			appAuthor == undefined ? "" : `
+				<p class="text-center">
+					by ${appAuthor}
+				</p>
+			`
+		}
 		<div class="description-block-outer">
 			<div class="description-block-inner">
 			${appDescriptionHtml}

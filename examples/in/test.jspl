@@ -12,9 +12,9 @@ laboratory {
 
     Testing
     "
-    icon "some url" 
-    author "Philipp Riemer"
-    version "1.0"
+    //icon "some url" 
+    //author "Philipp Riemer"
+    //version "1.0"
     format MD
 }
 
