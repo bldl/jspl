@@ -47991,7 +47991,7 @@ function getReferenceablesInStatement(statement, output) {
     output.add(reference);
 }
 function getReferencablesInExpression(expression, output) {
-  if (expression == void 0)
+  if (expression === void 0)
     return;
   switch (expression.$type) {
     case "OrExpression":
@@ -48012,8 +48012,7 @@ function getReferencablesInExpression(expression, output) {
 }
 function getReferencablesInWhenCondition(condition) {
   let result = /* @__PURE__ */ new Set();
-  if (condition.expression != void 0)
-    getReferencablesInExpression(condition.expression, result);
+  getReferencablesInExpression(condition.expression, result);
   return result;
 }
 function getAllUsedConcerns(model) {
@@ -48041,7 +48040,7 @@ function getAllUsedReferenceables(model) {
         });
       });
     });
-    if (proposition.disable == void 0)
+    if (proposition.disable === void 0)
       return;
     proposition.disable.statements.forEach((disableStatement) => {
       getReferencablesInWhenCondition(disableStatement.condition).forEach((referenceable) => {
@@ -48056,7 +48055,7 @@ function extractValueAsString(value) {
 }
 function formattedStringToHTML(formattedString, default_format = "MD") {
   let format = formattedString.format;
-  if (format == void 0)
+  if (format === void 0)
     format = default_format;
   const preprocessed = (0, import_dedent_js.default)(formattedString.contents);
   switch (format) {
@@ -48078,7 +48077,7 @@ var DEFAULT_APP_INFORMATION = {
 };
 function extractLaboratoryInformation(information) {
   let result = DEFAULT_APP_INFORMATION;
-  if (information != void 0) {
+  if (information !== void 0) {
     if (information.titles.length > 0)
       result.title = information.titles[0];
     if (information.descriptions.length > 0)
@@ -48114,6 +48113,9 @@ function registerValidationChecks2(services) {
     ],
     LaboratoryInformation: [
       validator.noDuplicateFieldsInLaboratoryInformation
+    ],
+    Statement: [
+      validator.statementReferencesValidValue
     ]
   };
   registry.register(checks, validator);
@@ -48225,6 +48227,31 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       accept("error", "Multiple authors for one laboratory are not allowed.", { node: information });
     if (information.versions.length > 1)
       accept("error", "Multiple versions for one laboratory are not allowed.", { node: information });
+  }
+  statementReferencesValidValue(statement, accept) {
+    if (statement === void 0)
+      return;
+    if (statement.value === void 0)
+      return;
+    if (statement.reference === void 0)
+      return;
+    if (statement.reference.ref === void 0)
+      return;
+    const referenceable = statement.reference.ref;
+    const value = statement.value;
+    if (referenceable.$type === "Condition") {
+      if (typeof value === "boolean")
+        return;
+      accept("error", "Stated value is not a valid value of the referenced object.", { node: statement, property: "value" });
+      return;
+    }
+    const proposition = referenceable;
+    if (proposition.valueClauses === void 0)
+      return;
+    const foundValue = proposition.valueClauses.map((clause) => clause.value).find((defined) => defined === value);
+    if (foundValue !== void 0)
+      return;
+    accept("error", "Stated value is not a valid value of the referenced object.", { node: statement, property: "value" });
   }
 };
 

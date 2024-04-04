@@ -16,7 +16,7 @@ function getReferenceablesInStatement(statement: Statement, output: Set<Referenc
 }
 
 function getReferencablesInExpression(expression: PropositionalExpression, output: Set<Referenceable>): void {
-    if (expression == undefined)
+    if (expression === undefined)
         return;
 
     switch (expression.$type) {
@@ -74,7 +74,7 @@ export function getAllUsedReferenceables(model: Model): Set<Referenceable> {
             });
         });
 
-        if (proposition.disable == undefined)
+        if (proposition.disable === undefined)
             return;
 
         proposition.disable.statements.forEach(disableStatement => {
@@ -94,7 +94,7 @@ export function extractValueAsString(value: string | boolean): string {
 export function formattedStringToHTML(formattedString: FormattedString, default_format: string = "MD"): string {
     // Extract format
     let format = formattedString.format;
-    if (format == undefined)
+    if (format === undefined)
         format = default_format;
 
     // Process multiline string
@@ -128,7 +128,7 @@ const DEFAULT_APP_INFORMATION: ExtractedLaboratoryInformation = {
 }
 export function extractLaboratoryInformation(information: LaboratoryInformation | undefined): ExtractedLaboratoryInformation {
     let result: ExtractedLaboratoryInformation = DEFAULT_APP_INFORMATION;
-    if (information != undefined) {
+    if (information !== undefined) {
         if (information.titles.length > 0)
             result.title = information.titles[0];
         if (information.descriptions.length > 0)

@@ -20,6 +20,9 @@ export function registerValidationChecks(services) {
         ],
         LaboratoryInformation: [
             validator.noDuplicateFieldsInLaboratoryInformation
+        ],
+        Statement: [
+            validator.statementReferencesValidValue
         ]
     };
     registry.register(checks, validator);
@@ -124,6 +127,33 @@ export class JavaScriptPropositionalLaboratoryFormatValidator {
             accept('error', 'Multiple authors for one laboratory are not allowed.', { node: information });
         if (information.versions.length > 1)
             accept('error', 'Multiple versions for one laboratory are not allowed.', { node: information });
+    }
+    statementReferencesValidValue(statement, accept) {
+        if (statement === undefined)
+            return;
+        if (statement.value === undefined)
+            return;
+        if (statement.reference === undefined)
+            return;
+        if (statement.reference.ref === undefined)
+            return;
+        // Extract referenced referenceable
+        const referenceable = statement.reference.ref;
+        const value = statement.value;
+        if (referenceable.$type === "Condition") {
+            if (typeof value === "boolean")
+                return;
+            accept('error', 'Stated value is not a valid value of the referenced object.', { node: statement, property: 'value' });
+            return;
+        }
+        // referenceable is a Proposition
+        const proposition = referenceable;
+        if (proposition.valueClauses === undefined)
+            return;
+        const foundValue = proposition.valueClauses.map(clause => (clause.value)).find(defined => (defined === value));
+        if (foundValue !== undefined)
+            return;
+        accept('error', 'Stated value is not a valid value of the referenced object.', { node: statement, property: 'value' });
     }
 }
 //# sourceMappingURL=java-script-propositional-laboratory-format-validator.js.map

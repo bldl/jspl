@@ -1,5 +1,9 @@
 laboratory {
-    title "Simple Laboratory"
+    title "Laboratory X"
+    description "This is a laboratory for X"
+    author "Author Name"
+    version "1"
+    format MD
 }
 
 concern testConcern {
@@ -7,7 +11,9 @@ concern testConcern {
     description ""
 }
 
-condition testCondition holds when testProposition is not True and otherProposition is False
+condition testCondition holds when testProposition is "object"
+condition testCondition2 holds when testCondition is "test"
+
 
 proposition testProposition {
     expression "a === b"
@@ -15,4 +21,5 @@ proposition testProposition {
     value False {
         raise test
     }
+    value "object"
 }

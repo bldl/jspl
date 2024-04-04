@@ -1,6 +1,6 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
 //import type { JavaScriptPropositionalLaboratoryFormatAstType, Person } from './generated/ast.js';
-import { type JavaScriptPropositionalLaboratoryFormatAstType, Proposition, Model, Condition, LaboratoryInformation, Concern, Referenceable} from './generated/ast.js';
+import { type JavaScriptPropositionalLaboratoryFormatAstType, Proposition, Model, Condition, LaboratoryInformation, Concern, Referenceable, Statement} from './generated/ast.js';
 import type { JavaScriptPropositionalLaboratoryFormatServices } from './java-script-propositional-laboratory-format-module.js';
 import { getAllUsedConcerns, getAllUsedReferenceables, getReferencablesInWhenCondition } from '../util/modelUtil.js';
 
@@ -25,6 +25,9 @@ export function registerValidationChecks(services: JavaScriptPropositionalLabora
         ],
         LaboratoryInformation: [
             validator.noDuplicateFieldsInLaboratoryInformation
+        ],
+        Statement: [
+            validator.statementReferencesValidValue
         ]
     };
     registry.register(checks, validator);
@@ -162,5 +165,29 @@ export class JavaScriptPropositionalLaboratoryFormatValidator {
             accept('error', 'Multiple authors for one laboratory are not allowed.', {node: information});
         if (information.versions.length > 1)
             accept('error', 'Multiple versions for one laboratory are not allowed.', {node: information});
+    }
+
+    statementReferencesValidValue(statement: Statement, accept: ValidationAcceptor): void {
+        if (statement === undefined) return;
+        if (statement.value === undefined) return;
+        if (statement.reference === undefined) return;
+        if (statement.reference.ref === undefined) return;
+
+        // Extract referenced referenceable
+        const referenceable = statement.reference.ref;
+        const value = statement.value;
+
+        if (referenceable.$type === "Condition") {
+            if (typeof value === "boolean") return;
+            accept('error', 'Stated value is not a valid value of the referenced object.', {node: statement, property: 'value'});
+            return;  
+        } 
+
+        // referenceable is a Proposition
+        const proposition = referenceable as Proposition;
+        if (proposition.valueClauses === undefined) return;
+        const foundValue = proposition.valueClauses.map(clause => (clause.value)).find(defined => (defined === value));
+        if (foundValue !== undefined) return;
+        accept('error', 'Stated value is not a valid value of the referenced object.', {node: statement, property: 'value'});
     }
 }
