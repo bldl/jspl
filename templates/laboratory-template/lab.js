@@ -64,15 +64,19 @@ function tweakable({name, input, output, concern, default: _default, disabled}) 
 	};
 }
 
-//???TEMPLATE-MARKER-CONCERNS-START???
-const concerns = {};
-//???TEMPLATE-MARKER-CONCERNS-END???
+//???TEMPLATE-MARKER-START???
+const appTitle = "Laboratory Title";
+const appDescriptionHtml = "<p>Laboratory Description</p>";
+const appAuthor = "Ada Lovelace";
+const appVersion = "1.0";
 
-//???TEMPLATE-MARKER-PROPOSITIONS-START???
+const concerns = {};
+
 const conditions = {};
+
 const givens = [];
 const tweakables = [];
-//???TEMPLATE-MARKER-PROPOSITIONS-END???
+//???TEMPLATE-MARKER-END???
 
 function setToDefaults() {
 	for (const { name, default: _default } of tweakables) {
@@ -132,14 +136,20 @@ function shuffle() {
 function App() {
 	return html`
 		<h1 class="text-center">
-			Record and Tuple Laboratory 🔬
-			<a href="https://github.com/acutmore/record-tuple-laboratory"
-				><img src="./res/github.png" height="30"
-			/></a>
+			${appTitle} ${appVersion == undefined ? "" : `(v${appVersion})`}
 		</h1>
-		<p class="text-center">
-			🏗 Work in progress - <a href="https://github.com/acutmore/record-tuple-laboratory/issues/new" target="_blank">raise issue</a>
-		</p>
+		${
+			appAuthor == undefined ? "" : `
+				<p class="text-center">
+					by ${appAuthor}
+				</p>
+			`
+		}
+		<div class="description-block-outer">
+			<div class="description-block-inner">
+			${appDescriptionHtml}
+			</div>
+		</div>
 		${urlLoadingIssues.length > 0
 			? html`
 					<ul class="text-center">

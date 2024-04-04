@@ -8924,6 +8924,42 @@ var require_node3 = __commonJS({
   }
 });
 
+// node_modules/dedent-js/lib/index.js
+var require_lib = __commonJS({
+  "node_modules/dedent-js/lib/index.js"(exports2, module2) {
+    module2.exports = function dedent2(templateStrings) {
+      var values2 = [];
+      for (var _i = 1; _i < arguments.length; _i++) {
+        values2[_i - 1] = arguments[_i];
+      }
+      var matches = [];
+      var strings = typeof templateStrings === "string" ? [templateStrings] : templateStrings.slice();
+      strings[strings.length - 1] = strings[strings.length - 1].replace(/\r?\n([\t ]*)$/, "");
+      for (var i = 0; i < strings.length; i++) {
+        var match = void 0;
+        if (match = strings[i].match(/\n[\t ]+/g)) {
+          matches.push.apply(matches, match);
+        }
+      }
+      if (matches.length) {
+        var size = Math.min.apply(Math, matches.map(function(value) {
+          return value.length - 1;
+        }));
+        var pattern = new RegExp("\n[	 ]{" + size + "}", "g");
+        for (var i = 0; i < strings.length; i++) {
+          strings[i] = strings[i].replace(pattern, "\n");
+        }
+      }
+      strings[0] = strings[0].replace(/^\r?\n/, "");
+      var string = strings[0];
+      for (var i = 0; i < values2.length; i++) {
+        string += values2[i] + strings[i + 1];
+      }
+      return string;
+    };
+  }
+});
+
 // node_modules/langium/lib/default-module.js
 var import_vscode_languageserver28 = __toESM(require_main4(), 1);
 
@@ -33706,7 +33742,7 @@ var Proposition = "Proposition";
 var Statement = "Statement";
 var JavaScriptPropositionalLaboratoryFormatAstReflection = class extends AbstractAstReflection {
   getAllTypes() {
-    return ["AndExpression", "Concern", "Condition", "DisableClause", "DisableStatement", "Group", "Model", "Negation", "OrExpression", "Proposition", "PropositionalExpression", "RaisingConcern", "Referenceable", "Statement", "ValueClause", "WhenCondition"];
+    return ["AndExpression", "Concern", "Condition", "DisableClause", "DisableStatement", "FormattedString", "Group", "LaboratoryInformation", "Model", "Negation", "OrExpression", "Proposition", "PropositionalExpression", "RaisingConcern", "Referenceable", "Statement", "ValueClause", "WhenCondition"];
   }
   computeIsSubtype(subtype, supertype) {
     switch (subtype) {
@@ -33747,6 +33783,19 @@ var JavaScriptPropositionalLaboratoryFormatAstReflection = class extends Abstrac
           name: "DisableClause",
           mandatory: [
             { name: "statements", type: "array" }
+          ]
+        };
+      }
+      case "LaboratoryInformation": {
+        return {
+          name: "LaboratoryInformation",
+          mandatory: [
+            { name: "authors", type: "array" },
+            { name: "descriptions", type: "array" },
+            { name: "formats", type: "array" },
+            { name: "icons", type: "array" },
+            { name: "titles", type: "array" },
+            { name: "versions", type: "array" }
           ]
         };
       }
@@ -33810,48 +33859,343 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "name": "Model",
       "entry": true,
       "definition": {
-        "$type": "Alternatives",
+        "$type": "Group",
         "elements": [
           {
             "$type": "Assignment",
-            "feature": "concerns",
-            "operator": "+=",
+            "feature": "laboratory",
+            "operator": "=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@1"
+                "$ref": "#/rules@9"
               },
               "arguments": []
-            }
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Alternatives",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "concerns",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@10"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "conditions",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@20"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "propositions",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@25"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "BOOLEAN",
+      "type": {
+        "$type": "ReturnType",
+        "name": "boolean"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/True|False/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "ML_STRING_FORMAT",
+      "type": {
+        "$type": "ReturnType",
+        "name": "string"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/MD|HTML/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "ID",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/[_a-zA-Z][\\\\w_]*/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "STRING",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/\\"(\\\\\\\\.|[^\\"\\\\\\\\])*\\"|'(\\\\\\\\.|[^'\\\\\\\\])*'/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "hidden": true,
+      "name": "WS",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/\\\\s+/"
+      },
+      "fragment": false
+    },
+    {
+      "$type": "TerminalRule",
+      "hidden": true,
+      "name": "ML_COMMENT",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/\\\\/\\\\*[\\\\s\\\\S]*?\\\\*\\\\//"
+      },
+      "fragment": false
+    },
+    {
+      "$type": "TerminalRule",
+      "hidden": true,
+      "name": "SL_COMMENT",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/\\\\/\\\\/[^\\\\n\\\\r]*/"
+      },
+      "fragment": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "FormattedString",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "format",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
           },
           {
             "$type": "Assignment",
-            "feature": "conditions",
-            "operator": "+=",
+            "feature": "contents",
+            "operator": "=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@11"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "propositions",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@16"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
           }
-        ],
-        "cardinality": "*"
+        ]
       },
       "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "LaboratoryInformation",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "laboratory"
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Alternatives",
+            "elements": [
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "title"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "titles",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "description"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "descriptions",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@8"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "icon"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "icons",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "format"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "formats",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@2"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "author"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "authors",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "version"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "versions",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
       "fragment": false,
       "hiddenTokens": [],
       "parameters": [],
@@ -33874,7 +34218,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -33894,7 +34238,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -33910,7 +34254,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@8"
               },
               "arguments": []
             }
@@ -33934,7 +34278,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "definition": {
         "$type": "RuleCall",
         "rule": {
-          "$ref": "#/rules@3"
+          "$ref": "#/rules@12"
         },
         "arguments": []
       },
@@ -33958,7 +34302,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@4"
+              "$ref": "#/rules@13"
             },
             "arguments": []
           },
@@ -33985,7 +34329,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@4"
+                    "$ref": "#/rules@13"
                   },
                   "arguments": []
                 }
@@ -34015,7 +34359,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@5"
+              "$ref": "#/rules@14"
             },
             "arguments": []
           },
@@ -34042,7 +34386,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@5"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -34072,21 +34416,21 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@9"
+              "$ref": "#/rules@18"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@6"
+              "$ref": "#/rules@15"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@7"
+              "$ref": "#/rules@16"
             },
             "arguments": []
           }
@@ -34116,7 +34460,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -34147,7 +34491,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -34174,14 +34518,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@11"
+              "$ref": "#/rules@20"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@16"
+              "$ref": "#/rules@25"
             },
             "arguments": []
           }
@@ -34207,7 +34551,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@8"
+                "$ref": "#/rules@17"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
               },
               "deprecatedSyntax": false
             }
@@ -34236,14 +34587,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@18"
+                    "$ref": "#/rules@1"
                   },
                   "arguments": []
                 },
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -34276,7 +34627,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -34307,7 +34658,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -34323,7 +34674,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -34354,7 +34705,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@1"
+                "$ref": "#/rules@10"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
               },
               "deprecatedSyntax": false
             }
@@ -34366,7 +34724,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             },
@@ -34411,14 +34769,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@18"
+                    "$ref": "#/rules@1"
                   },
                   "arguments": []
                 },
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -34439,7 +34797,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@12"
+                    "$ref": "#/rules@21"
                   },
                   "arguments": []
                 },
@@ -34478,7 +34836,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -34490,7 +34848,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -34525,7 +34883,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@14"
+                "$ref": "#/rules@23"
               },
               "arguments": []
             },
@@ -34561,7 +34919,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -34581,7 +34939,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -34593,7 +34951,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@13"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             },
@@ -34606,7 +34964,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@15"
+                "$ref": "#/rules@24"
               },
               "arguments": []
             },
@@ -34624,70 +34982,6 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "hiddenTokens": [],
       "parameters": [],
       "wildcard": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "WS",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\s+/"
-      },
-      "fragment": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "BOOLEAN",
-      "type": {
-        "$type": "ReturnType",
-        "name": "boolean"
-      },
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/True|False/"
-      },
-      "fragment": false,
-      "hidden": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "ID",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/[_a-zA-Z][\\\\w_]*/"
-      },
-      "fragment": false,
-      "hidden": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "STRING",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\"(\\\\\\\\.|[^\\"\\\\\\\\])*\\"|'(\\\\\\\\.|[^'\\\\\\\\])*'/"
-      },
-      "fragment": false,
-      "hidden": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "ML_COMMENT",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\/\\\\*[\\\\s\\\\S]*?\\\\*\\\\//"
-      },
-      "fragment": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "SL_COMMENT",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\/\\\\/[^\\\\n\\\\r]*/"
-      },
-      "fragment": false
     }
   ],
   "definesHiddenTokens": false,
@@ -34714,6 +35008,7 @@ var JavaScriptPropositionalLaboratoryFormatGeneratedModule = {
 };
 
 // src/util/modelUtil.ts
+var import_dedent_js = __toESM(require_lib(), 1);
 function getReferenceablesInBinaryExpression(expression, output) {
   getReferencablesInExpression(expression.left, output);
   getReferencablesInExpression(expression.right, output);
@@ -34724,6 +35019,8 @@ function getReferenceablesInStatement(statement, output) {
     output.add(reference);
 }
 function getReferencablesInExpression(expression, output) {
+  if (expression === void 0)
+    return;
   switch (expression.$type) {
     case "OrExpression":
       getReferenceablesInBinaryExpression(expression, output);
@@ -34746,6 +35043,41 @@ function getReferencablesInWhenCondition(condition) {
   getReferencablesInExpression(condition.expression, result);
   return result;
 }
+function getAllUsedConcerns(model) {
+  let result = /* @__PURE__ */ new Set();
+  model.propositions.forEach((proposition) => {
+    proposition.valueClauses.forEach((valueClause) => {
+      valueClause.raises.forEach((raisingConcern) => {
+        var _a;
+        if (((_a = raisingConcern.concern) == null ? void 0 : _a.ref) != void 0)
+          result.add(raisingConcern.concern.ref);
+      });
+    });
+  });
+  return result;
+}
+function getAllUsedReferenceables(model) {
+  let result = /* @__PURE__ */ new Set();
+  model.propositions.forEach((proposition) => {
+    proposition.valueClauses.forEach((valueClause) => {
+      valueClause.raises.forEach((raisingConcern) => {
+        if (raisingConcern.condition == void 0)
+          return;
+        getReferencablesInWhenCondition(raisingConcern.condition).forEach((referenceable) => {
+          result.add(referenceable);
+        });
+      });
+    });
+    if (proposition.disable === void 0)
+      return;
+    proposition.disable.statements.forEach((disableStatement) => {
+      getReferencablesInWhenCondition(disableStatement.condition).forEach((referenceable) => {
+        result.add(referenceable);
+      });
+    });
+  });
+  return result;
+}
 
 // src/language/java-script-propositional-laboratory-format-validator.ts
 function registerValidationChecks2(services) {
@@ -34754,21 +35086,33 @@ function registerValidationChecks2(services) {
   const checks = {
     Model: [
       validator.uniqueConcernIdentifiers,
-      validator.uniqueReferenceableIdentifiers
+      validator.uniqueReferenceableIdentifiers,
+      validator.checkForUnusedConcerns,
+      validator.checkForUnusedConditions
     ],
-    Proposition: validator.propositionHasExactlyOneDefaultOrJustOneValue,
-    Condition: validator.noRecursionInConditions
+    Proposition: [
+      validator.propositionHasExactlyOneDefaultOrJustOneValue
+    ],
+    Condition: [
+      validator.noRecursionInConditions
+    ],
+    LaboratoryInformation: [
+      validator.noDuplicateFieldsInLaboratoryInformation
+    ],
+    Statement: [
+      validator.statementReferencesValidValue
+    ]
   };
   registry.register(checks, validator);
 }
 var JavaScriptPropositionalLaboratoryFormatValidator = class {
   uniqueConcernIdentifiers(model, accept) {
     const reported = /* @__PURE__ */ new Set();
-    model.concerns.forEach((conern) => {
-      if (reported.has(conern.name)) {
-        accept("error", `Concern has non-unique name '${conern.name}'.`, { node: conern, property: "name" });
+    model.concerns.forEach((concern) => {
+      if (reported.has(concern.name)) {
+        accept("error", `Concern has non-unique name '${concern.name}'.`, { node: concern, property: "name" });
       }
-      reported.add(conern.name);
+      reported.add(concern.name);
     });
   }
   uniqueReferenceableIdentifiers(model, accept) {
@@ -34777,13 +35121,13 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       if (reported.has(condition.name)) {
         accept(
           "error",
-          `Condition has non-unique name '${condition.name}'. All names of Propositions and Conditions must be uniqued, to be properly referenced.`,
+          `Condition has non-unique name '${condition.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
           { node: condition, property: "name" }
         );
         let original = reported.get(condition.name);
         accept(
           "error",
-          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be uniqued, to be properly referenced.`,
+          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
           { node: original, property: "name" }
         );
       }
@@ -34793,17 +35137,33 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       if (reported.has(proposition.name)) {
         accept(
           "error",
-          `Proposition has non-unique name '${proposition.name}'. All names of Propositions and Conditions must be uniqued, to be properly referenced.`,
+          `Proposition has non-unique name '${proposition.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
           { node: proposition, property: "name" }
         );
         let original = reported.get(proposition.name);
         accept(
           "error",
-          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be uniqued, to be properly referenced.`,
+          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
           { node: original, property: "name" }
         );
       }
       reported.set(proposition.name, proposition);
+    });
+  }
+  checkForUnusedConcerns(model, accept) {
+    const usedConcerns = getAllUsedConcerns(model);
+    model.concerns.forEach((concern) => {
+      if (usedConcerns.has(concern))
+        return;
+      accept("warning", "Concern is defined, but never used.", { node: concern, property: "name" });
+    });
+  }
+  checkForUnusedConditions(model, accept) {
+    const usedReferenceables = getAllUsedReferenceables(model);
+    model.conditions.forEach((condition) => {
+      if (usedReferenceables.has(condition))
+        return;
+      accept("warning", "Condition is defined, but never used.", { node: condition, property: "name" });
     });
   }
   propositionHasExactlyOneDefaultOrJustOneValue(proposition, accept) {
@@ -34838,6 +35198,45 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       if (referenceable.name === name)
         accept("error", `Recursion is not allowed here.`, { node: condition, property: "name" });
     });
+  }
+  noDuplicateFieldsInLaboratoryInformation(information, accept) {
+    if (information.descriptions.length > 1)
+      accept("error", "Multiple descriptions for one laboratory are not allowed.", { node: information });
+    if (information.titles.length > 1)
+      accept("error", "Multiple titles for one laboratory are not allowed.", { node: information });
+    if (information.icons.length > 1)
+      accept("error", "Multiple icons for one laboratory are not allowed.", { node: information });
+    if (information.formats.length > 1)
+      accept("error", "Multiple default formats for one laboratory are not allowed.", { node: information });
+    if (information.authors.length > 1)
+      accept("error", "Multiple authors for one laboratory are not allowed.", { node: information });
+    if (information.versions.length > 1)
+      accept("error", "Multiple versions for one laboratory are not allowed.", { node: information });
+  }
+  statementReferencesValidValue(statement, accept) {
+    if (statement === void 0)
+      return;
+    if (statement.value === void 0)
+      return;
+    if (statement.reference === void 0)
+      return;
+    if (statement.reference.ref === void 0)
+      return;
+    const referenceable = statement.reference.ref;
+    const value = statement.value;
+    if (referenceable.$type === "Condition") {
+      if (typeof value === "boolean")
+        return;
+      accept("error", "Stated value is not a valid value of the referenced object.", { node: statement, property: "value" });
+      return;
+    }
+    const proposition = referenceable;
+    if (proposition.valueClauses === void 0)
+      return;
+    const foundValue = proposition.valueClauses.map((clause) => clause.value).find((defined) => defined === value);
+    if (foundValue !== void 0)
+      return;
+    accept("error", "Stated value is not a valid value of the referenced object.", { node: statement, property: "value" });
   }
 };
 

@@ -4,10 +4,11 @@
  ******************************************************************************/
 import { AbstractAstReflection } from 'langium';
 export const JavaScriptPropositionalLaboratoryFormatTerminals = {
-    WS: /\s+/,
     BOOLEAN: /True|False/,
+    ML_STRING_FORMAT: /MD|HTML/,
     ID: /[_a-zA-Z][\w_]*/,
     STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/,
+    WS: /\s+/,
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
 };
@@ -39,9 +40,17 @@ export const DisableStatement = 'DisableStatement';
 export function isDisableStatement(item) {
     return reflection.isInstance(item, DisableStatement);
 }
+export const FormattedString = 'FormattedString';
+export function isFormattedString(item) {
+    return reflection.isInstance(item, FormattedString);
+}
 export const Group = 'Group';
 export function isGroup(item) {
     return reflection.isInstance(item, Group);
+}
+export const LaboratoryInformation = 'LaboratoryInformation';
+export function isLaboratoryInformation(item) {
+    return reflection.isInstance(item, LaboratoryInformation);
 }
 export const Model = 'Model';
 export function isModel(item) {
@@ -77,7 +86,7 @@ export function isWhenCondition(item) {
 }
 export class JavaScriptPropositionalLaboratoryFormatAstReflection extends AbstractAstReflection {
     getAllTypes() {
-        return ['AndExpression', 'Concern', 'Condition', 'DisableClause', 'DisableStatement', 'Group', 'Model', 'Negation', 'OrExpression', 'Proposition', 'PropositionalExpression', 'RaisingConcern', 'Referenceable', 'Statement', 'ValueClause', 'WhenCondition'];
+        return ['AndExpression', 'Concern', 'Condition', 'DisableClause', 'DisableStatement', 'FormattedString', 'Group', 'LaboratoryInformation', 'Model', 'Negation', 'OrExpression', 'Proposition', 'PropositionalExpression', 'RaisingConcern', 'Referenceable', 'Statement', 'ValueClause', 'WhenCondition'];
     }
     computeIsSubtype(subtype, supertype) {
         switch (subtype) {
@@ -118,6 +127,19 @@ export class JavaScriptPropositionalLaboratoryFormatAstReflection extends Abstra
                     name: 'DisableClause',
                     mandatory: [
                         { name: 'statements', type: 'array' }
+                    ]
+                };
+            }
+            case 'LaboratoryInformation': {
+                return {
+                    name: 'LaboratoryInformation',
+                    mandatory: [
+                        { name: 'authors', type: 'array' },
+                        { name: 'descriptions', type: 'array' },
+                        { name: 'formats', type: 'array' },
+                        { name: 'icons', type: 'array' },
+                        { name: 'titles', type: 'array' },
+                        { name: 'versions', type: 'array' }
                     ]
                 };
             }

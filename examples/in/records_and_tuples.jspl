@@ -1,3 +1,12 @@
+laboratory {
+	title "Records and Tuples Laboratory 🔬"
+	description MD "🏗 Work in progress - [raise issue](https://github.com/acutmore/record-tuple-laboratory/issues/new)"
+	icon "./res/favicon.svg"
+	author "Ashley Claymore"
+	format HTML
+	version "2"
+}
+
 concern withoutBox {
     summary 
         "complexity moved to ecosystem"
@@ -528,28 +537,4 @@ proposition tupleWithBoxAsArgumentForNewProxy {
     }
 }
 
-proposition testingThisAndTHAT {
-	expression "Run you fools!!!!!"
-	default value True
-}
 
-proposition testingThisAndTHAT2 {
-	expression "Keep RUNNING!!!!"
-	default value True
-	value False
-}
-
-proposition testingThisAndTHAT3 {
-	expression "Keep RUNNING!!!!"
-	default value True
-	value False
-}
-
-proposition testForMultipleConcerns {
-	expression "Multiple Concerns?"
-	value True
-	default value False {
-		raise recordProxies
-		raise proxyThrowTypeofObject
-	}
-}

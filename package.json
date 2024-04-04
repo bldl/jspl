@@ -1,12 +1,24 @@
 {
     "name": "jspl-javascript-propositional-laboratory",
     "displayName": "JSPL: JavaScript Propositional Laboratory",
-    "description": "Provides support for the JavaScript Propositional Laboratory Format (JSPL), a format developed for Ecma-/JS-Developers, to be used for discussing contentious features of proposals.",
-    "version": "0.0.1",
+    "description": "Support for writing JavaScript Proposal Laboratories",
+    "version": "0.5.4",
+    "publisher": "PhilippRiemer",
+    "license": "SEE LICENSE IN LICENSE.txt",
     "icon": "icon.png",
+    "galleryBanner": {
+        "color": "#232323",
+        "theme": "dark"
+    },
     "repository": {
+        "type": "git",
         "url": "https://gitlab.com/phirie/jspl"
     },
+    "bugs": {
+        "url": "https://gitlab.com/phirie/jspl/-/issues"
+    },
+    "homepage": "https://gitlab.com/phirie/jspl",
+    "categories": ["Programming Languages"],
     "files": [
         "bin",
         "templates"
@@ -22,8 +34,10 @@
         "esbuild-base": "esbuild ./src/extension/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node"
     },
     "dependencies": {
+        "@ts-stack/markdown": "^1.5.0",
         "chalk": "~5.3.0",
         "commander": "~11.0.0",
+        "dedent-js": "^1.0.1",
         "langium": "~2.1.0",
         "vscode-languageclient": "~9.0.1",
         "vscode-languageserver": "~9.0.1"
@@ -43,9 +57,6 @@
         "vscode": "^1.67.0",
         "node": ">=16.0.0"
     },
-    "categories": [
-        "Programming Languages"
-    ],
     "contributes": {
         "languages": [
             {

@@ -21211,6 +21211,42 @@ ${stack}`);
   }
 });
 
+// node_modules/dedent-js/lib/index.js
+var require_lib = __commonJS({
+  "node_modules/dedent-js/lib/index.js"(exports2, module2) {
+    module2.exports = function dedent2(templateStrings) {
+      var values2 = [];
+      for (var _i = 1; _i < arguments.length; _i++) {
+        values2[_i - 1] = arguments[_i];
+      }
+      var matches = [];
+      var strings = typeof templateStrings === "string" ? [templateStrings] : templateStrings.slice();
+      strings[strings.length - 1] = strings[strings.length - 1].replace(/\r?\n([\t ]*)$/, "");
+      for (var i = 0; i < strings.length; i++) {
+        var match = void 0;
+        if (match = strings[i].match(/\n[\t ]+/g)) {
+          matches.push.apply(matches, match);
+        }
+      }
+      if (matches.length) {
+        var size = Math.min.apply(Math, matches.map(function(value) {
+          return value.length - 1;
+        }));
+        var pattern = new RegExp("\n[	 ]{" + size + "}", "g");
+        for (var i = 0; i < strings.length; i++) {
+          strings[i] = strings[i].replace(pattern, "\n");
+        }
+      }
+      strings[0] = strings[0].replace(/^\r?\n/, "");
+      var string = strings[0];
+      for (var i = 0; i < values2.length; i++) {
+        string += values2[i] + strings[i + 1];
+      }
+      return string;
+    };
+  }
+});
+
 // src/extension/main.ts
 var main_exports = {};
 __export(main_exports, {
@@ -45627,7 +45663,7 @@ var Proposition = "Proposition";
 var Statement = "Statement";
 var JavaScriptPropositionalLaboratoryFormatAstReflection = class extends AbstractAstReflection {
   getAllTypes() {
-    return ["AndExpression", "Concern", "Condition", "DisableClause", "DisableStatement", "Group", "Model", "Negation", "OrExpression", "Proposition", "PropositionalExpression", "RaisingConcern", "Referenceable", "Statement", "ValueClause", "WhenCondition"];
+    return ["AndExpression", "Concern", "Condition", "DisableClause", "DisableStatement", "FormattedString", "Group", "LaboratoryInformation", "Model", "Negation", "OrExpression", "Proposition", "PropositionalExpression", "RaisingConcern", "Referenceable", "Statement", "ValueClause", "WhenCondition"];
   }
   computeIsSubtype(subtype, supertype) {
     switch (subtype) {
@@ -45668,6 +45704,19 @@ var JavaScriptPropositionalLaboratoryFormatAstReflection = class extends Abstrac
           name: "DisableClause",
           mandatory: [
             { name: "statements", type: "array" }
+          ]
+        };
+      }
+      case "LaboratoryInformation": {
+        return {
+          name: "LaboratoryInformation",
+          mandatory: [
+            { name: "authors", type: "array" },
+            { name: "descriptions", type: "array" },
+            { name: "formats", type: "array" },
+            { name: "icons", type: "array" },
+            { name: "titles", type: "array" },
+            { name: "versions", type: "array" }
           ]
         };
       }
@@ -45731,48 +45780,343 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "name": "Model",
       "entry": true,
       "definition": {
-        "$type": "Alternatives",
+        "$type": "Group",
         "elements": [
           {
             "$type": "Assignment",
-            "feature": "concerns",
-            "operator": "+=",
+            "feature": "laboratory",
+            "operator": "=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@1"
+                "$ref": "#/rules@9"
               },
               "arguments": []
-            }
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Alternatives",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "concerns",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@10"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "conditions",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@20"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "propositions",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@25"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "BOOLEAN",
+      "type": {
+        "$type": "ReturnType",
+        "name": "boolean"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/True|False/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "ML_STRING_FORMAT",
+      "type": {
+        "$type": "ReturnType",
+        "name": "string"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/MD|HTML/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "ID",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/[_a-zA-Z][\\\\w_]*/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "STRING",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/\\"(\\\\\\\\.|[^\\"\\\\\\\\])*\\"|'(\\\\\\\\.|[^'\\\\\\\\])*'/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "hidden": true,
+      "name": "WS",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/\\\\s+/"
+      },
+      "fragment": false
+    },
+    {
+      "$type": "TerminalRule",
+      "hidden": true,
+      "name": "ML_COMMENT",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/\\\\/\\\\*[\\\\s\\\\S]*?\\\\*\\\\//"
+      },
+      "fragment": false
+    },
+    {
+      "$type": "TerminalRule",
+      "hidden": true,
+      "name": "SL_COMMENT",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/\\\\/\\\\/[^\\\\n\\\\r]*/"
+      },
+      "fragment": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "FormattedString",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "format",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
           },
           {
             "$type": "Assignment",
-            "feature": "conditions",
-            "operator": "+=",
+            "feature": "contents",
+            "operator": "=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@11"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "propositions",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@16"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
           }
-        ],
-        "cardinality": "*"
+        ]
       },
       "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "LaboratoryInformation",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "laboratory"
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Alternatives",
+            "elements": [
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "title"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "titles",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "description"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "descriptions",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@8"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "icon"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "icons",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "format"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "formats",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@2"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "author"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "authors",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "version"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "versions",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
       "fragment": false,
       "hiddenTokens": [],
       "parameters": [],
@@ -45795,7 +46139,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -45815,7 +46159,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -45831,7 +46175,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@8"
               },
               "arguments": []
             }
@@ -45855,7 +46199,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "definition": {
         "$type": "RuleCall",
         "rule": {
-          "$ref": "#/rules@3"
+          "$ref": "#/rules@12"
         },
         "arguments": []
       },
@@ -45879,7 +46223,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@4"
+              "$ref": "#/rules@13"
             },
             "arguments": []
           },
@@ -45906,7 +46250,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@4"
+                    "$ref": "#/rules@13"
                   },
                   "arguments": []
                 }
@@ -45936,7 +46280,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@5"
+              "$ref": "#/rules@14"
             },
             "arguments": []
           },
@@ -45963,7 +46307,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@5"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -45993,21 +46337,21 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@9"
+              "$ref": "#/rules@18"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@6"
+              "$ref": "#/rules@15"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@7"
+              "$ref": "#/rules@16"
             },
             "arguments": []
           }
@@ -46037,7 +46381,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -46068,7 +46412,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -46095,14 +46439,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@11"
+              "$ref": "#/rules@20"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@16"
+              "$ref": "#/rules@25"
             },
             "arguments": []
           }
@@ -46128,7 +46472,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@8"
+                "$ref": "#/rules@17"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
               },
               "deprecatedSyntax": false
             }
@@ -46157,14 +46508,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@18"
+                    "$ref": "#/rules@1"
                   },
                   "arguments": []
                 },
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -46197,7 +46548,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@2"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -46228,7 +46579,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -46244,7 +46595,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -46275,7 +46626,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@1"
+                "$ref": "#/rules@10"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
               },
               "deprecatedSyntax": false
             }
@@ -46287,7 +46645,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             },
@@ -46332,14 +46690,14 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@18"
+                    "$ref": "#/rules@1"
                   },
                   "arguments": []
                 },
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@4"
                   },
                   "arguments": []
                 }
@@ -46360,7 +46718,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@12"
+                    "$ref": "#/rules@21"
                   },
                   "arguments": []
                 },
@@ -46399,7 +46757,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -46411,7 +46769,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@19"
               },
               "arguments": []
             }
@@ -46446,7 +46804,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@14"
+                "$ref": "#/rules@23"
               },
               "arguments": []
             },
@@ -46482,7 +46840,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             }
@@ -46502,7 +46860,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             }
@@ -46514,7 +46872,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@13"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             },
@@ -46527,7 +46885,7 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@15"
+                "$ref": "#/rules@24"
               },
               "arguments": []
             },
@@ -46545,70 +46903,6 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
       "hiddenTokens": [],
       "parameters": [],
       "wildcard": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "WS",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\s+/"
-      },
-      "fragment": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "BOOLEAN",
-      "type": {
-        "$type": "ReturnType",
-        "name": "boolean"
-      },
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/True|False/"
-      },
-      "fragment": false,
-      "hidden": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "ID",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/[_a-zA-Z][\\\\w_]*/"
-      },
-      "fragment": false,
-      "hidden": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "STRING",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\"(\\\\\\\\.|[^\\"\\\\\\\\])*\\"|'(\\\\\\\\.|[^'\\\\\\\\])*'/"
-      },
-      "fragment": false,
-      "hidden": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "ML_COMMENT",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\/\\\\*[\\\\s\\\\S]*?\\\\*\\\\//"
-      },
-      "fragment": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "SL_COMMENT",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\/\\\\/[^\\\\n\\\\r]*/"
-      },
-      "fragment": false
     }
   ],
   "definesHiddenTokens": false,
@@ -46635,6 +46929,1058 @@ var JavaScriptPropositionalLaboratoryFormatGeneratedModule = {
 };
 
 // src/util/modelUtil.ts
+var import_dedent_js = __toESM(require_lib(), 1);
+
+// node_modules/@ts-stack/markdown/fesm2022/ts-stack-markdown.mjs
+var ExtendRegexp = class {
+  constructor(regex, flags = "") {
+    __publicField(this, "source");
+    __publicField(this, "flags");
+    this.source = regex.source;
+    this.flags = flags;
+  }
+  /**
+   * Extend regular expression.
+   *
+   * @param groupName Regular expression for search a group name.
+   * @param groupRegexp Regular expression of named group.
+   */
+  setGroup(groupName, groupRegexp) {
+    let newRegexp = typeof groupRegexp == "string" ? groupRegexp : groupRegexp.source;
+    newRegexp = newRegexp.replace(/(^|[^\[])\^/g, "$1");
+    this.source = this.source.replace(groupName, newRegexp);
+    return this;
+  }
+  /**
+   * Returns a result of extending a regular expression.
+   */
+  getRegexp() {
+    return new RegExp(this.source, this.flags);
+  }
+};
+var escapeTest = /[&<>"']/;
+var escapeReplace = /[&<>"']/g;
+var replacements = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  // tslint:disable-next-line:quotemark
+  "'": "&#39;"
+};
+var escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/;
+var escapeReplaceNoEncode = /[<>"']|&(?!#?\w+;)/g;
+function escape(html, encode) {
+  if (encode) {
+    if (escapeTest.test(html)) {
+      return html.replace(escapeReplace, (ch) => replacements[ch]);
+    }
+  } else {
+    if (escapeTestNoEncode.test(html)) {
+      return html.replace(escapeReplaceNoEncode, (ch) => replacements[ch]);
+    }
+  }
+  return html;
+}
+function unescape(html) {
+  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi, function(_2, n) {
+    n = n.toLowerCase();
+    if (n === "colon") {
+      return ":";
+    }
+    if (n.charAt(0) === "#") {
+      return n.charAt(1) === "x" ? String.fromCharCode(parseInt(n.substring(2), 16)) : String.fromCharCode(+n.substring(1));
+    }
+    return "";
+  });
+}
+var TokenType;
+(function(TokenType2) {
+  TokenType2[TokenType2["space"] = 1] = "space";
+  TokenType2[TokenType2["text"] = 2] = "text";
+  TokenType2[TokenType2["paragraph"] = 3] = "paragraph";
+  TokenType2[TokenType2["heading"] = 4] = "heading";
+  TokenType2[TokenType2["listStart"] = 5] = "listStart";
+  TokenType2[TokenType2["listEnd"] = 6] = "listEnd";
+  TokenType2[TokenType2["looseItemStart"] = 7] = "looseItemStart";
+  TokenType2[TokenType2["looseItemEnd"] = 8] = "looseItemEnd";
+  TokenType2[TokenType2["listItemStart"] = 9] = "listItemStart";
+  TokenType2[TokenType2["listItemEnd"] = 10] = "listItemEnd";
+  TokenType2[TokenType2["blockquoteStart"] = 11] = "blockquoteStart";
+  TokenType2[TokenType2["blockquoteEnd"] = 12] = "blockquoteEnd";
+  TokenType2[TokenType2["code"] = 13] = "code";
+  TokenType2[TokenType2["table"] = 14] = "table";
+  TokenType2[TokenType2["html"] = 15] = "html";
+  TokenType2[TokenType2["hr"] = 16] = "hr";
+})(TokenType || (TokenType = {}));
+var MarkedOptions = class {
+  constructor() {
+    __publicField(this, "gfm", true);
+    __publicField(this, "tables", true);
+    __publicField(this, "breaks", false);
+    __publicField(this, "pedantic", false);
+    __publicField(this, "sanitize", false);
+    __publicField(this, "sanitizer");
+    __publicField(this, "mangle", true);
+    __publicField(this, "smartLists", false);
+    __publicField(this, "silent", false);
+    /**
+     * @param code The section of code to pass to the highlighter.
+     * @param lang The programming language specified in the code block.
+     */
+    __publicField(this, "highlight");
+    __publicField(this, "langPrefix", "lang-");
+    __publicField(this, "smartypants", false);
+    __publicField(this, "headerPrefix", "");
+    /**
+     * An object containing functions to render tokens to HTML. Default: `new Renderer()`
+     */
+    __publicField(this, "renderer");
+    /**
+     * Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.)
+     * with a "/" as required by XHTML.
+     */
+    __publicField(this, "xhtml", false);
+    /**
+     * The function that will be using to escape HTML entities.
+     * By default using inner helper.
+     */
+    __publicField(this, "escape", escape);
+    /**
+     * The function that will be using to unescape HTML entities.
+     * By default using inner helper.
+     */
+    __publicField(this, "unescape", unescape);
+    /**
+     * If set to `true`, an inline text will not be taken in paragraph.
+     *
+     * ```ts
+     * // isNoP == false
+     * Marked.parse('some text'); // returns '<p>some text</p>'
+     *
+     * Marked.setOptions({isNoP: true});
+     *
+     * Marked.parse('some text'); // returns 'some text'
+     * ```
+     */
+    __publicField(this, "isNoP");
+  }
+};
+var Renderer = class {
+  constructor(options) {
+    __publicField(this, "options");
+    this.options = options || Marked.options;
+  }
+  code(code, lang, escaped, meta) {
+    if (this.options.highlight) {
+      const out = this.options.highlight(code, lang);
+      if (out != null && out !== code) {
+        escaped = true;
+        code = out;
+      }
+    }
+    const escapedCode = escaped ? code : this.options.escape(code, true);
+    if (!lang) {
+      return `
+<pre><code>${escapedCode}
+</code></pre>
+`;
+    }
+    const className = this.options.langPrefix + this.options.escape(lang, true);
+    return `
+<pre><code class="${className}">${escapedCode}
+</code></pre>
+`;
+  }
+  blockquote(quote) {
+    return `<blockquote>
+${quote}</blockquote>
+`;
+  }
+  html(html) {
+    return html;
+  }
+  heading(text, level, raw) {
+    const id = this.options.headerPrefix + raw.toLowerCase().replace(/[^\w]+/g, "-");
+    return `<h${level} id="${id}">${text}</h${level}>
+`;
+  }
+  hr() {
+    return this.options.xhtml ? "<hr/>\n" : "<hr>\n";
+  }
+  list(body, ordered) {
+    const type = ordered ? "ol" : "ul";
+    return `
+<${type}>
+${body}</${type}>
+`;
+  }
+  listitem(text) {
+    return "<li>" + text + "</li>\n";
+  }
+  paragraph(text) {
+    return "<p>" + text + "</p>\n";
+  }
+  table(header, body) {
+    return `
+<table>
+<thead>
+${header}</thead>
+<tbody>
+${body}</tbody>
+</table>
+`;
+  }
+  tablerow(content) {
+    return "<tr>\n" + content + "</tr>\n";
+  }
+  tablecell(content, flags) {
+    const type = flags.header ? "th" : "td";
+    const tag = flags.align ? "<" + type + ' style="text-align:' + flags.align + '">' : "<" + type + ">";
+    return tag + content + "</" + type + ">\n";
+  }
+  // *** Inline level renderer methods. ***
+  strong(text) {
+    return "<strong>" + text + "</strong>";
+  }
+  em(text) {
+    return "<em>" + text + "</em>";
+  }
+  codespan(text) {
+    return "<code>" + text + "</code>";
+  }
+  br() {
+    return this.options.xhtml ? "<br/>" : "<br>";
+  }
+  del(text) {
+    return "<del>" + text + "</del>";
+  }
+  link(href, title, text) {
+    if (this.options.sanitize) {
+      let prot;
+      try {
+        prot = decodeURIComponent(this.options.unescape(href)).replace(/[^\w:]/g, "").toLowerCase();
+      } catch (e) {
+        return text;
+      }
+      if (prot.indexOf("javascript:") === 0 || prot.indexOf("vbscript:") === 0 || prot.indexOf("data:") === 0) {
+        return text;
+      }
+    }
+    let out = '<a href="' + href + '"';
+    if (title) {
+      out += ' title="' + title + '"';
+    }
+    out += ">" + text + "</a>";
+    return out;
+  }
+  image(href, title, text) {
+    let out = '<img src="' + href + '" alt="' + text + '"';
+    if (title) {
+      out += ' title="' + title + '"';
+    }
+    out += this.options.xhtml ? "/>" : ">";
+    return out;
+  }
+  text(text) {
+    return text;
+  }
+};
+var InlineLexer = class {
+  constructor(staticThis, links, options = Marked.options, renderer) {
+    __publicField(this, "staticThis");
+    __publicField(this, "links");
+    __publicField(this, "options");
+    __publicField(this, "rules");
+    __publicField(this, "renderer");
+    __publicField(this, "inLink");
+    __publicField(this, "hasRulesGfm");
+    __publicField(this, "ruleCallbacks");
+    this.staticThis = staticThis;
+    this.links = links;
+    this.options = options;
+    this.renderer = renderer || this.options.renderer || new Renderer(this.options);
+    if (!this.links) {
+      throw new Error("InlineLexer requires 'links' parameter.");
+    }
+    this.setRules();
+  }
+  /**
+   * Static Lexing/Compiling Method.
+   */
+  static output(src, links, options) {
+    const inlineLexer = new this(this, links, options);
+    return inlineLexer.output(src);
+  }
+  static getRulesBase() {
+    if (this.rulesBase) {
+      return this.rulesBase;
+    }
+    const base = {
+      escape: /^\\([\\`*{}\[\]()#+\-.!_>])/,
+      autolink: /^<([^ <>]+(@|:\/)[^ <>]+)>/,
+      tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^<'">])*?>/,
+      link: /^!?\[(inside)\]\(href\)/,
+      reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
+      nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
+      strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+      em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+      code: /^(`+)([\s\S]*?[^`])\1(?!`)/,
+      br: /^ {2,}\n(?!\s*$)/,
+      text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/,
+      _inside: /(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/,
+      _href: /\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/
+    };
+    base.link = new ExtendRegexp(base.link).setGroup("inside", base._inside).setGroup("href", base._href).getRegexp();
+    base.reflink = new ExtendRegexp(base.reflink).setGroup("inside", base._inside).getRegexp();
+    return this.rulesBase = base;
+  }
+  static getRulesPedantic() {
+    if (this.rulesPedantic) {
+      return this.rulesPedantic;
+    }
+    return this.rulesPedantic = __spreadValues(__spreadValues({}, this.getRulesBase()), {
+      strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
+      em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/
+    });
+  }
+  static getRulesGfm() {
+    if (this.rulesGfm) {
+      return this.rulesGfm;
+    }
+    const base = this.getRulesBase();
+    const escape2 = new ExtendRegexp(base.escape).setGroup("])", "~|])").getRegexp();
+    const text = new ExtendRegexp(base.text).setGroup("]|", "~]|").setGroup("|", "|https?://|").getRegexp();
+    return this.rulesGfm = __spreadValues(__spreadValues({}, base), {
+      escape: escape2,
+      url: /^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,
+      del: /^~~(?=\S)([\s\S]*?\S)~~/,
+      text
+    });
+  }
+  static getRulesBreaks() {
+    if (this.rulesBreaks) {
+      return this.rulesBreaks;
+    }
+    const inline = this.getRulesGfm();
+    const gfm = this.getRulesGfm();
+    return this.rulesBreaks = __spreadValues(__spreadValues({}, gfm), {
+      br: new ExtendRegexp(inline.br).setGroup("{2,}", "*").getRegexp(),
+      text: new ExtendRegexp(gfm.text).setGroup("{2,}", "*").getRegexp()
+    });
+  }
+  setRules() {
+    if (this.options.gfm) {
+      if (this.options.breaks) {
+        this.rules = this.staticThis.getRulesBreaks();
+      } else {
+        this.rules = this.staticThis.getRulesGfm();
+      }
+    } else if (this.options.pedantic) {
+      this.rules = this.staticThis.getRulesPedantic();
+    } else {
+      this.rules = this.staticThis.getRulesBase();
+    }
+    this.hasRulesGfm = this.rules.url !== void 0;
+  }
+  /**
+   * Lexing/Compiling.
+   */
+  output(nextPart) {
+    let execArr;
+    let out = "";
+    while (nextPart) {
+      if (execArr = this.rules.escape.exec(nextPart)) {
+        nextPart = nextPart.substring(execArr[0].length);
+        out += execArr[1];
+        continue;
+      }
+      if (execArr = this.rules.autolink.exec(nextPart)) {
+        let text;
+        let href;
+        nextPart = nextPart.substring(execArr[0].length);
+        if (execArr[2] === "@") {
+          text = this.options.escape(execArr[1].charAt(6) === ":" ? this.mangle(execArr[1].substring(7)) : this.mangle(execArr[1]));
+          href = this.mangle("mailto:") + text;
+        } else {
+          text = this.options.escape(execArr[1]);
+          href = text;
+        }
+        out += this.renderer.link(href, null, text);
+        continue;
+      }
+      if (!this.inLink && this.hasRulesGfm && (execArr = this.rules.url.exec(nextPart))) {
+        nextPart = nextPart.substring(execArr[0].length);
+        const text = this.options.escape(execArr[1]);
+        const href = text;
+        out += this.renderer.link(href, null, text);
+        continue;
+      }
+      if (execArr = this.rules.tag.exec(nextPart)) {
+        if (!this.inLink && /^<a /i.test(execArr[0])) {
+          this.inLink = true;
+        } else if (this.inLink && /^<\/a>/i.test(execArr[0])) {
+          this.inLink = false;
+        }
+        nextPart = nextPart.substring(execArr[0].length);
+        out += this.options.sanitize ? this.options.sanitizer ? this.options.sanitizer(execArr[0]) : this.options.escape(execArr[0]) : execArr[0];
+        continue;
+      }
+      if (execArr = this.rules.link.exec(nextPart)) {
+        nextPart = nextPart.substring(execArr[0].length);
+        this.inLink = true;
+        out += this.outputLink(execArr, {
+          href: execArr[2],
+          title: execArr[3]
+        });
+        this.inLink = false;
+        continue;
+      }
+      if ((execArr = this.rules.reflink.exec(nextPart)) || (execArr = this.rules.nolink.exec(nextPart))) {
+        nextPart = nextPart.substring(execArr[0].length);
+        const keyLink = (execArr[2] || execArr[1]).replace(/\s+/g, " ");
+        const link = this.links[keyLink.toLowerCase()];
+        if (!link || !link.href) {
+          out += execArr[0].charAt(0);
+          nextPart = execArr[0].substring(1) + nextPart;
+          continue;
+        }
+        this.inLink = true;
+        out += this.outputLink(execArr, link);
+        this.inLink = false;
+        continue;
+      }
+      if (execArr = this.rules.strong.exec(nextPart)) {
+        nextPart = nextPart.substring(execArr[0].length);
+        out += this.renderer.strong(this.output(execArr[2] || execArr[1]));
+        continue;
+      }
+      if (execArr = this.rules.em.exec(nextPart)) {
+        nextPart = nextPart.substring(execArr[0].length);
+        out += this.renderer.em(this.output(execArr[2] || execArr[1]));
+        continue;
+      }
+      if (execArr = this.rules.code.exec(nextPart)) {
+        nextPart = nextPart.substring(execArr[0].length);
+        out += this.renderer.codespan(this.options.escape(execArr[2].trim(), true));
+        continue;
+      }
+      if (execArr = this.rules.br.exec(nextPart)) {
+        nextPart = nextPart.substring(execArr[0].length);
+        out += this.renderer.br();
+        continue;
+      }
+      if (this.hasRulesGfm && (execArr = this.rules.del.exec(nextPart))) {
+        nextPart = nextPart.substring(execArr[0].length);
+        out += this.renderer.del(this.output(execArr[1]));
+        continue;
+      }
+      if (execArr = this.rules.text.exec(nextPart)) {
+        nextPart = nextPart.substring(execArr[0].length);
+        out += this.renderer.text(this.options.escape(this.smartypants(execArr[0])));
+        continue;
+      }
+      if (nextPart) {
+        throw new Error("Infinite loop on byte: " + nextPart.charCodeAt(0));
+      }
+    }
+    return out;
+  }
+  /**
+   * Compile Link.
+   */
+  outputLink(execArr, link) {
+    const href = this.options.escape(link.href);
+    const title = link.title ? this.options.escape(link.title) : null;
+    return execArr[0].charAt(0) !== "!" ? this.renderer.link(href, title, this.output(execArr[1])) : this.renderer.image(href, title, this.options.escape(execArr[1]));
+  }
+  /**
+   * Smartypants Transformations.
+   */
+  smartypants(text) {
+    if (!this.options.smartypants) {
+      return text;
+    }
+    return text.replace(/---/g, "\u2014").replace(/--/g, "\u2013").replace(/(^|[-\u2014/([{"\s])'/g, "$1\u2018").replace(/'/g, "\u2019").replace(/(^|[-\u2014/([{\u2018\s])"/g, "$1\u201C").replace(/"/g, "\u201D").replace(/\.{3}/g, "\u2026");
+  }
+  /**
+   * Mangle Links.
+   */
+  mangle(text) {
+    if (!this.options.mangle) {
+      return text;
+    }
+    let out = "";
+    const length = text.length;
+    for (let i = 0; i < length; i++) {
+      let str;
+      if (Math.random() > 0.5) {
+        str = "x" + text.charCodeAt(i).toString(16);
+      }
+      out += "&#" + str + ";";
+    }
+    return out;
+  }
+};
+__publicField(InlineLexer, "rulesBase", null);
+/**
+ * Pedantic Inline Grammar.
+ */
+__publicField(InlineLexer, "rulesPedantic", null);
+/**
+ * GFM Inline Grammar
+ */
+__publicField(InlineLexer, "rulesGfm", null);
+/**
+ * GFM + Line Breaks Inline Grammar.
+ */
+__publicField(InlineLexer, "rulesBreaks", null);
+var Parser2 = class {
+  constructor(options) {
+    __publicField(this, "simpleRenderers", []);
+    __publicField(this, "tokens");
+    __publicField(this, "token");
+    __publicField(this, "inlineLexer");
+    __publicField(this, "options");
+    __publicField(this, "renderer");
+    __publicField(this, "line", 0);
+    this.tokens = [];
+    this.token = null;
+    this.options = options || Marked.options;
+    this.renderer = this.options.renderer || new Renderer(this.options);
+  }
+  static parse(tokens, links, options) {
+    const parser = new this(options);
+    return parser.parse(links, tokens);
+  }
+  parse(links, tokens) {
+    this.inlineLexer = new InlineLexer(InlineLexer, links, this.options, this.renderer);
+    this.tokens = tokens.reverse();
+    let out = "";
+    while (this.next()) {
+      out += this.tok();
+    }
+    return out;
+  }
+  debug(links, tokens) {
+    this.inlineLexer = new InlineLexer(InlineLexer, links, this.options, this.renderer);
+    this.tokens = tokens.reverse();
+    let out = "";
+    while (this.next()) {
+      const outToken = this.tok();
+      this.token.line = this.line += outToken.split("\n").length - 1;
+      out += outToken;
+    }
+    return out;
+  }
+  next() {
+    return this.token = this.tokens.pop();
+  }
+  getNextElement() {
+    return this.tokens[this.tokens.length - 1];
+  }
+  parseText() {
+    let body = this.token.text;
+    let nextElement;
+    while ((nextElement = this.getNextElement()) && nextElement.type == TokenType.text) {
+      body += "\n" + this.next().text;
+    }
+    return this.inlineLexer.output(body);
+  }
+  tok() {
+    switch (this.token.type) {
+      case TokenType.space: {
+        return "";
+      }
+      case TokenType.paragraph: {
+        return this.renderer.paragraph(this.inlineLexer.output(this.token.text));
+      }
+      case TokenType.text: {
+        if (this.options.isNoP) {
+          return this.parseText();
+        } else {
+          return this.renderer.paragraph(this.parseText());
+        }
+      }
+      case TokenType.heading: {
+        return this.renderer.heading(this.inlineLexer.output(this.token.text), this.token.depth, this.token.text);
+      }
+      case TokenType.listStart: {
+        let body = "";
+        const ordered = this.token.ordered;
+        while (this.next().type != TokenType.listEnd) {
+          body += this.tok();
+        }
+        return this.renderer.list(body, ordered);
+      }
+      case TokenType.listItemStart: {
+        let body = "";
+        while (this.next().type != TokenType.listItemEnd) {
+          body += this.token.type == TokenType.text ? this.parseText() : this.tok();
+        }
+        return this.renderer.listitem(body);
+      }
+      case TokenType.looseItemStart: {
+        let body = "";
+        while (this.next().type != TokenType.listItemEnd) {
+          body += this.tok();
+        }
+        return this.renderer.listitem(body);
+      }
+      case TokenType.code: {
+        return this.renderer.code(this.token.text, this.token.lang, this.token.escaped, this.token.meta);
+      }
+      case TokenType.table: {
+        let header = "";
+        let body = "";
+        let cell;
+        cell = "";
+        for (let i = 0; i < this.token.header.length; i++) {
+          const flags = { header: true, align: this.token.align[i] };
+          const out = this.inlineLexer.output(this.token.header[i]);
+          cell += this.renderer.tablecell(out, flags);
+        }
+        header += this.renderer.tablerow(cell);
+        for (const row of this.token.cells) {
+          cell = "";
+          for (let j = 0; j < row.length; j++) {
+            cell += this.renderer.tablecell(this.inlineLexer.output(row[j]), {
+              header: false,
+              align: this.token.align[j]
+            });
+          }
+          body += this.renderer.tablerow(cell);
+        }
+        return this.renderer.table(header, body);
+      }
+      case TokenType.blockquoteStart: {
+        let body = "";
+        while (this.next().type != TokenType.blockquoteEnd) {
+          body += this.tok();
+        }
+        return this.renderer.blockquote(body);
+      }
+      case TokenType.hr: {
+        return this.renderer.hr();
+      }
+      case TokenType.html: {
+        const html = !this.token.pre && !this.options.pedantic ? this.inlineLexer.output(this.token.text) : this.token.text;
+        return this.renderer.html(html);
+      }
+      default: {
+        if (this.simpleRenderers.length) {
+          for (let i = 0; i < this.simpleRenderers.length; i++) {
+            if (this.token.type == "simpleRule" + (i + 1)) {
+              return this.simpleRenderers[i].call(this.renderer, this.token.execArr);
+            }
+          }
+        }
+        const errMsg = `Token with "${this.token.type}" type was not found.`;
+        if (this.options.silent) {
+          console.log(errMsg);
+        } else {
+          throw new Error(errMsg);
+        }
+      }
+    }
+  }
+};
+var Marked = class {
+  /**
+   * Merges the default options with options that will be set.
+   *
+   * @param options Hash of options.
+   */
+  static setOptions(options) {
+    Object.assign(this.options, options);
+    return this;
+  }
+  /**
+   * Setting simple block rule.
+   */
+  static setBlockRule(regexp, renderer = () => "") {
+    BlockLexer.simpleRules.push(regexp);
+    this.simpleRenderers.push(renderer);
+    return this;
+  }
+  /**
+   * Accepts Markdown text and returns text in HTML format.
+   *
+   * @param src String of markdown source to be compiled.
+   * @param options Hash of options. They replace, but do not merge with the default options.
+   * If you want the merging, you can to do this via `Marked.setOptions()`.
+   */
+  static parse(src, options) {
+    try {
+      options = __spreadValues(__spreadValues({}, this.options), options);
+      const { tokens, links } = this.callBlockLexer(src, options);
+      return this.callParser(tokens, links, options);
+    } catch (e) {
+      return this.callMe(e);
+    }
+  }
+  /**
+   * Accepts Markdown text and returns object with text in HTML format,
+   * tokens and links from `BlockLexer.parser()`.
+   *
+   * @param src String of markdown source to be compiled.
+   * @param options Hash of options. They replace, but do not merge with the default options.
+   * If you want the merging, you can to do this via `Marked.setOptions()`.
+   */
+  static debug(src, options = this.options) {
+    const { tokens, links } = this.callBlockLexer(src, options);
+    let origin = tokens.slice();
+    const parser = new Parser2(options);
+    parser.simpleRenderers = this.simpleRenderers;
+    const result = parser.debug(links, tokens);
+    origin = origin.map((token) => {
+      token.type = TokenType[token.type] || token.type;
+      const line = token.line;
+      delete token.line;
+      if (line) {
+        return __spreadValues(__spreadValues({}, { line }), token);
+      } else {
+        return token;
+      }
+    });
+    return { tokens: origin, links, result };
+  }
+  static callBlockLexer(src = "", options) {
+    if (typeof src != "string") {
+      throw new Error(`Expected that the 'src' parameter would have a 'string' type, got '${typeof src}'`);
+    }
+    src = src.replace(/\r\n|\r/g, "\n").replace(/\t/g, "    ").replace(/\u00a0/g, " ").replace(/\u2424/g, "\n").replace(/^ +$/gm, "");
+    return BlockLexer.lex(src, options, true);
+  }
+  static callParser(tokens, links, options) {
+    if (this.simpleRenderers.length) {
+      const parser = new Parser2(options);
+      parser.simpleRenderers = this.simpleRenderers;
+      return parser.parse(links, tokens);
+    } else {
+      return Parser2.parse(tokens, links, options);
+    }
+  }
+  static callMe(err) {
+    err.message += "\nPlease report this to https://github.com/ts-stack/markdown";
+    if (this.options.silent) {
+      return "<p>An error occured:</p><pre>" + this.options.escape(err.message + "", true) + "</pre>";
+    }
+    throw err;
+  }
+};
+__publicField(Marked, "options", new MarkedOptions());
+__publicField(Marked, "simpleRenderers", []);
+var BlockLexer = class {
+  constructor(staticThis, options) {
+    __publicField(this, "staticThis");
+    __publicField(this, "rules");
+    __publicField(this, "options");
+    __publicField(this, "links", {});
+    __publicField(this, "tokens", []);
+    __publicField(this, "hasRulesGfm");
+    __publicField(this, "hasRulesTables");
+    this.staticThis = staticThis;
+    this.options = options || Marked.options;
+    this.setRules();
+  }
+  /**
+   * Accepts Markdown text and returns object with tokens and links.
+   *
+   * @param src String of markdown source to be compiled.
+   * @param options Hash of options.
+   */
+  static lex(src, options, top, isBlockQuote) {
+    const lexer = new this(this, options);
+    return lexer.getTokens(src, top, isBlockQuote);
+  }
+  static getRulesBase() {
+    if (this.rulesBase) {
+      return this.rulesBase;
+    }
+    const base = {
+      newline: /^\n+/,
+      code: /^( {4}[^\n]+\n*)+/,
+      hr: /^( *[-*_]){3,} *(?:\n+|$)/,
+      heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
+      lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
+      blockquote: /^( *>[^\n]+(\n[^\n]+)*\n*)+/,
+      list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
+      html: /^ *(?:comment *(?:\n|\s*$)|closed *(?:\n{2,}|\s*$)|closing *(?:\n{2,}|\s*$))/,
+      def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
+      paragraph: /^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,
+      text: /^[^\n]+/,
+      bullet: /(?:[*+-]|\d+\.)/,
+      item: /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/
+    };
+    base.item = new ExtendRegexp(base.item, "gm").setGroup(/bull/g, base.bullet).getRegexp();
+    base.list = new ExtendRegexp(base.list).setGroup(/bull/g, base.bullet).setGroup("hr", "\\n+(?=\\1?(?:[-*_] *){3,}(?:\\n+|$))").setGroup("def", "\\n+(?=" + base.def.source + ")").getRegexp();
+    const tag = "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|[^\\w\\s@]*@)\\b";
+    base.html = new ExtendRegexp(base.html).setGroup("comment", /<!--[\s\S]*?-->/).setGroup("closed", /<(tag)[\s\S]+?<\/\1>/).setGroup("closing", /<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/).setGroup(/tag/g, tag).getRegexp();
+    base.paragraph = new ExtendRegexp(base.paragraph).setGroup("hr", base.hr).setGroup("heading", base.heading).setGroup("lheading", base.lheading).setGroup("blockquote", base.blockquote).setGroup("tag", "<" + tag).setGroup("def", base.def).getRegexp();
+    return this.rulesBase = base;
+  }
+  static getRulesGfm() {
+    if (this.rulesGfm) {
+      return this.rulesGfm;
+    }
+    const base = this.getRulesBase();
+    const gfm = __spreadValues(__spreadValues({}, base), {
+      fences: /^ *(`{3,}|~{3,})[ \.]*((\S+)? *[^\n]*)\n([\s\S]*?)\s*\1 *(?:\n+|$)/,
+      paragraph: /^/,
+      heading: /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/
+    });
+    const group1 = gfm.fences.source.replace("\\1", "\\2");
+    const group2 = base.list.source.replace("\\1", "\\3");
+    gfm.paragraph = new ExtendRegexp(base.paragraph).setGroup("(?!", `(?!${group1}|${group2}|`).getRegexp();
+    return this.rulesGfm = gfm;
+  }
+  static getRulesTable() {
+    if (this.rulesTables) {
+      return this.rulesTables;
+    }
+    return this.rulesTables = __spreadValues(__spreadValues({}, this.getRulesGfm()), {
+      nptable: /^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,
+      table: /^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/
+    });
+  }
+  setRules() {
+    if (this.options.gfm) {
+      if (this.options.tables) {
+        this.rules = this.staticThis.getRulesTable();
+      } else {
+        this.rules = this.staticThis.getRulesGfm();
+      }
+    } else {
+      this.rules = this.staticThis.getRulesBase();
+    }
+    this.hasRulesGfm = this.rules.fences !== void 0;
+    this.hasRulesTables = this.rules.table !== void 0;
+  }
+  /**
+   * Lexing.
+   */
+  getTokens(src, top, isBlockQuote) {
+    let nextPart = src;
+    let execArr;
+    mainLoop:
+      while (nextPart) {
+        if (execArr = this.rules.newline.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          if (execArr[0].length > 1) {
+            this.tokens.push({ type: TokenType.space });
+          }
+        }
+        if (execArr = this.rules.code.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          const code = execArr[0].replace(/^ {4}/gm, "");
+          this.tokens.push({
+            type: TokenType.code,
+            text: !this.options.pedantic ? code.replace(/\n+$/, "") : code
+          });
+          continue;
+        }
+        if (this.hasRulesGfm && (execArr = this.rules.fences.exec(nextPart))) {
+          nextPart = nextPart.substring(execArr[0].length);
+          this.tokens.push({
+            type: TokenType.code,
+            meta: execArr[2],
+            lang: execArr[3],
+            text: execArr[4] || ""
+          });
+          continue;
+        }
+        if (execArr = this.rules.heading.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          this.tokens.push({
+            type: TokenType.heading,
+            depth: execArr[1].length,
+            text: execArr[2]
+          });
+          continue;
+        }
+        if (top && this.hasRulesTables && (execArr = this.rules.nptable.exec(nextPart))) {
+          nextPart = nextPart.substring(execArr[0].length);
+          const item = {
+            type: TokenType.table,
+            header: execArr[1].replace(/^ *| *\| *$/g, "").split(/ *\| */),
+            align: execArr[2].replace(/^ *|\| *$/g, "").split(/ *\| */),
+            cells: []
+          };
+          for (let i = 0; i < item.align.length; i++) {
+            if (/^ *-+: *$/.test(item.align[i])) {
+              item.align[i] = "right";
+            } else if (/^ *:-+: *$/.test(item.align[i])) {
+              item.align[i] = "center";
+            } else if (/^ *:-+ *$/.test(item.align[i])) {
+              item.align[i] = "left";
+            } else {
+              item.align[i] = null;
+            }
+          }
+          const td = execArr[3].replace(/\n$/, "").split("\n");
+          for (let i = 0; i < td.length; i++) {
+            item.cells[i] = td[i].split(/ *\| */);
+          }
+          this.tokens.push(item);
+          continue;
+        }
+        if (execArr = this.rules.lheading.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          this.tokens.push({
+            type: TokenType.heading,
+            depth: execArr[2] === "=" ? 1 : 2,
+            text: execArr[1]
+          });
+          continue;
+        }
+        if (execArr = this.rules.hr.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          this.tokens.push({ type: TokenType.hr });
+          continue;
+        }
+        if (execArr = this.rules.blockquote.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          this.tokens.push({ type: TokenType.blockquoteStart });
+          const str = execArr[0].replace(/^ *> ?/gm, "");
+          this.getTokens(str);
+          this.tokens.push({ type: TokenType.blockquoteEnd });
+          continue;
+        }
+        if (execArr = this.rules.list.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          const bull = execArr[2];
+          this.tokens.push({ type: TokenType.listStart, ordered: bull.length > 1 });
+          const str = execArr[0].match(this.rules.item);
+          const length = str.length;
+          let next = false;
+          let space;
+          let blockBullet;
+          let loose;
+          for (let i = 0; i < length; i++) {
+            let item = str[i];
+            space = item.length;
+            item = item.replace(/^ *([*+-]|\d+\.) +/, "");
+            if (item.indexOf("\n ") !== -1) {
+              space -= item.length;
+              item = !this.options.pedantic ? item.replace(new RegExp("^ {1," + space + "}", "gm"), "") : item.replace(/^ {1,4}/gm, "");
+            }
+            if (this.options.smartLists && i !== length - 1) {
+              blockBullet = this.staticThis.getRulesBase().bullet.exec(str[i + 1])[0];
+              if (bull !== blockBullet && !(bull.length > 1 && blockBullet.length > 1)) {
+                nextPart = str.slice(i + 1).join("\n") + nextPart;
+                i = length - 1;
+              }
+            }
+            loose = next || /\n\n(?!\s*$)/.test(item);
+            if (i !== length - 1) {
+              next = item.charAt(item.length - 1) === "\n";
+              if (!loose) {
+                loose = next;
+              }
+            }
+            this.tokens.push({ type: loose ? TokenType.looseItemStart : TokenType.listItemStart });
+            this.getTokens(item, false, isBlockQuote);
+            this.tokens.push({ type: TokenType.listItemEnd });
+          }
+          this.tokens.push({ type: TokenType.listEnd });
+          continue;
+        }
+        if (execArr = this.rules.html.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          const attr = execArr[1];
+          const isPre = attr === "pre" || attr === "script" || attr === "style";
+          this.tokens.push({
+            type: this.options.sanitize ? TokenType.paragraph : TokenType.html,
+            pre: !this.options.sanitizer && isPre,
+            text: execArr[0]
+          });
+          continue;
+        }
+        if (top && (execArr = this.rules.def.exec(nextPart))) {
+          nextPart = nextPart.substring(execArr[0].length);
+          this.links[execArr[1].toLowerCase()] = {
+            href: execArr[2],
+            title: execArr[3]
+          };
+          continue;
+        }
+        if (top && this.hasRulesTables && (execArr = this.rules.table.exec(nextPart))) {
+          nextPart = nextPart.substring(execArr[0].length);
+          const item = {
+            type: TokenType.table,
+            header: execArr[1].replace(/^ *| *\| *$/g, "").split(/ *\| */),
+            align: execArr[2].replace(/^ *|\| *$/g, "").split(/ *\| */),
+            cells: []
+          };
+          for (let i = 0; i < item.align.length; i++) {
+            if (/^ *-+: *$/.test(item.align[i])) {
+              item.align[i] = "right";
+            } else if (/^ *:-+: *$/.test(item.align[i])) {
+              item.align[i] = "center";
+            } else if (/^ *:-+ *$/.test(item.align[i])) {
+              item.align[i] = "left";
+            } else {
+              item.align[i] = null;
+            }
+          }
+          const td = execArr[3].replace(/(?: *\| *)?\n$/, "").split("\n");
+          for (let i = 0; i < td.length; i++) {
+            item.cells[i] = td[i].replace(/^ *\| *| *\| *$/g, "").split(/ *\| */);
+          }
+          this.tokens.push(item);
+          continue;
+        }
+        if (this.staticThis.simpleRules.length) {
+          const simpleRules = this.staticThis.simpleRules;
+          for (let i = 0; i < simpleRules.length; i++) {
+            if (execArr = simpleRules[i].exec(nextPart)) {
+              nextPart = nextPart.substring(execArr[0].length);
+              const type = "simpleRule" + (i + 1);
+              this.tokens.push({ type, execArr });
+              continue mainLoop;
+            }
+          }
+        }
+        if (top && (execArr = this.rules.paragraph.exec(nextPart))) {
+          nextPart = nextPart.substring(execArr[0].length);
+          if (execArr[1].slice(-1) === "\n") {
+            this.tokens.push({
+              type: TokenType.paragraph,
+              text: execArr[1].slice(0, -1)
+            });
+          } else {
+            this.tokens.push({
+              type: this.tokens.length > 0 ? TokenType.paragraph : TokenType.text,
+              text: execArr[1]
+            });
+          }
+          continue;
+        }
+        if (execArr = this.rules.text.exec(nextPart)) {
+          nextPart = nextPart.substring(execArr[0].length);
+          this.tokens.push({ type: TokenType.text, text: execArr[0] });
+          continue;
+        }
+        if (nextPart) {
+          throw new Error("Infinite loop on byte: " + nextPart.charCodeAt(0) + `, near text '${nextPart.slice(0, 30)}...'`);
+        }
+      }
+    return { tokens: this.tokens, links: this.links };
+  }
+};
+__publicField(BlockLexer, "simpleRules", []);
+__publicField(BlockLexer, "rulesBase", null);
+/**
+ * GFM Block Grammar.
+ */
+__publicField(BlockLexer, "rulesGfm", null);
+/**
+ * GFM + Tables Block Grammar.
+ */
+__publicField(BlockLexer, "rulesTables", null);
+
+// src/util/modelUtil.ts
 function getReferenceablesInBinaryExpression(expression, output) {
   getReferencablesInExpression(expression.left, output);
   getReferencablesInExpression(expression.right, output);
@@ -46645,6 +47991,8 @@ function getReferenceablesInStatement(statement, output) {
     output.add(reference);
 }
 function getReferencablesInExpression(expression, output) {
+  if (expression === void 0)
+    return;
   switch (expression.$type) {
     case "OrExpression":
       getReferenceablesInBinaryExpression(expression, output);
@@ -46667,6 +48015,84 @@ function getReferencablesInWhenCondition(condition) {
   getReferencablesInExpression(condition.expression, result);
   return result;
 }
+function getAllUsedConcerns(model) {
+  let result = /* @__PURE__ */ new Set();
+  model.propositions.forEach((proposition) => {
+    proposition.valueClauses.forEach((valueClause) => {
+      valueClause.raises.forEach((raisingConcern) => {
+        var _a;
+        if (((_a = raisingConcern.concern) == null ? void 0 : _a.ref) != void 0)
+          result.add(raisingConcern.concern.ref);
+      });
+    });
+  });
+  return result;
+}
+function getAllUsedReferenceables(model) {
+  let result = /* @__PURE__ */ new Set();
+  model.propositions.forEach((proposition) => {
+    proposition.valueClauses.forEach((valueClause) => {
+      valueClause.raises.forEach((raisingConcern) => {
+        if (raisingConcern.condition == void 0)
+          return;
+        getReferencablesInWhenCondition(raisingConcern.condition).forEach((referenceable) => {
+          result.add(referenceable);
+        });
+      });
+    });
+    if (proposition.disable === void 0)
+      return;
+    proposition.disable.statements.forEach((disableStatement) => {
+      getReferencablesInWhenCondition(disableStatement.condition).forEach((referenceable) => {
+        result.add(referenceable);
+      });
+    });
+  });
+  return result;
+}
+function extractValueAsString(value) {
+  return typeof value === "string" ? `"${value}"` : toString2(value);
+}
+function formattedStringToHTML(formattedString, default_format = "MD") {
+  let format = formattedString.format;
+  if (format === void 0)
+    format = default_format;
+  const preprocessed = (0, import_dedent_js.default)(formattedString.contents);
+  switch (format) {
+    case "HTML":
+      return preprocessed;
+    case "MD":
+      return Marked.parse(preprocessed);
+    default:
+      return Marked.parse(preprocessed);
+  }
+}
+var DEFAULT_APP_INFORMATION = {
+  title: "Laboratory Title",
+  description: "<p>Laboratory Description</p>",
+  icon: void 0,
+  format: "MD",
+  author: void 0,
+  version: void 0
+};
+function extractLaboratoryInformation(information) {
+  let result = DEFAULT_APP_INFORMATION;
+  if (information !== void 0) {
+    if (information.titles.length > 0)
+      result.title = information.titles[0];
+    if (information.descriptions.length > 0)
+      result.description = formattedStringToHTML(information.descriptions[0]);
+    if (information.icons.length > 0)
+      result.icon = information.icons[0];
+    if (information.formats.length > 0)
+      result.format = information.formats[0];
+    if (information.authors.length > 0)
+      result.author = information.authors[0];
+    if (information.versions.length > 0)
+      result.version = information.versions[0];
+  }
+  return result;
+}
 
 // src/language/java-script-propositional-laboratory-format-validator.ts
 function registerValidationChecks2(services) {
@@ -46675,21 +48101,33 @@ function registerValidationChecks2(services) {
   const checks = {
     Model: [
       validator.uniqueConcernIdentifiers,
-      validator.uniqueReferenceableIdentifiers
+      validator.uniqueReferenceableIdentifiers,
+      validator.checkForUnusedConcerns,
+      validator.checkForUnusedConditions
     ],
-    Proposition: validator.propositionHasExactlyOneDefaultOrJustOneValue,
-    Condition: validator.noRecursionInConditions
+    Proposition: [
+      validator.propositionHasExactlyOneDefaultOrJustOneValue
+    ],
+    Condition: [
+      validator.noRecursionInConditions
+    ],
+    LaboratoryInformation: [
+      validator.noDuplicateFieldsInLaboratoryInformation
+    ],
+    Statement: [
+      validator.statementReferencesValidValue
+    ]
   };
   registry.register(checks, validator);
 }
 var JavaScriptPropositionalLaboratoryFormatValidator = class {
   uniqueConcernIdentifiers(model, accept) {
     const reported = /* @__PURE__ */ new Set();
-    model.concerns.forEach((conern) => {
-      if (reported.has(conern.name)) {
-        accept("error", `Concern has non-unique name '${conern.name}'.`, { node: conern, property: "name" });
+    model.concerns.forEach((concern) => {
+      if (reported.has(concern.name)) {
+        accept("error", `Concern has non-unique name '${concern.name}'.`, { node: concern, property: "name" });
       }
-      reported.add(conern.name);
+      reported.add(concern.name);
     });
   }
   uniqueReferenceableIdentifiers(model, accept) {
@@ -46698,13 +48136,13 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       if (reported.has(condition.name)) {
         accept(
           "error",
-          `Condition has non-unique name '${condition.name}'. All names of Propositions and Conditions must be uniqued, to be properly referenced.`,
+          `Condition has non-unique name '${condition.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
           { node: condition, property: "name" }
         );
         let original = reported.get(condition.name);
         accept(
           "error",
-          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be uniqued, to be properly referenced.`,
+          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
           { node: original, property: "name" }
         );
       }
@@ -46714,17 +48152,33 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       if (reported.has(proposition.name)) {
         accept(
           "error",
-          `Proposition has non-unique name '${proposition.name}'. All names of Propositions and Conditions must be uniqued, to be properly referenced.`,
+          `Proposition has non-unique name '${proposition.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
           { node: proposition, property: "name" }
         );
         let original = reported.get(proposition.name);
         accept(
           "error",
-          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be uniqued, to be properly referenced.`,
+          `Object has non-unique name '${original.name}'. All names of Propositions and Conditions must be unique, to be properly referenced.`,
           { node: original, property: "name" }
         );
       }
       reported.set(proposition.name, proposition);
+    });
+  }
+  checkForUnusedConcerns(model, accept) {
+    const usedConcerns = getAllUsedConcerns(model);
+    model.concerns.forEach((concern) => {
+      if (usedConcerns.has(concern))
+        return;
+      accept("warning", "Concern is defined, but never used.", { node: concern, property: "name" });
+    });
+  }
+  checkForUnusedConditions(model, accept) {
+    const usedReferenceables = getAllUsedReferenceables(model);
+    model.conditions.forEach((condition) => {
+      if (usedReferenceables.has(condition))
+        return;
+      accept("warning", "Condition is defined, but never used.", { node: condition, property: "name" });
     });
   }
   propositionHasExactlyOneDefaultOrJustOneValue(proposition, accept) {
@@ -46759,6 +48213,45 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
       if (referenceable.name === name)
         accept("error", `Recursion is not allowed here.`, { node: condition, property: "name" });
     });
+  }
+  noDuplicateFieldsInLaboratoryInformation(information, accept) {
+    if (information.descriptions.length > 1)
+      accept("error", "Multiple descriptions for one laboratory are not allowed.", { node: information });
+    if (information.titles.length > 1)
+      accept("error", "Multiple titles for one laboratory are not allowed.", { node: information });
+    if (information.icons.length > 1)
+      accept("error", "Multiple icons for one laboratory are not allowed.", { node: information });
+    if (information.formats.length > 1)
+      accept("error", "Multiple default formats for one laboratory are not allowed.", { node: information });
+    if (information.authors.length > 1)
+      accept("error", "Multiple authors for one laboratory are not allowed.", { node: information });
+    if (information.versions.length > 1)
+      accept("error", "Multiple versions for one laboratory are not allowed.", { node: information });
+  }
+  statementReferencesValidValue(statement, accept) {
+    if (statement === void 0)
+      return;
+    if (statement.value === void 0)
+      return;
+    if (statement.reference === void 0)
+      return;
+    if (statement.reference.ref === void 0)
+      return;
+    const referenceable = statement.reference.ref;
+    const value = statement.value;
+    if (referenceable.$type === "Condition") {
+      if (typeof value === "boolean")
+        return;
+      accept("error", "Stated value is not a valid value of the referenced object.", { node: statement, property: "value" });
+      return;
+    }
+    const proposition = referenceable;
+    if (proposition.valueClauses === void 0)
+      return;
+    const foundValue = proposition.valueClauses.map((clause) => clause.value).find((defined) => defined === value);
+    if (foundValue !== void 0)
+      return;
+    accept("error", "Stated value is not a valid value of the referenced object.", { node: statement, property: "value" });
   }
 };
 
@@ -47309,126 +48802,29 @@ async function extractAstNode(fileName, services) {
   return (_a = (await extractDocument(fileName, services)).parseResult) == null ? void 0 : _a.value;
 }
 
-// src/generators/labGenerator.ts
-var import_node_fs = require("fs");
+// src/generators/lab/main.ts
+var import_node_fs2 = require("fs");
 var import_node_path2 = __toESM(require("path"), 1);
-var LAB_TEMPLATE_CONCERNS_MARKER = {
-  START: "//???TEMPLATE-MARKER-CONCERNS-START???",
-  END: "//???TEMPLATE-MARKER-CONCERNS-END???"
-};
-var LAB_TEMPLATE_PROPOSITIONS_MARKER = {
-  START: "//???TEMPLATE-MARKER-PROPOSITIONS-START???",
-  END: "//???TEMPLATE-MARKER-PROPOSITIONS-END???"
-};
-var ROOT_FILES_TO_COPY = [
-  "README.md",
-  "index.html",
-  "LICENSE"
-];
-var RESOURCES_TO_COPY = [
-  "favicon.svg",
-  "github.png"
-];
-function generateLaboratory(model, outputDirectory, templateDirectory) {
-  const labTemplatePath = import_node_path2.default.join(templateDirectory, "lab.js");
-  const outputJavaScript = import_node_path2.default.join(outputDirectory, "lab.js");
-  const outputResources = import_node_path2.default.join(outputDirectory, "res");
-  if (!(0, import_node_fs.existsSync)(outputResources))
-    (0, import_node_fs.mkdirSync)(outputResources);
-  ROOT_FILES_TO_COPY.forEach((fileName) => {
-    (0, import_node_fs.copyFileSync)(
-      import_node_path2.default.join(templateDirectory, fileName),
-      import_node_path2.default.join(outputDirectory, fileName)
-    );
-  });
-  RESOURCES_TO_COPY.forEach((fileName) => {
-    (0, import_node_fs.copyFileSync)(
-      import_node_path2.default.join(templateDirectory, fileName),
-      import_node_path2.default.join(outputResources, fileName)
-    );
-  });
-  const labTemplate = readLabTemplate(labTemplatePath);
-  (0, import_node_fs.writeFileSync)(outputJavaScript, "");
-  (0, import_node_fs.appendFileSync)(outputJavaScript, labTemplate.prefix);
-  const concernsNode = new CompositeGeneratorNode();
-  generateConcerns(model.concerns, concernsNode);
-  (0, import_node_fs.appendFileSync)(outputJavaScript, toString2(concernsNode));
-  (0, import_node_fs.appendFileSync)(outputJavaScript, labTemplate.infix);
-  const conditionsNode = new CompositeGeneratorNode();
-  generateConditions(model.conditions, conditionsNode);
-  (0, import_node_fs.appendFileSync)(outputJavaScript, toString2(conditionsNode));
-  const givensNode = new CompositeGeneratorNode();
-  generateGivens(model.propositions, givensNode);
-  (0, import_node_fs.appendFileSync)(outputJavaScript, toString2(givensNode));
-  const tweakablesNode = new CompositeGeneratorNode();
-  generateTweakables(model.propositions, tweakablesNode);
-  (0, import_node_fs.appendFileSync)(outputJavaScript, toString2(tweakablesNode));
-  (0, import_node_fs.appendFileSync)(outputJavaScript, labTemplate.postfix);
-  return outputDirectory;
-}
-function splitByStartAndEndMarker(input, markers) {
-  const splitByStartMarker = input.split(markers.START);
-  return {
-    BEFORE: splitByStartMarker[0],
-    AFTER: splitByStartMarker[1].split(markers.END)[1]
-  };
-}
-function readLabTemplate(labTemplateFile) {
-  const template = (0, import_node_fs.readFileSync)(labTemplateFile, `utf-8`);
-  const splitByConcernsMarkers = splitByStartAndEndMarker(template, LAB_TEMPLATE_CONCERNS_MARKER);
-  const splitByPropositionsMarkers = splitByStartAndEndMarker(splitByConcernsMarkers.AFTER, LAB_TEMPLATE_PROPOSITIONS_MARKER);
-  return {
-    prefix: splitByConcernsMarkers.BEFORE,
-    infix: splitByPropositionsMarkers.BEFORE,
-    postfix: splitByPropositionsMarkers.AFTER
-  };
-}
-function generateConcernHtml(concern) {
+
+// src/generators/lab/concerns.ts
+function generateConcernHtml(concern, default_format) {
   return `<details><summary>\u26A0 ${concern.summary}</summary>
-    ${concern.description}
+    ${formattedStringToHTML(concern.description, default_format)}
     </details>`;
 }
-function generateConcerns(concerns, node) {
+function generateConcerns(concerns, node, laboratoryInformation) {
   node.append(`const concerns = {
 `);
   concerns.forEach((concern) => {
-    node.append(`	${concern.name}: html\`${generateConcernHtml(concern)}\`,
+    node.append(`	${concern.name}: html\`${generateConcernHtml(concern, laboratoryInformation.format)}\`,
 `);
   });
   node.append(`};
 `);
 }
-function generateConditions(conditions, node) {
-  node.append(`const conditions = {
-`);
-  conditions.forEach((condition) => {
-    node.append(`	${condition.name}: () => {
-`);
-    node.append(`		return ${extractJSCondition.fromExpression(condition.condition.expression)};
-`);
-    node.append(`	},
-`);
-  });
-  node.append(`};
-`);
-}
-function isGiven(proposition) {
-  return proposition.valueClauses.length == 1;
-}
-function extractValueAsString(value) {
-  return typeof value === "string" ? `"${value}"` : toString2(value);
-}
-function generateGivens(propositions, node) {
-  node.append(`const givens = [
-`);
-  propositions.filter(isGiven).forEach((given) => {
-    let value = given.valueClauses[0].value;
-    node.append(`	{ input: \`${given.expression}\`, output: ${extractValueAsString(value)} },
-`);
-  });
-  node.append(`];
-`);
-}
+
+// src/generators/lab/util.ts
+var import_node_fs = require("fs");
 var extractJSCondition = {
   fromOrExpression: function(expression) {
     return `${extractJSCondition.fromExpression(expression.left)} || ${extractJSCondition.fromExpression(expression.right)}`;
@@ -47469,6 +48865,53 @@ var extractJSCondition = {
     }
   }
 };
+function splitByStartAndEndMarker(input, markers) {
+  const splitByStartMarker = input.split(markers.START);
+  return {
+    BEFORE: splitByStartMarker[0],
+    AFTER: splitByStartMarker[1].split(markers.END)[1]
+  };
+}
+function readTemplatedFile(templateFilePath, templateMarker) {
+  const template = (0, import_node_fs.readFileSync)(templateFilePath, `utf-8`);
+  const splitByConcernsMarkers = splitByStartAndEndMarker(template, templateMarker);
+  return {
+    prefix: splitByConcernsMarkers.BEFORE,
+    postfix: splitByConcernsMarkers.AFTER
+  };
+}
+
+// src/generators/lab/conditions.ts
+function generateConditions(conditions, node) {
+  node.append(`const conditions = {
+`);
+  conditions.forEach((condition) => {
+    node.append(`	${condition.name}: () => {
+`);
+    node.append(`		return ${extractJSCondition.fromExpression(condition.condition.expression)};
+`);
+    node.append(`	},
+`);
+  });
+  node.append(`};
+`);
+}
+
+// src/generators/lab/propositions.ts
+function isGiven(proposition) {
+  return proposition.valueClauses.length == 1;
+}
+function generateGivens(propositions, node) {
+  node.append(`const givens = [
+`);
+  propositions.filter(isGiven).forEach((given) => {
+    let value = given.valueClauses[0].value;
+    node.append(`	{ input: \`${given.expression}\`, output: ${extractValueAsString(value)} },
+`);
+  });
+  node.append(`];
+`);
+}
 function generateConcernFunction(proposition, node, baseIndent) {
   const indent = (level) => baseIndent + "	".repeat(level);
   node.append(`(self) => {
@@ -47561,8 +49004,102 @@ function generateTweakables(propositions, node) {
 `);
 }
 
-// src/generators/graphvizGenerator.ts
-var import_node_fs2 = require("fs");
+// src/generators/lab/main.ts
+var LAB_TEMPLATE_MARKER = {
+  START: "//???TEMPLATE-MARKER-START???",
+  END: "//???TEMPLATE-MARKER-END???"
+};
+var INDEX_TEMPLATE_MARKER = {
+  START: "<!--???TEMPLATE-MARKER-START???-->",
+  END: "<!--???TEMPLATE-MARKER-END???-->"
+};
+var ROOT_FILES_TO_COPY = [
+  "README.md",
+  "LICENSE"
+];
+var RESOURCES_TO_COPY = [
+  "favicon.svg",
+  "github.png"
+];
+function generateLaboratory(model, outputDirectory, templateDirectory) {
+  const outputResourcesPath = import_node_path2.default.join(outputDirectory, "res");
+  if (!(0, import_node_fs2.existsSync)(outputResourcesPath))
+    (0, import_node_fs2.mkdirSync)(outputResourcesPath);
+  ROOT_FILES_TO_COPY.forEach((fileName) => {
+    (0, import_node_fs2.copyFileSync)(
+      import_node_path2.default.join(templateDirectory, fileName),
+      import_node_path2.default.join(outputDirectory, fileName)
+    );
+  });
+  RESOURCES_TO_COPY.forEach((fileName) => {
+    (0, import_node_fs2.copyFileSync)(
+      import_node_path2.default.join(templateDirectory, fileName),
+      import_node_path2.default.join(outputResourcesPath, fileName)
+    );
+  });
+  const laboratoryInformation = extractLaboratoryInformation(model.laboratory);
+  generateIndex(
+    model,
+    laboratoryInformation,
+    import_node_path2.default.join(templateDirectory, "index.html"),
+    import_node_path2.default.join(outputDirectory, "index.html")
+  );
+  generateLabJS(
+    model,
+    laboratoryInformation,
+    import_node_path2.default.join(templateDirectory, "lab.js"),
+    import_node_path2.default.join(outputDirectory, "lab.js")
+  );
+  return outputDirectory;
+}
+function generateIndex(model, laboratoryInformation, indexTemplatePath, outputIndexPath) {
+  const indexTemplate = readTemplatedFile(indexTemplatePath, INDEX_TEMPLATE_MARKER);
+  (0, import_node_fs2.writeFileSync)(outputIndexPath, "");
+  (0, import_node_fs2.appendFileSync)(outputIndexPath, indexTemplate.prefix);
+  const iconString = laboratoryInformation.icon == void 0 ? "undefined" : laboratoryInformation.icon;
+  const headerData = `<title>${laboratoryInformation.title}</title>
+	<link rel="icon" href="${iconString}"/>`;
+  (0, import_node_fs2.appendFileSync)(outputIndexPath, headerData);
+  (0, import_node_fs2.appendFileSync)(outputIndexPath, indexTemplate.postfix);
+}
+function generateLabJS(model, laboratoryInformation, labTemplatePath, outputJavaScript) {
+  const labTemplate = readTemplatedFile(labTemplatePath, LAB_TEMPLATE_MARKER);
+  (0, import_node_fs2.writeFileSync)(outputJavaScript, "");
+  (0, import_node_fs2.appendFileSync)(outputJavaScript, labTemplate.prefix);
+  const laboratoryInformationNode = new CompositeGeneratorNode();
+  generateLaboratoryInformation(laboratoryInformation, laboratoryInformationNode);
+  (0, import_node_fs2.appendFileSync)(outputJavaScript, toString2(laboratoryInformationNode));
+  const concernsNode = new CompositeGeneratorNode();
+  generateConcerns(model.concerns, concernsNode, laboratoryInformation);
+  (0, import_node_fs2.appendFileSync)(outputJavaScript, toString2(concernsNode));
+  const conditionsNode = new CompositeGeneratorNode();
+  generateConditions(model.conditions, conditionsNode);
+  (0, import_node_fs2.appendFileSync)(outputJavaScript, toString2(conditionsNode));
+  const givensNode = new CompositeGeneratorNode();
+  generateGivens(model.propositions, givensNode);
+  (0, import_node_fs2.appendFileSync)(outputJavaScript, toString2(givensNode));
+  const tweakablesNode = new CompositeGeneratorNode();
+  generateTweakables(model.propositions, tweakablesNode);
+  (0, import_node_fs2.appendFileSync)(outputJavaScript, toString2(tweakablesNode));
+  (0, import_node_fs2.appendFileSync)(outputJavaScript, labTemplate.postfix);
+}
+function generateLaboratoryInformation(laboratoryInformation, node) {
+  const titleString = laboratoryInformation.title == void 0 ? "undefined" : `"${laboratoryInformation.title}"`;
+  node.append(`const appTitle = ${titleString};
+`);
+  const descriptionString = laboratoryInformation.description == void 0 ? "undefined" : `${laboratoryInformation.description}`;
+  node.append(`const appDescriptionHtml = html\`${descriptionString}\`;
+`);
+  const authorString = laboratoryInformation.author == void 0 ? "undefined" : `"${laboratoryInformation.author}"`;
+  node.append(`const appAuthor = ${authorString};
+`);
+  const versionString = laboratoryInformation.version == void 0 ? "undefined" : `"${laboratoryInformation.version}"`;
+  node.append(`const appVersion = ${versionString};
+`);
+}
+
+// src/generators/graphviz/main.ts
+var import_node_fs3 = require("fs");
 var GRAPHVIZ_COLORS = {
   red: '"#9d0208"',
   yellow: '"#ffba08"'
@@ -47576,9 +49113,9 @@ function generateGraphviz(model, destination) {
   const generatedFilePath = destination;
   const propositionsNode = new CompositeGeneratorNode();
   graphvizPropositions(model.propositions, propositionsNode);
-  (0, import_node_fs2.writeFileSync)(generatedFilePath, GRAPHVIZ_PREFIX);
-  (0, import_node_fs2.appendFileSync)(generatedFilePath, toString2(propositionsNode));
-  (0, import_node_fs2.appendFileSync)(generatedFilePath, GRAPHVIZ_POSTFIX);
+  (0, import_node_fs3.writeFileSync)(generatedFilePath, GRAPHVIZ_PREFIX);
+  (0, import_node_fs3.appendFileSync)(generatedFilePath, toString2(propositionsNode));
+  (0, import_node_fs3.appendFileSync)(generatedFilePath, GRAPHVIZ_POSTFIX);
   return generatedFilePath;
 }
 function graphvizPropositions(propositions, fileNode) {
@@ -47637,7 +49174,7 @@ var NodeFileSystem = {
 };
 
 // src/generators/actions.ts
-var import_node_fs3 = require("fs");
+var import_node_fs4 = require("fs");
 var import_vscode = require("vscode");
 var import_node_path3 = require("path");
 var TEMPLATES_DIRECTORY = "./templates/laboratory-template";
@@ -47647,16 +49184,16 @@ function getModel(inputFile) {
 }
 function checkJSPLInput(inputFile) {
   const fileExtensions = getInputExtensionsAsSet();
-  const inputStats = (0, import_node_fs3.statSync)(inputFile);
+  const inputStats = (0, import_node_fs4.statSync)(inputFile);
   if (!inputStats.isFile())
     throw new import_vscode.FileSystemError(`The specified input file (${inputFile}) is not a file.`);
   if (!fileExtensions.has((0, import_node_path3.extname)(inputFile)))
     throw new import_vscode.FileSystemError(`The specified input file (${inputFile}) does not have one of the allowed file extensions (${getInputExtensionsAsString()}).`);
 }
 function checkLaboratoryOutputDirectory(outputDirectoryPath) {
-  if (!(0, import_node_fs3.existsSync)(outputDirectoryPath))
-    (0, import_node_fs3.mkdirSync)(outputDirectoryPath);
-  const outputStats = (0, import_node_fs3.statSync)(outputDirectoryPath);
+  if (!(0, import_node_fs4.existsSync)(outputDirectoryPath))
+    (0, import_node_fs4.mkdirSync)(outputDirectoryPath);
+  const outputStats = (0, import_node_fs4.statSync)(outputDirectoryPath);
   if (!outputStats.isDirectory())
     throw new import_vscode.FileSystemError(`The specified output directory (${outputDirectoryPath}) is not a directory.`);
 }
@@ -47798,6 +49335,32 @@ lodash-es/lodash.js:
    * Released under MIT license <https://lodash.com/license>
    * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
    * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+   *)
+
+@ts-stack/markdown/fesm2022/ts-stack-markdown.mjs:
+  (*
+   * @license
+   *
+   * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
+   * https://github.com/chjj/marked
+   *
+   * Copyright (c) 2018-2021, Костя Третяк. (MIT Licensed)
+   * https://github.com/ts-stack/markdown
+   *)
+  (**
+   * @license
+   *
+   * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
+   * https://github.com/chjj/marked
+   *
+   * Copyright (c) 2018-2021, Костя Третяк. (MIT Licensed)
+   * https://github.com/ts-stack/markdown
+   *)
+  (**
+   * @license
+   *
+   * Copyright (c) 2018-2021, Костя Третяк. (MIT Licensed)
+   * https://github.com/ts-stack/markdown
    *)
 */
 //# sourceMappingURL=main.cjs.map

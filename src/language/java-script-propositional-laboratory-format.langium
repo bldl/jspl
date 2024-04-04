@@ -1,15 +1,52 @@
 grammar JavaScriptPropositionalLaboratoryFormat
 
 entry Model:
-    (concerns+=Concern | conditions+=Condition | propositions+=Proposition)*;
+    ( // Optional Header
+        laboratory=LaboratoryInformation
+    )?
+    ( // Main Body
+        concerns+=Concern 
+        | conditions+=Condition 
+        | propositions+=Proposition
+    )*
+;
+
+// Terminals
+
+terminal BOOLEAN returns boolean: /True|False/;
+terminal ML_STRING_FORMAT returns string: /MD|HTML/;
+terminal ID: /[_a-zA-Z][\w_]*/;
+//terminal INT returns number: /[0-9]+/;
+//terminal CODE_STRING: /`(\\.|[^`\\])*`/;
+terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
+
+hidden terminal WS: /\s+/;
+hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
+hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+
+FormattedString:
+    (format=ML_STRING_FORMAT)? contents=STRING
+;
+
+
+LaboratoryInformation:
+    "laboratory" "{" 
+        ( // allow only one field to be used multiple times via validators
+            ("title" titles+=STRING)
+            | ("description" descriptions+=FormattedString)
+            | ("icon" icons+=STRING)
+            | ("format" formats+=ML_STRING_FORMAT)
+            | ("author" authors+=STRING)
+            | ("version" versions+=STRING)
+        )*
+    "}"
+;
 
 // Concerns
-
 Concern:
     "concern" name=ID "{"
         "summary" summary=STRING
-        "description" description=STRING
-        //"assumes_using" assumes="==="
+        "description" description=FormattedString
     "}"
 ;
 
@@ -25,7 +62,7 @@ Group: "(" inner=PropositionalExpression ")";
 
 Referenceable: Condition | Proposition;
 Statement: 
-    reference=[Referenceable] "is" (negation?="not")? value=(BOOLEAN | STRING)
+    reference=[Referenceable:ID] "is" (negation?="not")? value=(BOOLEAN | STRING)
 ;
 
 WhenCondition: 
@@ -41,7 +78,7 @@ Condition:
 // Propositions
 
 RaisingConcern:
-    "raise" concern=[Concern] (condition=WhenCondition)?
+    "raise" concern=[Concern:ID] (condition=WhenCondition)?
 ;
 
 ValueClause:
@@ -68,15 +105,3 @@ Proposition:
         (disable=DisableClause)?
     "}"
 ;
-
-// Terminals
-
-hidden terminal WS: /\s+/;
-terminal BOOLEAN returns boolean: /True|False/;
-terminal ID: /[_a-zA-Z][\w_]*/;
-//terminal INT returns number: /[0-9]+/;
-//terminal CODE_STRING: /`(\\.|[^`\\])*`/;
-terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
-
-hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
-hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
