@@ -7,12 +7,12 @@ concern testConcern {
     description ""
 }
 
-condition testCondition holds when testProposition is True
+condition testCondition holds when testProposition is not True and otherProposition is False
 
 proposition testProposition {
     expression "a === b"
     default value True
     value False {
-        raise  testConcern 
+        raise test
     }
 }

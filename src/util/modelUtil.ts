@@ -16,6 +16,9 @@ function getReferenceablesInStatement(statement: Statement, output: Set<Referenc
 }
 
 function getReferencablesInExpression(expression: PropositionalExpression, output: Set<Referenceable>): void {
+    if (expression == undefined)
+        return;
+
     switch (expression.$type) {
         case 'OrExpression': 
             getReferenceablesInBinaryExpression(expression as OrExpression, output);

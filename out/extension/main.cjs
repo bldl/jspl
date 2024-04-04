@@ -46474,6 +46474,13 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
               "type": {
                 "$ref": "#/rules@17"
               },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
+              },
               "deprecatedSyntax": false
             }
           },
@@ -46620,6 +46627,13 @@ var JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaScriptPropo
               "$type": "CrossReference",
               "type": {
                 "$ref": "#/rules@10"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
               },
               "deprecatedSyntax": false
             }
@@ -47977,6 +47991,8 @@ function getReferenceablesInStatement(statement, output) {
     output.add(reference);
 }
 function getReferencablesInExpression(expression, output) {
+  if (expression == void 0)
+    return;
   switch (expression.$type) {
     case "OrExpression":
       getReferenceablesInBinaryExpression(expression, output);

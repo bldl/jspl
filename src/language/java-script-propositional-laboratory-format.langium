@@ -62,7 +62,7 @@ Group: "(" inner=PropositionalExpression ")";
 
 Referenceable: Condition | Proposition;
 Statement: 
-    reference=[Referenceable] "is" (negation?="not")? value=(BOOLEAN | STRING)
+    reference=[Referenceable:ID] "is" (negation?="not")? value=(BOOLEAN | STRING)
 ;
 
 WhenCondition: 
@@ -78,7 +78,7 @@ Condition:
 // Propositions
 
 RaisingConcern:
-    "raise" concern=[Concern] (condition=WhenCondition)?
+    "raise" concern=[Concern:ID] (condition=WhenCondition)?
 ;
 
 ValueClause:

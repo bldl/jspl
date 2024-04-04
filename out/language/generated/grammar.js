@@ -708,6 +708,13 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaSc
               "type": {
                 "$ref": "#/rules@17"
               },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
+              },
               "deprecatedSyntax": false
             }
           },
@@ -854,6 +861,13 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = () => loadedJavaSc
               "$type": "CrossReference",
               "type": {
                 "$ref": "#/rules@10"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
               },
               "deprecatedSyntax": false
             }

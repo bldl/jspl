@@ -711,6 +711,13 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
               "type": {
                 "$ref": "#/rules@17"
               },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
+              },
               "deprecatedSyntax": false
             }
           },
@@ -857,6 +864,13 @@ export const JavaScriptPropositionalLaboratoryFormatGrammar = (): Grammar => loa
               "$type": "CrossReference",
               "type": {
                 "$ref": "#/rules@10"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@3"
+                },
+                "arguments": []
               },
               "deprecatedSyntax": false
             }
