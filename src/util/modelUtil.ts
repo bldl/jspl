@@ -40,8 +40,7 @@ function getReferencablesInExpression(expression: PropositionalExpression, outpu
 export function getReferencablesInWhenCondition(condition: WhenCondition): Set<Referenceable> {
     let result = new Set<Referenceable>();
 
-    if (condition.expression != undefined)
-        getReferencablesInExpression(condition.expression, result);
+    getReferencablesInExpression(condition.expression, result);
 
     return result;
 }
