@@ -7,6 +7,7 @@ import { NodeFileSystem } from 'langium/node';
 import { statSync, existsSync, mkdirSync } from 'node:fs';
 import { FileSystemError } from 'vscode';
 import { extname as pathExtname } from 'node:path'
+import { generateJSON } from './json/main.js';
 //import { workspace, Uri } from 'vscode'; // TODO: replace node:fs with workspace.fs
 
 const TEMPLATES_DIRECTORY: string = "./templates/laboratory-template";
@@ -67,3 +68,16 @@ export const generateGraphvizAction = async (inputFile: string, destination: str
     const generatedFilePath = generateGraphviz(model, destination);
     return Promise.resolve(generatedFilePath);
 };
+
+export const generateJSONAction = async (inputFile: string, destination: string): Promise<string> => {
+    // check input file
+    try {
+        checkJSPLInput(inputFile);
+    } catch (error) {
+        return Promise.reject(`Something went wrong while reading the input file. (Error: ${error})`)
+    }
+
+    const model = await getModel(inputFile);
+    const generatedFilePath = generateJSON(model, destination);
+    return Promise.resolve(generatedFilePath);
+}

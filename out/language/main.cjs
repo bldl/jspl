@@ -35009,38 +35009,51 @@ var JavaScriptPropositionalLaboratoryFormatGeneratedModule = {
 
 // src/util/modelUtil.ts
 var import_dedent_js = __toESM(require_lib(), 1);
-function getReferenceablesInBinaryExpression(expression, output) {
-  getReferencablesInExpression(expression.left, output);
-  getReferencablesInExpression(expression.right, output);
-}
-function getReferenceablesInStatement(statement, output) {
-  let reference = statement.reference.ref;
-  if (reference !== void 0)
-    output.add(reference);
-}
-function getReferencablesInExpression(expression, output) {
-  if (expression === void 0)
-    return;
-  switch (expression.$type) {
-    case "OrExpression":
-      getReferenceablesInBinaryExpression(expression, output);
-      break;
-    case "AndExpression":
-      getReferenceablesInBinaryExpression(expression, output);
-      break;
-    case "Negation":
-      getReferencablesInExpression(expression.inner, output);
-      break;
-    case "Group":
-      getReferencablesInExpression(expression.inner, output);
-    case "Statement":
-      getReferenceablesInStatement(expression, output);
-      break;
+var extractReferenceables = {
+  fromExpression: function(expression, output) {
+    if (expression === void 0)
+      return;
+    switch (expression.$type) {
+      case "OrExpression":
+        extractReferenceables.fromOrExpression(expression, output);
+        break;
+      case "AndExpression":
+        extractReferenceables.fromAndExpression(expression, output);
+        break;
+      case "Negation":
+        extractReferenceables.fromNegation(expression, output);
+        break;
+      case "Group":
+        extractReferenceables.fromGroup(expression, output);
+        break;
+      case "Statement":
+        extractReferenceables.fromStatement(expression, output);
+        break;
+    }
+  },
+  fromOrExpression: function(expression, output) {
+    extractReferenceables.fromExpression(expression.left, output);
+    extractReferenceables.fromExpression(expression.right, output);
+  },
+  fromAndExpression: function(expression, output) {
+    extractReferenceables.fromExpression(expression.left, output);
+    extractReferenceables.fromExpression(expression.right, output);
+  },
+  fromNegation: function(expression, output) {
+    extractReferenceables.fromExpression(expression.inner, output);
+  },
+  fromGroup: function(expression, output) {
+    extractReferenceables.fromExpression(expression.inner, output);
+  },
+  fromStatement: function(statement, output) {
+    let reference = statement.reference.ref;
+    if (reference !== void 0)
+      output.add(reference);
   }
-}
+};
 function getReferencablesInWhenCondition(condition) {
   let result = /* @__PURE__ */ new Set();
-  getReferencablesInExpression(condition.expression, result);
+  extractReferenceables.fromExpression(condition.expression, result);
   return result;
 }
 function getAllUsedConcerns(model) {

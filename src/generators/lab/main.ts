@@ -6,8 +6,7 @@ import { Model } from '../../language/generated/ast.js';
 import { generateConcerns } from './concerns.js';
 import { generateConditions } from './conditions.js';
 import { generateGivens, generateTweakables } from './propositions.js';
-import { readTemplatedFile } from './util.js';
-import { ExtractedLaboratoryInformation, extractLaboratoryInformation } from '../../util/modelUtil.js';
+import { extractLaboratoryInformationForWebWithDefaults, ExtractedWebLaboratoryInformation, readTemplatedFile } from './util.js';
 
 type TemplateMarker = {
     START: string,
@@ -55,7 +54,7 @@ export function generateLaboratory(model: Model, outputDirectory: string, templa
     });
 
     // extract laboratory information from model
-    const laboratoryInformation = extractLaboratoryInformation(model.laboratory);
+    const laboratoryInformation = extractLaboratoryInformationForWebWithDefaults(model.laboratory);
 
     generateIndex(
         model,
@@ -74,7 +73,7 @@ export function generateLaboratory(model: Model, outputDirectory: string, templa
     return outputDirectory;
 }
 
-function generateIndex(model: Model, laboratoryInformation: ExtractedLaboratoryInformation, indexTemplatePath: string, outputIndexPath: string): void {
+function generateIndex(model: Model, laboratoryInformation: ExtractedWebLaboratoryInformation, indexTemplatePath: string, outputIndexPath: string): void {
     const indexTemplate = readTemplatedFile(indexTemplatePath, INDEX_TEMPLATE_MARKER);
 
     // Clear index.html file
@@ -92,7 +91,7 @@ function generateIndex(model: Model, laboratoryInformation: ExtractedLaboratoryI
     appendFileSync(outputIndexPath, indexTemplate.postfix);
 }
 
-function generateLabJS(model: Model, laboratoryInformation: ExtractedLaboratoryInformation, labTemplatePath: string, outputJavaScript: string): void {
+function generateLabJS(model: Model, laboratoryInformation: ExtractedWebLaboratoryInformation, labTemplatePath: string, outputJavaScript: string): void {
     const labTemplate = readTemplatedFile(labTemplatePath, LAB_TEMPLATE_MARKER);
 
     // Clear lab.js file
@@ -131,7 +130,7 @@ function generateLabJS(model: Model, laboratoryInformation: ExtractedLaboratoryI
     appendFileSync(outputJavaScript, labTemplate.postfix);
 }
 
-function generateLaboratoryInformation(laboratoryInformation: ExtractedLaboratoryInformation, node: CompositeGeneratorNode) {
+function generateLaboratoryInformation(laboratoryInformation: ExtractedWebLaboratoryInformation, node: CompositeGeneratorNode) {
     const titleString = (laboratoryInformation.title == undefined) ? "undefined" : `"${laboratoryInformation.title}"`;
     node.append(`const appTitle = ${titleString};\n`);
 

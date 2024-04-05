@@ -47981,39 +47981,88 @@ __publicField(BlockLexer, "rulesGfm", null);
 __publicField(BlockLexer, "rulesTables", null);
 
 // src/util/modelUtil.ts
-function getReferenceablesInBinaryExpression(expression, output) {
-  getReferencablesInExpression(expression.left, output);
-  getReferencablesInExpression(expression.right, output);
-}
-function getReferenceablesInStatement(statement, output) {
-  let reference = statement.reference.ref;
-  if (reference !== void 0)
-    output.add(reference);
-}
-function getReferencablesInExpression(expression, output) {
-  if (expression === void 0)
-    return;
-  switch (expression.$type) {
-    case "OrExpression":
-      getReferenceablesInBinaryExpression(expression, output);
-      break;
-    case "AndExpression":
-      getReferenceablesInBinaryExpression(expression, output);
-      break;
-    case "Negation":
-      getReferencablesInExpression(expression.inner, output);
-      break;
-    case "Group":
-      getReferencablesInExpression(expression.inner, output);
-    case "Statement":
-      getReferenceablesInStatement(expression, output);
-      break;
+var extractReferenceables = {
+  fromExpression: function(expression, output) {
+    if (expression === void 0)
+      return;
+    switch (expression.$type) {
+      case "OrExpression":
+        extractReferenceables.fromOrExpression(expression, output);
+        break;
+      case "AndExpression":
+        extractReferenceables.fromAndExpression(expression, output);
+        break;
+      case "Negation":
+        extractReferenceables.fromNegation(expression, output);
+        break;
+      case "Group":
+        extractReferenceables.fromGroup(expression, output);
+        break;
+      case "Statement":
+        extractReferenceables.fromStatement(expression, output);
+        break;
+    }
+  },
+  fromOrExpression: function(expression, output) {
+    extractReferenceables.fromExpression(expression.left, output);
+    extractReferenceables.fromExpression(expression.right, output);
+  },
+  fromAndExpression: function(expression, output) {
+    extractReferenceables.fromExpression(expression.left, output);
+    extractReferenceables.fromExpression(expression.right, output);
+  },
+  fromNegation: function(expression, output) {
+    extractReferenceables.fromExpression(expression.inner, output);
+  },
+  fromGroup: function(expression, output) {
+    extractReferenceables.fromExpression(expression.inner, output);
+  },
+  fromStatement: function(statement, output) {
+    let reference = statement.reference.ref;
+    if (reference !== void 0)
+      output.add(reference);
   }
-}
+};
 function getReferencablesInWhenCondition(condition) {
   let result = /* @__PURE__ */ new Set();
-  getReferencablesInExpression(condition.expression, result);
+  extractReferenceables.fromExpression(condition.expression, result);
   return result;
+}
+var extractStringFromExpression = {
+  fromExpression: function(expression) {
+    if (expression === void 0)
+      return "";
+    switch (expression.$type) {
+      case "OrExpression":
+        return extractStringFromExpression.fromOrExpression(expression);
+      case "AndExpression":
+        return extractStringFromExpression.fromAndExpression(expression);
+      case "Negation":
+        return extractStringFromExpression.fromNegation(expression);
+      case "Group":
+        return extractStringFromExpression.fromGroup(expression);
+      case "Statement":
+        return extractStringFromExpression.fromStatement(expression);
+    }
+  },
+  fromOrExpression: function(expression) {
+    return extractStringFromExpression.fromExpression(expression.left) + " or " + extractStringFromExpression.fromExpression(expression.right);
+  },
+  fromAndExpression: function(expression) {
+    return extractStringFromExpression.fromExpression(expression.left) + " or " + extractStringFromExpression.fromExpression(expression.right);
+  },
+  fromNegation: function(expression) {
+    return "not " + extractStringFromExpression.fromExpression(expression.inner);
+  },
+  fromGroup: function(expression) {
+    return "(" + extractStringFromExpression.fromExpression(expression.inner) + ")";
+  },
+  fromStatement: function(statement) {
+    return statement.reference.$refText + ` is${statement.negation ? " not" : ""} ` + extractValueAsString(statement.value);
+  }
+};
+function getStringFromWhenCondition(condition) {
+  return extractStringFromExpression.fromExpression(condition.expression);
 }
 function getAllUsedConcerns(model) {
   let result = /* @__PURE__ */ new Set();
@@ -48067,30 +48116,30 @@ function formattedStringToHTML(formattedString, default_format = "MD") {
       return Marked.parse(preprocessed);
   }
 }
-var DEFAULT_APP_INFORMATION = {
-  title: "Laboratory Title",
-  description: "<p>Laboratory Description</p>",
+var DEFAULT_LABORATORY_INFORMATION = {
+  title: void 0,
+  description: void 0,
   icon: void 0,
-  format: "MD",
+  format: void 0,
   author: void 0,
   version: void 0
 };
 function extractLaboratoryInformation(information) {
-  let result = DEFAULT_APP_INFORMATION;
-  if (information !== void 0) {
-    if (information.titles.length > 0)
-      result.title = information.titles[0];
-    if (information.descriptions.length > 0)
-      result.description = formattedStringToHTML(information.descriptions[0]);
-    if (information.icons.length > 0)
-      result.icon = information.icons[0];
-    if (information.formats.length > 0)
-      result.format = information.formats[0];
-    if (information.authors.length > 0)
-      result.author = information.authors[0];
-    if (information.versions.length > 0)
-      result.version = information.versions[0];
-  }
+  let result = DEFAULT_LABORATORY_INFORMATION;
+  if (information === void 0)
+    return result;
+  if (information.titles.length > 0)
+    result.title = information.titles[0];
+  if (information.descriptions.length > 0)
+    result.description = information.descriptions[0];
+  if (information.icons.length > 0)
+    result.icon = information.icons[0];
+  if (information.formats.length > 0)
+    result.format = information.formats[0];
+  if (information.authors.length > 0)
+    result.author = information.authors[0];
+  if (information.versions.length > 0)
+    result.version = information.versions[0];
   return result;
 }
 
@@ -48880,6 +48929,31 @@ function readTemplatedFile(templateFilePath, templateMarker) {
     postfix: splitByConcernsMarkers.AFTER
   };
 }
+var DEFAULT_WEB_LABORATORY_INFORMATION = {
+  title: "Laboratory Title",
+  description: "<p>Laboratory description</p>",
+  icon: void 0,
+  format: "MD",
+  author: void 0,
+  version: void 0
+};
+function extractLaboratoryInformationForWebWithDefaults(information) {
+  const extracted = extractLaboratoryInformation(information);
+  let result = DEFAULT_WEB_LABORATORY_INFORMATION;
+  if (extracted.title !== void 0)
+    result.title = extracted.title;
+  if (extracted.icon !== void 0)
+    result.icon = extracted.icon;
+  if (extracted.format !== void 0)
+    result.format = extracted.format;
+  if (extracted.author !== void 0)
+    result.author = extracted.author;
+  if (extracted.version !== void 0)
+    result.version = extracted.version;
+  if (extracted.description !== void 0)
+    result.description = formattedStringToHTML(extracted.description, result.format);
+  return result;
+}
 
 // src/generators/lab/conditions.ts
 function generateConditions(conditions, node) {
@@ -49037,7 +49111,7 @@ function generateLaboratory(model, outputDirectory, templateDirectory) {
       import_node_path2.default.join(outputResourcesPath, fileName)
     );
   });
-  const laboratoryInformation = extractLaboratoryInformation(model.laboratory);
+  const laboratoryInformation = extractLaboratoryInformationForWebWithDefaults(model.laboratory);
   generateIndex(
     model,
     laboratoryInformation,
@@ -49100,51 +49174,82 @@ function generateLaboratoryInformation(laboratoryInformation, node) {
 
 // src/generators/graphviz/main.ts
 var import_node_fs3 = require("fs");
-var GRAPHVIZ_COLORS = {
+var COLORS = {
   red: '"#9d0208"',
-  yellow: '"#ffba08"'
+  yellow: '"#9e7702"',
+  green: '"#509e02"',
+  black: '"#000000"'
 };
-var GRAPHVIZ_PREFIX = "digraph G {\n";
-var GRAPHVIZ_POSTFIX = "}\n";
-var GRAPHVIZ_PROPOSITIONS_NODE_STYLE = "shape=oval, color=black";
-var GRAPHVIZ_PROPOSITIONS_DISABLE_EDGE_STYLE = `labelfontcolor=${GRAPHVIZ_COLORS.red}, color=${GRAPHVIZ_COLORS.red}`;
-var GRAPHVIZ_PROPOSITIONS_RAISE_EDGE_STYLE = `labelfontcolor=${GRAPHVIZ_COLORS.yellow}, color=${GRAPHVIZ_COLORS.yellow}`;
+var DOT_PREFIX = "digraph G {\n";
+var DOT_POSTFIX = "}\n";
+var CONDITION_VERTEX_STYLE = `shape=diamond, color=${COLORS.green}`;
+var CONDITION_DETERMINED_EDGE_STYLE = `labelfontcolor=${COLORS.green}, color=${COLORS.green}`;
+var PROPOSITIONS_VERTEX_STYLE = `shape=oval, color=${COLORS.black}`;
+var PROPOSITIONS_DISABLE_EDGE_STYLE = `labelfontcolor=${COLORS.red}, color=${COLORS.red}`;
+var PROPOSITIONS_RAISE_EDGE_STYLE = `labelfontcolor=${COLORS.yellow}, color=${COLORS.yellow}`;
 function generateGraphviz(model, destination) {
   const generatedFilePath = destination;
+  (0, import_node_fs3.writeFileSync)(generatedFilePath, DOT_PREFIX);
+  const conditionsNode = new CompositeGeneratorNode();
+  generateConditions2(model.conditions, conditionsNode);
+  (0, import_node_fs3.appendFileSync)(generatedFilePath, toString2(conditionsNode));
   const propositionsNode = new CompositeGeneratorNode();
-  graphvizPropositions(model.propositions, propositionsNode);
-  (0, import_node_fs3.writeFileSync)(generatedFilePath, GRAPHVIZ_PREFIX);
+  generatePropositions(model.propositions, propositionsNode);
   (0, import_node_fs3.appendFileSync)(generatedFilePath, toString2(propositionsNode));
-  (0, import_node_fs3.appendFileSync)(generatedFilePath, GRAPHVIZ_POSTFIX);
+  (0, import_node_fs3.appendFileSync)(generatedFilePath, DOT_POSTFIX);
   return generatedFilePath;
 }
-function graphvizPropositions(propositions, fileNode) {
+function generateConditions2(conditions, fileNode) {
+  fileNode.append(`	// Conditions:
+`);
+  conditions.forEach((condition) => {
+    fileNode.append(`	${condition.name} [${CONDITION_VERTEX_STYLE}];
+`);
+    getReferencablesInWhenCondition(condition.condition).forEach((referenceable) => {
+      fileNode.append(`		${referenceable.name} -> ${condition.name} [${CONDITION_DETERMINED_EDGE_STYLE}];
+`);
+    });
+  });
+}
+function generatePropositions(propositions, fileNode) {
+  fileNode.append(`	// Propositions:
+`);
   propositions.forEach((proposition) => {
-    let indentation = `	`;
-    fileNode.append(`${indentation}${proposition.name} [${GRAPHVIZ_PROPOSITIONS_NODE_STYLE}];
+    fileNode.append(`	${proposition.name} [${PROPOSITIONS_VERTEX_STYLE}];
 `);
-    indentation += "	";
-    proposition.valueClauses.forEach((valueDescription) => {
-      valueDescription.raises.forEach((raise) => {
-        if (raise.condition === void 0)
-          return;
-        let referenceables = getReferencablesInWhenCondition(raise.condition);
-        referenceables.forEach((referenceable) => {
-          fileNode.append(`${indentation}${referenceable.name} -> ${proposition.name} [${GRAPHVIZ_PROPOSITIONS_RAISE_EDGE_STYLE}];
+    getReferenceablesCausingRaises(proposition).forEach((referenceable) => {
+      fileNode.append(`		${referenceable.name} -> ${proposition.name} [${PROPOSITIONS_RAISE_EDGE_STYLE}];
 `);
-        });
+    });
+    getReferenceablesCausingDisable(proposition).forEach((referenceable) => {
+      fileNode.append(`		${referenceable.name} -> ${proposition.name} [${PROPOSITIONS_DISABLE_EDGE_STYLE}];
+`);
+    });
+  });
+}
+function getReferenceablesCausingRaises(proposition) {
+  let result = /* @__PURE__ */ new Set();
+  proposition.valueClauses.forEach((clause) => {
+    clause.raises.forEach((raise) => {
+      if (raise.condition === void 0)
+        return;
+      getReferencablesInWhenCondition(raise.condition).forEach((ref) => {
+        result.add(ref);
       });
     });
-    if (proposition.disable !== void 0) {
-      proposition.disable.statements.forEach((statement) => {
-        let referenceables = getReferencablesInWhenCondition(statement.condition);
-        referenceables.forEach((referenceable) => {
-          fileNode.append(`${indentation}${referenceable.name} -> ${proposition.name} [${GRAPHVIZ_PROPOSITIONS_DISABLE_EDGE_STYLE}];
-`);
-        });
-      });
-    }
   });
+  return result;
+}
+function getReferenceablesCausingDisable(proposition) {
+  let result = /* @__PURE__ */ new Set();
+  if (proposition.disable === void 0)
+    return result;
+  proposition.disable.statements.forEach((statement) => {
+    getReferencablesInWhenCondition(statement.condition).forEach((ref) => {
+      result.add(ref);
+    });
+  });
+  return result;
 }
 
 // node_modules/langium/lib/node/node-file-system-provider.js
@@ -49174,9 +49279,201 @@ var NodeFileSystem = {
 };
 
 // src/generators/actions.ts
-var import_node_fs4 = require("fs");
+var import_node_fs5 = require("fs");
 var import_vscode = require("vscode");
 var import_node_path3 = require("path");
+
+// src/generators/json/main.ts
+var import_node_fs4 = require("fs");
+function generateJSON(model, destination) {
+  (0, import_node_fs4.writeFileSync)(destination, "{\n");
+  const informationNode = new CompositeGeneratorNode();
+  generateLaboratoryInformation2(model.laboratory, informationNode);
+  (0, import_node_fs4.appendFileSync)(destination, toString2(informationNode));
+  const concernsNode = new CompositeGeneratorNode();
+  generateConcerns2(model.concerns, concernsNode);
+  (0, import_node_fs4.appendFileSync)(destination, toString2(concernsNode));
+  const conditionsNode = new CompositeGeneratorNode();
+  generateConditions3(model.conditions, conditionsNode);
+  (0, import_node_fs4.appendFileSync)(destination, toString2(conditionsNode));
+  const propositionsNode = new CompositeGeneratorNode();
+  generatePropositions2(model.propositions, propositionsNode);
+  (0, import_node_fs4.appendFileSync)(destination, toString2(propositionsNode));
+  (0, import_node_fs4.appendFileSync)(destination, "}");
+  return destination;
+}
+function generateLaboratoryInformation2(laboratory, fileNode) {
+  const extracted = extractLaboratoryInformation(laboratory);
+  fileNode.append(`	"laboratory": {
+`);
+  const title = extracted.title === void 0 ? "null" : `"${escapeString(extracted.title)}"`;
+  const author = extracted.author === void 0 ? "null" : `"${escapeString(extracted.author)}"`;
+  const version = extracted.version === void 0 ? "null" : `"${escapeString(extracted.version)}"`;
+  const icon = extracted.icon === void 0 ? "null" : `"${escapeString(extracted.icon)}"`;
+  const format = extracted.format === void 0 ? "null" : `"${escapeString(extracted.format)}"`;
+  const description = extracted.description === void 0 ? "null" : generateFormattedString(extracted.description);
+  fileNode.append(`		"title": ${title},
+`);
+  fileNode.append(`		"author": ${author},
+`);
+  fileNode.append(`		"version": ${version},
+`);
+  fileNode.append(`		"icon": ${icon},
+`);
+  fileNode.append(`		"format": ${format},
+`);
+  fileNode.append(`		"description": ${description}
+`);
+  fileNode.append(`	},
+`);
+}
+function generateConcerns2(concerns, fileNode) {
+  fileNode.append(`	"concerns": [
+`);
+  let isFirst = true;
+  concerns.forEach((concern) => {
+    if (isFirst)
+      isFirst = false;
+    else
+      fileNode.append(`,
+`);
+    fileNode.append(`		{
+`);
+    fileNode.append(`			"name": "${concern.name}",
+`);
+    fileNode.append(`			"summary": "${concern.summary}",
+`);
+    fileNode.append(`			"description": ${generateFormattedString(concern.description)}
+`);
+    fileNode.append(`		}`);
+  });
+  fileNode.appendNewLine();
+  fileNode.append(`	],
+`);
+}
+function generateConditions3(conditions, fileNode) {
+  fileNode.append(`	"conditions": [
+`);
+  let isFirst = true;
+  conditions.forEach((condition) => {
+    if (isFirst)
+      isFirst = false;
+    else
+      fileNode.append(`,
+`);
+    fileNode.append(`		{
+`);
+    fileNode.append(`			"name": "${condition.name}",
+`);
+    fileNode.append(`			"condition": "${generateWhenCondition(condition.condition)}"
+`);
+    fileNode.append(`		}`);
+  });
+  fileNode.appendNewLine();
+  fileNode.append(`	],
+`);
+}
+function generatePropositions2(propositions, fileNode) {
+  fileNode.append(`	"propositions": [
+`);
+  let isFirst = true;
+  propositions.forEach((proposition) => {
+    if (isFirst)
+      isFirst = false;
+    else
+      fileNode.append(`,
+`);
+    fileNode.append(`		{
+`);
+    fileNode.append(`			"name": "${proposition.name}",
+`);
+    fileNode.append(`			"expression": "${proposition.expression}",
+`);
+    generateValueClauses(proposition, fileNode);
+    generateDisableStatements(proposition, fileNode);
+    fileNode.append(`		}`);
+  });
+  fileNode.appendNewLine();
+  fileNode.append(`	]
+`);
+}
+function generateValueClauses(proposition, fileNode) {
+  fileNode.append(`			"values": [
+`);
+  let isFirstClause = true;
+  proposition.valueClauses.forEach((clause) => {
+    if (isFirstClause)
+      isFirstClause = false;
+    else
+      fileNode.append(`,
+`);
+    fileNode.append(`				{
+`);
+    fileNode.append(`					"value": ${extractValueAsString(clause.value)},
+`);
+    fileNode.append(`					"raises": [
+`);
+    let isFirstRaise = true;
+    clause.raises.forEach((raise) => {
+      var _a;
+      if (isFirstRaise)
+        isFirstRaise = false;
+      else
+        fileNode.append(`,
+`);
+      fileNode.append(`						{
+`);
+      fileNode.append(`							"concern": "${(_a = raise.concern.ref) == null ? void 0 : _a.name}",
+`);
+      fileNode.append(`							"condition": ${raise.condition === void 0 ? "null" : `"${generateWhenCondition(raise.condition)}"`}
+`);
+      fileNode.append(`						}`);
+    });
+    fileNode.append(`
+					]
+`);
+    fileNode.append(`				}`);
+  });
+  fileNode.append(`
+			],
+`);
+}
+function generateDisableStatements(proposition, fileNode) {
+  fileNode.append(`			"disabled": [
+`);
+  let isFirst = true;
+  if (proposition.disable !== void 0) {
+    proposition.disable.statements.forEach((statement) => {
+      if (isFirst)
+        isFirst = false;
+      else
+        fileNode.append(`,
+`);
+      fileNode.append(`				{
+`);
+      fileNode.append(`					"message": "${escapeString(statement.message)}",
+`);
+      fileNode.append(`					"condition": "${generateWhenCondition(statement.condition)}"
+`);
+      fileNode.append(`				}`);
+    });
+  }
+  fileNode.append(`
+			]
+`);
+}
+function generateFormattedString(formatted) {
+  const format = formatted.format === void 0 ? "null" : `"${formatted.format}"`;
+  return `{"format": ${format}, "contents": "${escapeString(formatted.contents)}"}`;
+}
+function generateWhenCondition(condition) {
+  return escapeString(getStringFromWhenCondition(condition));
+}
+function escapeString(input) {
+  return input.replaceAll('"', '\\"').replaceAll("\n", "\\n").replaceAll("	", "\\t");
+}
+
+// src/generators/actions.ts
 var TEMPLATES_DIRECTORY = "./templates/laboratory-template";
 function getModel(inputFile) {
   const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
@@ -49184,16 +49481,16 @@ function getModel(inputFile) {
 }
 function checkJSPLInput(inputFile) {
   const fileExtensions = getInputExtensionsAsSet();
-  const inputStats = (0, import_node_fs4.statSync)(inputFile);
+  const inputStats = (0, import_node_fs5.statSync)(inputFile);
   if (!inputStats.isFile())
     throw new import_vscode.FileSystemError(`The specified input file (${inputFile}) is not a file.`);
   if (!fileExtensions.has((0, import_node_path3.extname)(inputFile)))
     throw new import_vscode.FileSystemError(`The specified input file (${inputFile}) does not have one of the allowed file extensions (${getInputExtensionsAsString()}).`);
 }
 function checkLaboratoryOutputDirectory(outputDirectoryPath) {
-  if (!(0, import_node_fs4.existsSync)(outputDirectoryPath))
-    (0, import_node_fs4.mkdirSync)(outputDirectoryPath);
-  const outputStats = (0, import_node_fs4.statSync)(outputDirectoryPath);
+  if (!(0, import_node_fs5.existsSync)(outputDirectoryPath))
+    (0, import_node_fs5.mkdirSync)(outputDirectoryPath);
+  const outputStats = (0, import_node_fs5.statSync)(outputDirectoryPath);
   if (!outputStats.isDirectory())
     throw new import_vscode.FileSystemError(`The specified output directory (${outputDirectoryPath}) is not a directory.`);
 }
@@ -49222,19 +49519,22 @@ var generateGraphvizAction = async (inputFile, destination) => {
   const generatedFilePath = generateGraphviz(model, destination);
   return Promise.resolve(generatedFilePath);
 };
+var generateJSONAction = async (inputFile, destination) => {
+  try {
+    checkJSPLInput(inputFile);
+  } catch (error) {
+    return Promise.reject(`Something went wrong while reading the input file. (Error: ${error})`);
+  }
+  const model = await getModel(inputFile);
+  const generatedFilePath = generateJSON(model, destination);
+  return Promise.resolve(generatedFilePath);
+};
 
 // src/extension/main.ts
 var client;
 var GENERATE_WEB_PAGE_COMMAND_IDENTIFIER = "jspl.generate-webpage";
 var GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER = "jspl.generate-graphviz";
 var GENERATE_JSON_COMMAND_IDENTIFIER = "jspl.generate-json";
-var DIRECTORY_PICKER_DIALOG_OPTIONS = {
-  canSelectMany: false,
-  title: "Select Output Directory",
-  openLabel: "Select",
-  canSelectFiles: false,
-  canSelectFolders: true
-};
 function activate(context) {
   client = startLanguageClient(context);
   import_vscode2.commands.registerCommand(
@@ -49265,8 +49565,16 @@ function deactivate() {
 async function generateWebpageCommand(context) {
   var _a;
   const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
+  const defaultOutputDirectory = (0, import_node_path4.dirname)(currentFilePath);
   const laboratoryTemplatePath = context.asAbsolutePath((0, import_node_path4.join)("templates", "laboratory-template"));
-  const selectedUris = await import_vscode2.window.showOpenDialog(DIRECTORY_PICKER_DIALOG_OPTIONS);
+  const selectedUris = await import_vscode2.window.showOpenDialog({
+    canSelectMany: false,
+    title: "Select Output Directory",
+    openLabel: "Select",
+    canSelectFiles: false,
+    canSelectFolders: true,
+    defaultUri: import_vscode2.Uri.file(defaultOutputDirectory)
+  });
   if (selectedUris === void 0) {
     import_vscode2.window.showErrorMessage("No Directory selected.");
     return;
@@ -49276,23 +49584,59 @@ async function generateWebpageCommand(context) {
     currentFilePath,
     outputDirectoryPath,
     laboratoryTemplatePath
-  ).then(
-    (value) => {
-      import_vscode2.window.showInformationMessage("Successfully created Laboratory at: " + value);
-    }
-  ).catch(
-    (reason) => {
-      import_vscode2.window.showErrorMessage("Couldn't create laboratory. " + reason);
-    }
-  );
+  ).then((value) => {
+    import_vscode2.window.showInformationMessage("Successfully created Laboratory at: " + value);
+  }).catch((reason) => {
+    import_vscode2.window.showErrorMessage("Couldn't create laboratory. " + reason);
+  });
 }
 async function generateGraphvizCommand(context) {
   var _a;
   const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
-  const outputFilePath = (0, import_node_path4.join)(import_vscode2.workspace.workspaceFolders[0].uri.fsPath, "graphviz.dot");
-  generateGraphvizAction(currentFilePath, outputFilePath);
+  const defaultOutputFile = (0, import_node_path4.dirname)(currentFilePath) + "/graphviz.dot";
+  const selectedUri = await import_vscode2.window.showSaveDialog({
+    title: "Save DOT Output",
+    saveLabel: "Save",
+    filters: { "DOT": ["dot"] },
+    defaultUri: import_vscode2.Uri.file(defaultOutputFile)
+  });
+  if (selectedUri === void 0) {
+    import_vscode2.window.showErrorMessage("No output file selected.");
+    return;
+  }
+  const outputFilePath = selectedUri.fsPath;
+  generateGraphvizAction(
+    currentFilePath,
+    outputFilePath
+  ).then((value) => {
+    import_vscode2.window.showInformationMessage("Successfully created Graphviz file at: " + value);
+  }).catch((reason) => {
+    import_vscode2.window.showErrorMessage("Couldn't create Graphviz file. " + reason);
+  });
 }
 async function generateJSONCommand(context) {
+  var _a;
+  const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
+  const defaultOutputFile = (0, import_node_path4.dirname)(currentFilePath) + "/laboratory.json";
+  const selectedUri = await import_vscode2.window.showSaveDialog({
+    title: "Select JSON Output",
+    saveLabel: "Save",
+    filters: { "JSON": ["json"] },
+    defaultUri: import_vscode2.Uri.file(defaultOutputFile)
+  });
+  if (selectedUri === void 0) {
+    import_vscode2.window.showErrorMessage("No output file selected.");
+    return;
+  }
+  const outputFilePath = selectedUri.fsPath;
+  generateJSONAction(
+    currentFilePath,
+    outputFilePath
+  ).then((value) => {
+    import_vscode2.window.showInformationMessage("Successfully created JSON file at: " + value);
+  }).catch((reason) => {
+    import_vscode2.window.showErrorMessage("Couldn't create JSON file. " + reason);
+  });
 }
 function startLanguageClient(context) {
   const serverModule = context.asAbsolutePath((0, import_node_path4.join)("out", "language", "main.cjs"));

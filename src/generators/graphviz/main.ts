@@ -1,60 +1,100 @@
-import { Model, Proposition, } from '../../language/generated/ast.js';
+import { Condition, Model, Proposition, Referenceable, } from '../../language/generated/ast.js';
 import { writeFileSync, appendFileSync  } from 'node:fs';
 import { CompositeGeneratorNode, toString } from 'langium';
 import { getReferencablesInWhenCondition } from '../../util/modelUtil.js';
 
-const GRAPHVIZ_COLORS = {
+const COLORS = {
     red: "\"#9d0208\"",
-    yellow: "\"#ffba08\""
+    yellow: "\"#9e7702\"",
+    green: "\"#509e02\"",
+    black: "\"#000000\""
 }
 
-const GRAPHVIZ_PREFIX: string = "digraph G {\n";
-const GRAPHVIZ_POSTFIX: string = "}\n";
-const GRAPHVIZ_PROPOSITIONS_NODE_STYLE: string = "shape=oval, color=black";
-const GRAPHVIZ_PROPOSITIONS_DISABLE_EDGE_STYLE: string = `labelfontcolor=${GRAPHVIZ_COLORS.red}, color=${GRAPHVIZ_COLORS.red}`;
-const GRAPHVIZ_PROPOSITIONS_RAISE_EDGE_STYLE: string = `labelfontcolor=${GRAPHVIZ_COLORS.yellow}, color=${GRAPHVIZ_COLORS.yellow}`;
+const DOT_PREFIX: string = "digraph G {\n";
+const DOT_POSTFIX: string = "}\n";
+
+const CONDITION_VERTEX_STYLE: string = `shape=diamond, color=${COLORS.green}`;
+const CONDITION_DETERMINED_EDGE_STYLE: string = `labelfontcolor=${COLORS.green}, color=${COLORS.green}`;
+
+const PROPOSITIONS_VERTEX_STYLE: string = `shape=oval, color=${COLORS.black}`;
+const PROPOSITIONS_DISABLE_EDGE_STYLE: string = `labelfontcolor=${COLORS.red}, color=${COLORS.red}`;
+const PROPOSITIONS_RAISE_EDGE_STYLE: string = `labelfontcolor=${COLORS.yellow}, color=${COLORS.yellow}`;
 
 export function generateGraphviz(model: Model, destination: string): string {
     const generatedFilePath = destination;
 
-    const propositionsNode = new CompositeGeneratorNode();
-    
-    graphvizPropositions(model.propositions, propositionsNode);
+    writeFileSync(generatedFilePath, DOT_PREFIX);
 
-    writeFileSync(generatedFilePath, GRAPHVIZ_PREFIX);
+    // 2. Conditions
+    const conditionsNode = new CompositeGeneratorNode();
+    generateConditions(model.conditions, conditionsNode);
+    appendFileSync(generatedFilePath, toString(conditionsNode));
+
+    // 3. Propositions
+    const propositionsNode = new CompositeGeneratorNode();
+    generatePropositions(model.propositions, propositionsNode);
     appendFileSync(generatedFilePath, toString(propositionsNode));
-    appendFileSync(generatedFilePath, GRAPHVIZ_POSTFIX);
+
+    appendFileSync(generatedFilePath, DOT_POSTFIX);
 
     return generatedFilePath;
 }
 
-function graphvizPropositions(propositions: Proposition[], fileNode: CompositeGeneratorNode): void {
-    propositions.forEach(proposition => {
-        let indentation = `\t`;
-        // add node
-        fileNode.append(`${indentation}${proposition.name} [${GRAPHVIZ_PROPOSITIONS_NODE_STYLE}];\n`);
+function generateConditions(conditions: Condition[], fileNode: CompositeGeneratorNode): void {
+    fileNode.append(`\t// Conditions:\n`);
+    conditions.forEach(condition => {
+        // add vertex
+        fileNode.append(`\t${condition.name} [${CONDITION_VERTEX_STYLE}];\n`);
 
-        indentation += '\t';
-        // add edges dor raising concerns
-        proposition.valueClauses.forEach(valueDescription => {
-            valueDescription.raises.forEach(raise => {
-                if (raise.condition === undefined)
-                    return;
-                let referenceables = getReferencablesInWhenCondition(raise.condition);
-                referenceables.forEach(referenceable => {
-                    fileNode.append(`${indentation}${referenceable.name} -> ${proposition.name} [${GRAPHVIZ_PROPOSITIONS_RAISE_EDGE_STYLE}];\n`);
-                });
-            });
+        // add incoming edges
+        getReferencablesInWhenCondition(condition.condition).forEach(referenceable => {
+            fileNode.append(`\t\t${referenceable.name} -> ${condition.name} [${CONDITION_DETERMINED_EDGE_STYLE}];\n`);
+        });
+    });
+}
+
+function generatePropositions(propositions: Proposition[], fileNode: CompositeGeneratorNode): void {
+    fileNode.append(`\t// Propositions:\n`);
+    propositions.forEach(proposition => {
+        // add vertex
+        fileNode.append(`\t${proposition.name} [${PROPOSITIONS_VERTEX_STYLE}];\n`);
+
+        // add edges for raising concerns
+        getReferenceablesCausingRaises(proposition).forEach(referenceable => {
+            fileNode.append(`\t\t${referenceable.name} -> ${proposition.name} [${PROPOSITIONS_RAISE_EDGE_STYLE}];\n`);
         });
 
         // add edges for disabling
-        if (proposition.disable !== undefined) {
-            proposition.disable.statements.forEach(statement => {
-                let referenceables = getReferencablesInWhenCondition(statement.condition);
-                referenceables.forEach(referenceable => {
-                    fileNode.append(`${indentation}${referenceable.name} -> ${proposition.name} [${GRAPHVIZ_PROPOSITIONS_DISABLE_EDGE_STYLE}];\n`);
-                });
-            });
-        }
+        getReferenceablesCausingDisable(proposition).forEach(referenceable => {
+            fileNode.append(`\t\t${referenceable.name} -> ${proposition.name} [${PROPOSITIONS_DISABLE_EDGE_STYLE}];\n`);
+        });
     });
+}
+
+function getReferenceablesCausingRaises(proposition: Proposition): Set<Referenceable> {
+    let result = new Set<Referenceable>();
+
+    proposition.valueClauses.forEach(clause => {
+        clause.raises.forEach(raise => {
+            if (raise.condition === undefined) return;
+            getReferencablesInWhenCondition(raise.condition).forEach(ref => {
+                result.add(ref)
+            });
+        });
+    });
+
+    return result;
+}
+
+function getReferenceablesCausingDisable(proposition: Proposition): Set<Referenceable> {
+    let result = new Set<Referenceable>();
+    if (proposition.disable === undefined) return result;
+    
+    proposition.disable.statements.forEach(statement => {
+        getReferencablesInWhenCondition(statement.condition).forEach(ref => {
+            result.add(ref);
+        });
+    });
+
+    return result;
 }

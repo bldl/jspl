@@ -2,7 +2,7 @@
     "name": "jspl-javascript-propositional-laboratory",
     "displayName": "JSPL: JavaScript Propositional Laboratory",
     "description": "Support for writing JavaScript Proposal Laboratories",
-    "version": "0.5.4",
+    "version": "0.6.0",
     "publisher": "PhilippRiemer",
     "license": "SEE LICENSE IN LICENSE.txt",
     "icon": "icon.png",
@@ -85,11 +85,11 @@
             },
             {
                 "command": "jspl.generate-graphviz",
-                "title": "JSPL: Generate Graphviz Visualization (WIP)"
+                "title": "JSPL: Generate Graphviz Visualization"
             },
             {
                 "command": "jspl.generate-json",
-                "title": "JSPL: Generate JSON Representation (WIP)"
+                "title": "JSPL: Generate JSON Representation"
             }
         ],
         "menus": {

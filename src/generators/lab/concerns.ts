@@ -1,6 +1,7 @@
 import { CompositeGeneratorNode } from "langium";
 import { Concern } from "../../language/generated/ast.js";
-import { ExtractedLaboratoryInformation, formattedStringToHTML } from "../../util/modelUtil.js";
+import { formattedStringToHTML } from "../../util/modelUtil.js";
+import { ExtractedWebLaboratoryInformation } from "./util.js";
 
 
 function generateConcernHtml(concern: Concern, default_format: string): string {
@@ -9,7 +10,7 @@ function generateConcernHtml(concern: Concern, default_format: string): string {
     </details>`;
 }
 
-export function generateConcerns(concerns: Concern[], node: CompositeGeneratorNode, laboratoryInformation: ExtractedLaboratoryInformation) {
+export function generateConcerns(concerns: Concern[], node: CompositeGeneratorNode, laboratoryInformation: ExtractedWebLaboratoryInformation) {
     // Create JS-Object with concerns as members and string/html values (see original lab)
     node.append(`const concerns = {\n`);
 

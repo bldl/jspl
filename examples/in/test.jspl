@@ -18,61 +18,26 @@ laboratory {
     format MD
 }
 
+concern used {
+    summary "CONCERNING!!!!"
+    description "Okay, maybe not so concerning"
+}
+
 concern unused {
     summary "nothing"
     description "nothing at all"
 }
 
-// TODO: add deprecated tags? with warnings concern deprecated test {...}
-concern test { // Multiline strings cant be indented?...
-    summary "CONCERN!"
-    description "
-    
-    # This is concerning.
-            
-    **Very concerning!** 
-
-    *Or is it?*
-
-        \{
-            int i = 0;
-            i++;
-            return i;
-        \}
-    "
-}
-
-concern test2 { // using dedent-js to remove leading tabs/spaces
-    summary "CONCERN!"
-    description HTML"
-    
-    # This is concerning.
-        
-    **Very concerning!** 
-            
-    *Or is it?*
-
-        {
-            int i = 0;
-            i++;
-            return i;
-        }
-    "
+proposition test {
+    expression "a === b"
+    default value True
+    value False {
+        raise used
+    }
 }
 
 condition usedCondition holds when test is True
 condition unusedCondition holds when test is False
-
-// TODO: deprecated for proposition? add markers in html webpage
-proposition test {
-    expression "a === b"
-    default value True {
-        raise test 
-    }
-    value False {
-        raise test2
-    }
-}
 
 proposition test22 {
     expression "a === 2"
