@@ -139,7 +139,7 @@ function App() {
 			${appTitle} ${appVersion == undefined ? "" : `(v${appVersion})`}
 		</h1>
 		${
-			appAuthor == undefined ? "" : `
+			appAuthor == undefined ? "" : html`
 				<p class="text-center">
 					by ${appAuthor}
 				</p>

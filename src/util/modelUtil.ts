@@ -1,49 +1,107 @@
 import { toString } from 'langium';
-import { AndExpression, Concern, FormattedString, LaboratoryInformation, Model, OrExpression, PropositionalExpression, Referenceable, Statement, WhenCondition } from '../language/generated/ast.js';
+import { AndExpression, Concern, FormattedString, Group, LaboratoryInformation, Model, Negation, OrExpression, PropositionalExpression, Referenceable, Statement, WhenCondition } from '../language/generated/ast.js';
 import dedent from 'dedent-js';
 import { Marked } from '@ts-stack/markdown';
 
-
-function getReferenceablesInBinaryExpression(expression: OrExpression | AndExpression, output: Set<Referenceable>): void {
-    getReferencablesInExpression(expression.left, output);
-    getReferencablesInExpression(expression.right, output);
+export type LogicalExpressionExtractor = {
+    fromExpression: Function,
+    fromOrExpression: Function,
+    fromAndExpression: Function,
+    fromNegation: Function,
+    fromGroup: Function,
+    fromStatement: Function
 }
 
-function getReferenceablesInStatement(statement: Statement, output: Set<Referenceable>): void {
-    let reference = statement.reference.ref;
-    if (reference !== undefined) 
-        output.add(reference);
-}
+const extractReferenceables: LogicalExpressionExtractor = {
+    fromExpression: function (expression: PropositionalExpression, output: Set<Referenceable>): void {
+        if (expression === undefined)
+            return;
 
-function getReferencablesInExpression(expression: PropositionalExpression, output: Set<Referenceable>): void {
-    if (expression === undefined)
-        return;
-
-    switch (expression.$type) {
-        case 'OrExpression': 
-            getReferenceablesInBinaryExpression(expression as OrExpression, output);
-            break;
-        case 'AndExpression': 
-            getReferenceablesInBinaryExpression(expression as AndExpression, output);
-            break;
-        case 'Negation': 
-            getReferencablesInExpression(expression.inner, output);
-            break;
-        case 'Group':
-            getReferencablesInExpression(expression.inner, output);
-        case 'Statement': 
-            getReferenceablesInStatement(expression as Statement, output);
-            break;
-    }
+        switch (expression.$type) {
+            case 'OrExpression':
+                extractReferenceables.fromOrExpression(expression as OrExpression, output);
+                break;
+            case 'AndExpression':
+                extractReferenceables.fromAndExpression(expression as AndExpression, output);
+                break;
+            case 'Negation':
+                extractReferenceables.fromNegation(expression as Negation, output);
+                break;
+            case 'Group':
+                extractReferenceables.fromGroup(expression as Group, output);
+                break;
+            case 'Statement':
+                extractReferenceables.fromStatement(expression as Statement, output);
+                break;
+        }
+    },
+    fromOrExpression: function (expression: OrExpression, output: Set<Referenceable>): void {
+        extractReferenceables.fromExpression(expression.left, output);
+        extractReferenceables.fromExpression(expression.right, output);
+    },
+    fromAndExpression: function (expression: AndExpression, output: Set<Referenceable>): void {
+        extractReferenceables.fromExpression(expression.left, output);
+        extractReferenceables.fromExpression(expression.right, output);
+    },
+    fromNegation: function (expression: Negation, output: Set<Referenceable>): void {
+        extractReferenceables.fromExpression(expression.inner, output);
+    },
+    fromGroup: function (expression: Group, output: Set<Referenceable>): void {
+        extractReferenceables.fromExpression(expression.inner, output);
+    },
+    fromStatement: function (statement: Statement, output: Set<Referenceable>): void {
+        let reference = statement.reference.ref;
+        if (reference !== undefined)
+            output.add(reference);
+    },
 }
 
 export function getReferencablesInWhenCondition(condition: WhenCondition): Set<Referenceable> {
     let result = new Set<Referenceable>();
-
-    getReferencablesInExpression(condition.expression, result);
-
+    extractReferenceables.fromExpression(condition.expression, result);
     return result;
 }
+
+const extractStringFromExpression: LogicalExpressionExtractor = {
+    fromExpression: function (expression: PropositionalExpression): string {
+        if (expression === undefined)
+            return "";
+
+        switch (expression.$type) {
+            case 'OrExpression':
+                return extractStringFromExpression.fromOrExpression(expression as OrExpression);
+            case 'AndExpression':
+                return extractStringFromExpression.fromAndExpression(expression as AndExpression);
+            case 'Negation':
+                return extractStringFromExpression.fromNegation(expression as Negation);
+            case 'Group':
+                return extractStringFromExpression.fromGroup(expression as Group);
+            case 'Statement':
+                return extractStringFromExpression.fromStatement(expression as Statement);
+        }
+    },
+    fromOrExpression: function (expression: OrExpression): string {
+        return extractStringFromExpression.fromExpression(expression.left) + " or " + extractStringFromExpression.fromExpression(expression.right);
+    },
+    fromAndExpression: function (expression: AndExpression): string {
+        return extractStringFromExpression.fromExpression(expression.left) + " or " + extractStringFromExpression.fromExpression(expression.right);
+    },
+    fromNegation: function (expression: Negation): string {
+        return "not " + extractStringFromExpression.fromExpression(expression.inner);
+    },
+    fromGroup: function (expression: Group): string {
+        return "(" + extractStringFromExpression.fromExpression(expression.inner) + ")";
+    },
+    fromStatement: function (statement: Statement): string {
+        return statement.reference.$refText + ` is${statement.negation ? " not" : ""} ` + extractValueAsString(statement.value); 
+         
+    }
+}
+
+export function getStringFromWhenCondition(condition: WhenCondition): string {
+    return extractStringFromExpression.fromExpression(condition.expression);
+}
+
 
 export function getAllUsedConcerns(model: Model): Set<Concern> {
     let result = new Set<Concern>();
@@ -88,7 +146,7 @@ export function getAllUsedReferenceables(model: Model): Set<Referenceable> {
 }
 
 export function extractValueAsString(value: string | boolean): string {
-    return (typeof value) === "string" ? `"${value}"`: toString(value);
+    return (typeof value) === "string" ? `"${value}"` : toString(value);
 }
 
 export function formattedStringToHTML(formattedString: FormattedString, default_format: string = "MD"): string {
@@ -111,37 +169,37 @@ export function formattedStringToHTML(formattedString: FormattedString, default_
 }
 
 export type ExtractedLaboratoryInformation = {
-    title: string, 
-    description: string,
+    title: string | undefined,
+    description: FormattedString | undefined,
     icon: string | undefined,
-    format: string,
+    format: string | undefined,
     author: string | undefined,
     version: string | undefined
 }
-const DEFAULT_APP_INFORMATION: ExtractedLaboratoryInformation = {
-    title: "Laboratory Title",
-    description: "<p>Laboratory Description</p>",
+const DEFAULT_LABORATORY_INFORMATION: ExtractedLaboratoryInformation = {
+    title: undefined,
+    description: undefined,
     icon: undefined,
-    format: "MD",
+    format: undefined,
     author: undefined,
     version: undefined
 }
 export function extractLaboratoryInformation(information: LaboratoryInformation | undefined): ExtractedLaboratoryInformation {
-    let result: ExtractedLaboratoryInformation = DEFAULT_APP_INFORMATION;
-    if (information !== undefined) {
-        if (information.titles.length > 0)
-            result.title = information.titles[0];
-        if (information.descriptions.length > 0)
-            result.description = formattedStringToHTML(information.descriptions[0]);
-        if (information.icons.length > 0)
-            result.icon = information.icons[0];
-        if (information.formats.length > 0)
-            result.format = information.formats[0];
-        if (information.authors.length > 0)
-            result.author = information.authors[0];
-        if (information.versions.length > 0)
-            result.version = information.versions[0];
-    }
+    let result: ExtractedLaboratoryInformation = DEFAULT_LABORATORY_INFORMATION;
+    if (information === undefined) return result;
+
+    if (information.titles.length > 0)
+        result.title = information.titles[0];
+    if (information.descriptions.length > 0)
+        result.description = information.descriptions[0];
+    if (information.icons.length > 0)
+        result.icon = information.icons[0];
+    if (information.formats.length > 0)
+        result.format = information.formats[0];
+    if (information.authors.length > 0)
+        result.author = information.authors[0];
+    if (information.versions.length > 0)
+        result.version = information.versions[0];
 
     return result;
-} 
+}

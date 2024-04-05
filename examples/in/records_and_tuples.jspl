@@ -11,7 +11,7 @@ concern withoutBox {
     summary 
         "complexity moved to ecosystem"
     description 
-        "<p>Without a 'Box' like type there will not be any direct support in the language for storing objects in Records and Tuples.</p>
+		"<p>Without a 'Box' like type there will not be any direct support in the language for storing objects in Records and Tuples.</p>
 		Instead using <a href=\"https://github.com/tc39/proposal-symbols-as-weakmap-keys\">symbols-as-weakmap-keys</a>,
 		symbols in Record and Tuples could still refer to objects/functions via a WeakMap.
 		Code will need to ensure the necessary code has access to these WeakMap side tables.
@@ -536,5 +536,3 @@ proposition tupleWithBoxAsArgumentForNewProxy {
         message "typeof Box === 'undefined'" when noBox is True
     }
 }
-
-

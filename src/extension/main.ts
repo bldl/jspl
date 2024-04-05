@@ -1,23 +1,14 @@
 import type { LanguageClientOptions, ServerOptions} from 'vscode-languageclient/node.js';
-import { OpenDialogOptions, ExtensionContext, commands, window, workspace } from 'vscode';
-import { join as pathJoin } from 'node:path';
+import { ExtensionContext, commands, window, workspace, Uri } from 'vscode';
+import { join as pathJoin, dirname as pathDirname } from 'node:path';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { generateGraphvizAction, generateLaboratoryAction } from '../generators/actions.js';
+import { generateGraphvizAction, generateJSONAction, generateLaboratoryAction } from '../generators/actions.js';
 
 let client: LanguageClient;
 
 const GENERATE_WEB_PAGE_COMMAND_IDENTIFIER: string = "jspl.generate-webpage";
 const GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER: string = "jspl.generate-graphviz";
 const GENERATE_JSON_COMMAND_IDENTIFIER: string = "jspl.generate-json";
-
-const DIRECTORY_PICKER_DIALOG_OPTIONS: OpenDialogOptions = {
-    canSelectMany: false,
-    title: 'Select Output Directory',
-    openLabel: 'Select',
-    canSelectFiles: false,
-    canSelectFolders: true
-};
-
 
 // This function is called when the extension is activated.
 export function activate(context: ExtensionContext): void {
@@ -49,10 +40,18 @@ export function deactivate(): Thenable<void> | undefined {
 
 async function generateWebpageCommand(context: ExtensionContext) {
     const currentFilePath: string = window.activeTextEditor?.document.uri.fsPath!;
+    const defaultOutputDirectory: string = pathDirname(currentFilePath);
     const laboratoryTemplatePath = context.asAbsolutePath(pathJoin("templates", "laboratory-template"));
 
     // Let user pick directory
-    const selectedUris = await window.showOpenDialog(DIRECTORY_PICKER_DIALOG_OPTIONS)
+    const selectedUris = await window.showOpenDialog({
+        canSelectMany: false,
+        title: 'Select Output Directory',
+        openLabel: 'Select',
+        canSelectFiles: false,
+        canSelectFolders: true,
+        defaultUri: Uri.file(defaultOutputDirectory)
+    });
     if (selectedUris === undefined) {
         window.showErrorMessage("No Directory selected.");
         return;
@@ -64,25 +63,68 @@ async function generateWebpageCommand(context: ExtensionContext) {
         outputDirectoryPath,
         laboratoryTemplatePath
     ).then((value: string) => {
-            // message user that the lab was created successfully
-            window.showInformationMessage("Successfully created Laboratory at: " + value);
-        }
-    ).catch((reason: any) => {
-            // message user about error
-            window.showErrorMessage("Couldn't create laboratory. " + reason);
-        }
-    );
+        // message user that the lab was created successfully
+        window.showInformationMessage("Successfully created Laboratory at: " + value);
+    }).catch((reason: any) => {
+        // message user about error
+        window.showErrorMessage("Couldn't create laboratory. " + reason);
+    });
 }
 
 async function generateGraphvizCommand(context: ExtensionContext) {
-    const currentFilePath = window.activeTextEditor?.document.uri.fsPath!;
-    const outputFilePath = pathJoin(workspace.workspaceFolders![0].uri.fsPath, "graphviz.dot");
-    generateGraphvizAction(currentFilePath, outputFilePath); // TODO: messages
+    const currentFilePath: string = window.activeTextEditor?.document.uri.fsPath!;
+    const defaultOutputFile: string = pathDirname(currentFilePath) + "/graphviz.dot";
+
+    // Let user pick output file
+    const selectedUri = await window.showSaveDialog({
+        title: 'Save DOT Output',
+        saveLabel: 'Save',
+        filters: {"DOT": ["dot"]},
+        defaultUri: Uri.file(defaultOutputFile)
+    });
+    if (selectedUri === undefined) {
+        window.showErrorMessage("No output file selected.");
+        return;
+    }
+    const outputFilePath = selectedUri.fsPath;
+
+    generateGraphvizAction(
+        currentFilePath, 
+        outputFilePath
+    ).then((value: string) => {
+        window.showInformationMessage("Successfully created Graphviz file at: " + value);
+    }).catch((reason: any) => {
+        // message user about error
+        window.showErrorMessage("Couldn't create Graphviz file. " + reason);
+    })
 }
 
 async function generateJSONCommand(context: ExtensionContext) {
-    //const currentFilePath = vscode.window.activeTextEditor?.document.uri.fsPath!;
-    // TODO: 
+    const currentFilePath: string = window.activeTextEditor?.document.uri.fsPath!;
+    const defaultOutputFile: string = pathDirname(currentFilePath) + "/laboratory.json";
+
+    // Let user pick output file
+    const selectedUri = await window.showSaveDialog({
+        title: 'Select JSON Output',
+        saveLabel: 'Save',
+        filters: {"JSON": ["json"]},
+        defaultUri: Uri.file(defaultOutputFile)
+    });
+    if (selectedUri === undefined) {
+        window.showErrorMessage("No output file selected.");
+        return;
+    }
+    const outputFilePath = selectedUri.fsPath;
+
+    generateJSONAction(
+        currentFilePath, 
+        outputFilePath
+    ).then((value: string) => {
+        window.showInformationMessage("Successfully created JSON file at: " + value);
+    }).catch((reason: any) => {
+        // message user about error
+        window.showErrorMessage("Couldn't create JSON file. " + reason);
+    })
 }
 
 function startLanguageClient(context: ExtensionContext): LanguageClient {
@@ -123,3 +165,4 @@ function startLanguageClient(context: ExtensionContext): LanguageClient {
     client.start();
     return client;
 }
+

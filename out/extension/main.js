@@ -1,18 +1,11 @@
-import { commands, window, workspace } from 'vscode';
-import { join as pathJoin } from 'node:path';
+import { commands, window, workspace, Uri } from 'vscode';
+import { join as pathJoin, dirname as pathDirname } from 'node:path';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { generateGraphvizAction, generateLaboratoryAction } from '../generators/actions.js';
+import { generateGraphvizAction, generateJSONAction, generateLaboratoryAction } from '../generators/actions.js';
 let client;
 const GENERATE_WEB_PAGE_COMMAND_IDENTIFIER = "jspl.generate-webpage";
 const GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER = "jspl.generate-graphviz";
 const GENERATE_JSON_COMMAND_IDENTIFIER = "jspl.generate-json";
-const DIRECTORY_PICKER_DIALOG_OPTIONS = {
-    canSelectMany: false,
-    title: 'Select Output Directory',
-    openLabel: 'Select',
-    canSelectFiles: false,
-    canSelectFolders: true
-};
 // This function is called when the extension is activated.
 export function activate(context) {
     client = startLanguageClient(context);
@@ -30,9 +23,17 @@ export function deactivate() {
 async function generateWebpageCommand(context) {
     var _a;
     const currentFilePath = (_a = window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document.uri.fsPath;
+    const defaultOutputDirectory = pathDirname(currentFilePath);
     const laboratoryTemplatePath = context.asAbsolutePath(pathJoin("templates", "laboratory-template"));
     // Let user pick directory
-    const selectedUris = await window.showOpenDialog(DIRECTORY_PICKER_DIALOG_OPTIONS);
+    const selectedUris = await window.showOpenDialog({
+        canSelectMany: false,
+        title: 'Select Output Directory',
+        openLabel: 'Select',
+        canSelectFiles: false,
+        canSelectFolders: true,
+        defaultUri: Uri.file(defaultOutputDirectory)
+    });
     if (selectedUris === undefined) {
         window.showErrorMessage("No Directory selected.");
         return;
@@ -49,12 +50,48 @@ async function generateWebpageCommand(context) {
 async function generateGraphvizCommand(context) {
     var _a;
     const currentFilePath = (_a = window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document.uri.fsPath;
-    const outputFilePath = pathJoin(workspace.workspaceFolders[0].uri.fsPath, "graphviz.dot");
-    generateGraphvizAction(currentFilePath, outputFilePath); // TODO: messages
+    const defaultOutputFile = pathDirname(currentFilePath) + "/graphviz.dot";
+    // Let user pick output file
+    const selectedUri = await window.showSaveDialog({
+        title: 'Save DOT Output',
+        saveLabel: 'Save',
+        filters: { "DOT": ["dot"] },
+        defaultUri: Uri.file(defaultOutputFile)
+    });
+    if (selectedUri === undefined) {
+        window.showErrorMessage("No output file selected.");
+        return;
+    }
+    const outputFilePath = selectedUri.fsPath;
+    generateGraphvizAction(currentFilePath, outputFilePath).then((value) => {
+        window.showInformationMessage("Successfully created Graphviz file at: " + value);
+    }).catch((reason) => {
+        // message user about error
+        window.showErrorMessage("Couldn't create Graphviz file. " + reason);
+    });
 }
 async function generateJSONCommand(context) {
-    //const currentFilePath = vscode.window.activeTextEditor?.document.uri.fsPath!;
-    // TODO: 
+    var _a;
+    const currentFilePath = (_a = window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document.uri.fsPath;
+    const defaultOutputFile = pathDirname(currentFilePath) + "/laboratory.json";
+    // Let user pick output file
+    const selectedUri = await window.showSaveDialog({
+        title: 'Select JSON Output',
+        saveLabel: 'Save',
+        filters: { "JSON": ["json"] },
+        defaultUri: Uri.file(defaultOutputFile)
+    });
+    if (selectedUri === undefined) {
+        window.showErrorMessage("No output file selected.");
+        return;
+    }
+    const outputFilePath = selectedUri.fsPath;
+    generateJSONAction(currentFilePath, outputFilePath).then((value) => {
+        window.showInformationMessage("Successfully created JSON file at: " + value);
+    }).catch((reason) => {
+        // message user about error
+        window.showErrorMessage("Couldn't create JSON file. " + reason);
+    });
 }
 function startLanguageClient(context) {
     const serverModule = context.asAbsolutePath(pathJoin('out', 'language', 'main.cjs'));

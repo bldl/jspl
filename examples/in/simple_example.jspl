@@ -11,8 +11,8 @@ concern testConcern {
     description ""
 }
 
-condition testCondition holds when testProposition is "object"
-condition testCondition2 holds when testCondition is "test"
+condition testCondition holds when testProposition is "obje"
+condition testCondition2 holds when testCondition is True
 
 
 proposition testProposition {

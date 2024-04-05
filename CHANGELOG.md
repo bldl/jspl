@@ -2,9 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2024-04-05
+
+- Added Graphviz-Generator to generate graph visualisation
+- Added JSON-Generator to generate json format for serialization
+
 ## [0.5.4] - 2024-04-04
 
-- Added validator to check that in every statement made, the referenced object actual can have the given value.
+- Added validator to check, that in every statement made, the referenced object actual can have the given value.
 - Fixed some validation errors, caused by accessing fields of possibly undefined objects.
 
 ## [0.5.3] - 2024-04-01

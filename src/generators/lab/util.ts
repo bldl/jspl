@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
-import { OrExpression, AndExpression, Negation, Group, Statement, PropositionalExpression } from "../../language/generated/ast.js";
-import { extractValueAsString } from "../../util/modelUtil.js";
+import { OrExpression, AndExpression, Negation, Group, Statement, PropositionalExpression, LaboratoryInformation } from "../../language/generated/ast.js";
+import { LogicalExpressionExtractor, extractLaboratoryInformation, extractValueAsString, formattedStringToHTML } from "../../util/modelUtil.js";
 
-export const extractJSCondition = {
+export const extractJSCondition: LogicalExpressionExtractor = {
     fromOrExpression: function (expression: OrExpression): string {
         return `${extractJSCondition.fromExpression(expression.left)} || ${extractJSCondition.fromExpression(expression.right)}`;
     },
@@ -63,4 +63,34 @@ export function readTemplatedFile(templateFilePath: string, templateMarker: Temp
         prefix: splitByConcernsMarkers.BEFORE,
         postfix: splitByConcernsMarkers.AFTER
     };
+}
+
+export type ExtractedWebLaboratoryInformation = {
+    title: string, 
+    description: string,
+    icon: string | undefined,
+    format: string,
+    author: string | undefined,
+    version: string | undefined
+}
+const DEFAULT_WEB_LABORATORY_INFORMATION: ExtractedWebLaboratoryInformation = {
+    title: "Laboratory Title",
+    description: "<p>Laboratory description</p>",
+    icon: undefined,
+    format: "MD",
+    author: undefined,
+    version: undefined
+}
+export function extractLaboratoryInformationForWebWithDefaults(information: LaboratoryInformation | undefined): ExtractedWebLaboratoryInformation {
+    const extracted = extractLaboratoryInformation(information);
+    let result = DEFAULT_WEB_LABORATORY_INFORMATION;
+
+    if (extracted.title !== undefined) result.title = extracted.title;
+    if (extracted.icon !== undefined) result.icon = extracted.icon;
+    if (extracted.format !== undefined) result.format = extracted.format;
+    if (extracted.author !== undefined) result.author = extracted.author;
+    if (extracted.version !== undefined) result.version = extracted.version;
+    if (extracted.description !== undefined) result.description = formattedStringToHTML(extracted.description, result.format);
+
+    return result;
 }
