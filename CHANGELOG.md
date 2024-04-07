@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1] - 2024-04-07
+
+- JSON Generator Fixes/Improvements:
+    - Added missing `default` field to values of propositions
+    - Shortened empty lists to reduce unused space in output
+
 ## [0.6.0] - 2024-04-05
 
 - Added Graphviz-Generator to generate graph visualisation

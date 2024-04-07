@@ -54,8 +54,12 @@ function generateLaboratoryInformation(laboratory: LaboratoryInformation | undef
 }
 
 function generateConcerns(concerns: Concern[], fileNode: CompositeGeneratorNode): void {
-    fileNode.append(`\t"concerns": [\n`);
+    if (concerns.length === 0) {
+        fileNode.append(`\t"concerns": [],\n`);
+        return;
+    }
 
+    fileNode.append(`\t"concerns": [\n`);
     let isFirst: boolean = true;
     concerns.forEach(concern => {
         // make sure all elements except the last have a trailing comma
@@ -76,8 +80,12 @@ function generateConcerns(concerns: Concern[], fileNode: CompositeGeneratorNode)
 }
 
 function generateConditions(conditions: Condition[], fileNode: CompositeGeneratorNode): void {
-    fileNode.append(`\t"conditions": [\n`);
+    if (conditions.length === 0) {
+        fileNode.append(`\t"conditions": [],\n`);
+        return;
+    }
 
+    fileNode.append(`\t"conditions": [\n`);
     let isFirst: boolean = true;
     conditions.forEach(condition => {
         // make sure all elements except the last have a trailing comma
@@ -97,8 +105,12 @@ function generateConditions(conditions: Condition[], fileNode: CompositeGenerato
 }
 
 function generatePropositions(propositions: Proposition[], fileNode: CompositeGeneratorNode): void {
-    fileNode.append(`\t"propositions": [\n`);
+    if (propositions.length === 0) {
+        fileNode.append(`\t"propositions": []\n`);
+        return;
+    }
 
+    fileNode.append(`\t"propositions": [\n`);
     let isFirst: boolean = true;
     propositions.forEach(proposition => {
         // make sure all elements except the last have a trailing comma
@@ -121,6 +133,11 @@ function generatePropositions(propositions: Proposition[], fileNode: CompositeGe
 }
 
 function generateValueClauses(proposition: Proposition, fileNode: CompositeGeneratorNode): void {
+    if (proposition.valueClauses.length === 0) {
+        fileNode.append(`\t\t\t"values": [],\n`);
+        return;
+    }
+
     fileNode.append(`\t\t\t"values": [\n`);
     let isFirstClause: boolean = true;
     proposition.valueClauses.forEach(clause => {
@@ -130,6 +147,13 @@ function generateValueClauses(proposition: Proposition, fileNode: CompositeGener
         fileNode.append(`\t\t\t\t{\n`)
 
         fileNode.append(`\t\t\t\t\t"value": ${extractValueAsString(clause.value)},\n`);
+        fileNode.append(`\t\t\t\t\t"default": ${extractValueAsString(clause.default)},\n`);
+        if (clause.raises.length === 0) {
+            fileNode.append(`\t\t\t\t\t"raises": []\n`);
+            fileNode.append(`\t\t\t\t}`);
+            return;
+        }
+
         fileNode.append(`\t\t\t\t\t"raises": [\n`);
         let isFirstRaise: boolean = true;
         clause.raises.forEach(raise => {
@@ -144,28 +168,30 @@ function generateValueClauses(proposition: Proposition, fileNode: CompositeGener
             fileNode.append(`\t\t\t\t\t\t}`);
         });
         fileNode.append(`\n\t\t\t\t\t]\n`)
-
         fileNode.append(`\t\t\t\t}`);
     });
     fileNode.append(`\n\t\t\t],\n`);
 }
 
 function generateDisableStatements(proposition: Proposition, fileNode: CompositeGeneratorNode): void {
+    if (proposition.disable === undefined) {
+        fileNode.append(`\t\t\t"disabled": []\n`);
+        return;
+    }
+
     fileNode.append(`\t\t\t"disabled": [\n`);
     let isFirst: boolean = true;
-    if (proposition.disable !== undefined) {
-        proposition.disable.statements.forEach(statement => {
-            if (isFirst) isFirst = false;
-            else fileNode.append(`,\n`);
+    proposition.disable.statements.forEach(statement => {
+        if (isFirst) isFirst = false;
+        else fileNode.append(`,\n`);
 
-            fileNode.append(`\t\t\t\t{\n`);
+        fileNode.append(`\t\t\t\t{\n`);
 
-            fileNode.append(`\t\t\t\t\t"message": "${escapeString(statement.message)}",\n`)
-            fileNode.append(`\t\t\t\t\t"condition": "${generateWhenCondition(statement.condition)}"\n`)
+        fileNode.append(`\t\t\t\t\t"message": "${escapeString(statement.message)}",\n`)
+        fileNode.append(`\t\t\t\t\t"condition": "${generateWhenCondition(statement.condition)}"\n`)
 
-            fileNode.append(`\t\t\t\t}`);
-        });
-    }
+        fileNode.append(`\t\t\t\t}`);
+    });
     fileNode.append(`\n\t\t\t]\n`);
 }
 
@@ -181,6 +207,7 @@ function generateWhenCondition(condition: WhenCondition): string {
 function escapeString(input: string): string {
     return input
         .replaceAll('"', '\\"')
+        .replaceAll('\'', '\\\'')
         .replaceAll('\n', '\\n')
         .replaceAll('\t', '\\t');
 }

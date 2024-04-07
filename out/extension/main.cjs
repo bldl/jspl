@@ -49328,6 +49328,11 @@ function generateLaboratoryInformation2(laboratory, fileNode) {
 `);
 }
 function generateConcerns2(concerns, fileNode) {
+  if (concerns.length === 0) {
+    fileNode.append(`	"concerns": [],
+`);
+    return;
+  }
   fileNode.append(`	"concerns": [
 `);
   let isFirst = true;
@@ -49352,6 +49357,11 @@ function generateConcerns2(concerns, fileNode) {
 `);
 }
 function generateConditions3(conditions, fileNode) {
+  if (conditions.length === 0) {
+    fileNode.append(`	"conditions": [],
+`);
+    return;
+  }
   fileNode.append(`	"conditions": [
 `);
   let isFirst = true;
@@ -49374,6 +49384,11 @@ function generateConditions3(conditions, fileNode) {
 `);
 }
 function generatePropositions2(propositions, fileNode) {
+  if (propositions.length === 0) {
+    fileNode.append(`	"propositions": []
+`);
+    return;
+  }
   fileNode.append(`	"propositions": [
 `);
   let isFirst = true;
@@ -49398,6 +49413,11 @@ function generatePropositions2(propositions, fileNode) {
 `);
 }
 function generateValueClauses(proposition, fileNode) {
+  if (proposition.valueClauses.length === 0) {
+    fileNode.append(`			"values": [],
+`);
+    return;
+  }
   fileNode.append(`			"values": [
 `);
   let isFirstClause = true;
@@ -49411,6 +49431,14 @@ function generateValueClauses(proposition, fileNode) {
 `);
     fileNode.append(`					"value": ${extractValueAsString(clause.value)},
 `);
+    fileNode.append(`					"default": ${extractValueAsString(clause.default)},
+`);
+    if (clause.raises.length === 0) {
+      fileNode.append(`					"raises": []
+`);
+      fileNode.append(`				}`);
+      return;
+    }
     fileNode.append(`					"raises": [
 `);
     let isFirstRaise = true;
@@ -49439,25 +49467,28 @@ function generateValueClauses(proposition, fileNode) {
 `);
 }
 function generateDisableStatements(proposition, fileNode) {
+  if (proposition.disable === void 0) {
+    fileNode.append(`			"disabled": []
+`);
+    return;
+  }
   fileNode.append(`			"disabled": [
 `);
   let isFirst = true;
-  if (proposition.disable !== void 0) {
-    proposition.disable.statements.forEach((statement) => {
-      if (isFirst)
-        isFirst = false;
-      else
-        fileNode.append(`,
+  proposition.disable.statements.forEach((statement) => {
+    if (isFirst)
+      isFirst = false;
+    else
+      fileNode.append(`,
 `);
-      fileNode.append(`				{
+    fileNode.append(`				{
 `);
-      fileNode.append(`					"message": "${escapeString(statement.message)}",
+    fileNode.append(`					"message": "${escapeString(statement.message)}",
 `);
-      fileNode.append(`					"condition": "${generateWhenCondition(statement.condition)}"
+    fileNode.append(`					"condition": "${generateWhenCondition(statement.condition)}"
 `);
-      fileNode.append(`				}`);
-    });
-  }
+    fileNode.append(`				}`);
+  });
   fileNode.append(`
 			]
 `);

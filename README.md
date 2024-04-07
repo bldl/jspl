@@ -74,7 +74,7 @@ concern test {
 }
 ```
 
-The usage of markdown can be disabled in favour of direct html-interpretation on a per-description basis by prefixing a string with "HTML":
+The usage of markdown can be disabled in favour of direct html-interpretation on a general basis by changing the format in the Laboratory Information or on a per-description basis by prefixing a string with "HTML":
 ```
 concern test {
     summary "summary"

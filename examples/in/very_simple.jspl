@@ -1,0 +1,18 @@
+concern concerning {
+    summary "a != b"
+    description "We need a to be equal to b."
+}
+
+proposition first {
+    expression "a == 0"
+    default value True
+    value False
+}
+
+proposition second {
+    expression "b == 0"
+    value True
+    default value False {
+        raise concerning when first is True
+    }
+}
