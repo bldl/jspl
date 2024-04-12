@@ -24,8 +24,8 @@ const INDEX_TEMPLATE_MARKER: TemplateMarker = {
 }
 
 const ROOT_FILES_TO_COPY: Array<string> = [
-    "README.md",
-    "LICENSE"
+    //"README.md",
+    //"LICENSE"
 ];
 const RESOURCES_TO_COPY: Array<string> = [
     "favicon.svg",

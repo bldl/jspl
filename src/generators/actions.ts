@@ -10,7 +10,8 @@ import { extname as pathExtname } from 'node:path'
 import { generateJSON } from './json/main.js';
 //import { workspace, Uri } from 'vscode'; // TODO: replace node:fs with workspace.fs
 
-const TEMPLATES_DIRECTORY: string = "./templates/laboratory-template";
+const TEMPLATES_DIRECTORY: string = "./templates";
+const LABORATORY_TEMPLATE_DIRECTORY: string = TEMPLATES_DIRECTORY + "/laboratory-template";
 
 function getModel(inputFile: string): Promise<Model> {
     const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
@@ -36,7 +37,7 @@ function checkLaboratoryOutputDirectory(outputDirectoryPath: string): void {
         throw new FileSystemError(`The specified output directory (${outputDirectoryPath}) is not a directory.`);
 }
 
-export const generateLaboratoryAction = async (inputFile: string, destination: string, templatePath: string = TEMPLATES_DIRECTORY): Promise<string> => {
+export const generateLaboratoryAction = async (inputFile: string, destination: string, templatePath: string = LABORATORY_TEMPLATE_DIRECTORY): Promise<string> => {
     // check input file
     try {
         checkJSPLInput(inputFile);

@@ -19,7 +19,7 @@ proposition testProposition {
     expression "a === b"
     default value True
     value False {
-        raise test
+        raise testConcern
     }
     value "object"
 }

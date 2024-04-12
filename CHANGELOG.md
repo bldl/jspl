@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.6.1] - 2024-04-07
+## [0.6.1] - 2024-04-12
+
+- Web Laboratory Fixes:
+    - Removed unnecessary LICENSE and README from template
+        - (They might be readded in the future, with the README containing the lab description and the LICENSE using the author name.)
 
 - JSON Generator Fixes/Improvements:
     - Added missing `default` field to values of propositions

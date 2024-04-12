@@ -48289,7 +48289,7 @@ var JavaScriptPropositionalLaboratoryFormatValidator = class {
     const referenceable = statement.reference.ref;
     const value = statement.value;
     if (referenceable.$type === "Condition") {
-      if (typeof value === "boolean")
+      if (typeof value !== "boolean")
         return;
       accept("error", "Stated value is not a valid value of the referenced object.", { node: statement, property: "value" });
       return;
@@ -49088,8 +49088,8 @@ var INDEX_TEMPLATE_MARKER = {
   END: "<!--???TEMPLATE-MARKER-END???-->"
 };
 var ROOT_FILES_TO_COPY = [
-  "README.md",
-  "LICENSE"
+  //"README.md",
+  //"LICENSE"
 ];
 var RESOURCES_TO_COPY = [
   "favicon.svg",
@@ -49501,11 +49501,12 @@ function generateWhenCondition(condition) {
   return escapeString(getStringFromWhenCondition(condition));
 }
 function escapeString(input) {
-  return input.replaceAll('"', '\\"').replaceAll("\n", "\\n").replaceAll("	", "\\t");
+  return input.replaceAll('"', '\\"').replaceAll("'", "\\'").replaceAll("\n", "\\n").replaceAll("	", "\\t");
 }
 
 // src/generators/actions.ts
-var TEMPLATES_DIRECTORY = "./templates/laboratory-template";
+var TEMPLATES_DIRECTORY = "./templates";
+var LABORATORY_TEMPLATE_DIRECTORY = TEMPLATES_DIRECTORY + "/laboratory-template";
 function getModel(inputFile) {
   const services = createJavaScriptPropositionalLaboratoryFormatServices(NodeFileSystem).JavaScriptPropositionalLaboratoryFormat;
   return extractAstNode(inputFile, services);
@@ -49525,7 +49526,7 @@ function checkLaboratoryOutputDirectory(outputDirectoryPath) {
   if (!outputStats.isDirectory())
     throw new import_vscode.FileSystemError(`The specified output directory (${outputDirectoryPath}) is not a directory.`);
 }
-var generateLaboratoryAction = async (inputFile, destination, templatePath = TEMPLATES_DIRECTORY) => {
+var generateLaboratoryAction = async (inputFile, destination, templatePath = LABORATORY_TEMPLATE_DIRECTORY) => {
   try {
     checkJSPLInput(inputFile);
   } catch (error) {
