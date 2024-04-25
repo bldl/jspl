@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.2] - 2024-04-25
+
+- Fixes:
+    - Fixed validation error, where all boolean values for referenced conditions were rejected, instead of accepted.
+
 ## [0.6.1] - 2024-04-12
 
 - Web Laboratory Fixes:

@@ -178,7 +178,7 @@ export class JavaScriptPropositionalLaboratoryFormatValidator {
         const value = statement.value;
 
         if (referenceable.$type === "Condition") {
-            if (typeof value !== "boolean") return;
+            if (typeof value === "boolean") return;
             accept('error', 'Stated value is not a valid value of the referenced object.', {node: statement, property: 'value'});
             return;  
         } 
