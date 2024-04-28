@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.3] - 2024-04-28
+
+- Repository was moved over to GitHub under the Bergen Language Design Laboratory
+
+- Fixes:
+    - Fixed issue where single quotes were escaped in JSON-Representation. (This is considered an error in json...)
+
 ## [0.6.2] - 2024-04-25
 
 - Fixes:

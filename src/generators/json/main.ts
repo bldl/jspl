@@ -207,7 +207,7 @@ function generateWhenCondition(condition: WhenCondition): string {
 function escapeString(input: string): string {
     return input
         .replaceAll('"', '\\"')
-        .replaceAll('\'', '\\\'')
+        //.replaceAll('\'', '\\\'')
         .replaceAll('\n', '\\n')
         .replaceAll('\t', '\\t');
 }

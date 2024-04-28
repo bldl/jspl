@@ -2,7 +2,7 @@
     "name": "jspl-javascript-propositional-laboratory",
     "displayName": "JSPL: JavaScript Propositional Laboratory",
     "description": "Support for writing JavaScript Proposal Laboratories",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "publisher": "PhilippRiemer",
     "license": "SEE LICENSE IN LICENSE.txt",
     "icon": "icon.png",
@@ -12,12 +12,12 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://gitlab.com/phirie/jspl"
+        "url": "https://github.com/bldl/jspl"
     },
     "bugs": {
-        "url": "https://gitlab.com/phirie/jspl/-/issues"
+        "url": "https://github.com/bldl/jspl/issues"
     },
-    "homepage": "https://gitlab.com/phirie/jspl",
+    "homepage": "https://github.com/bldl/jspl",
     "categories": ["Programming Languages"],
     "files": [
         "bin",

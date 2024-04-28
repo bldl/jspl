@@ -49501,7 +49501,7 @@ function generateWhenCondition(condition) {
   return escapeString(getStringFromWhenCondition(condition));
 }
 function escapeString(input) {
-  return input.replaceAll('"', '\\"').replaceAll("'", "\\'").replaceAll("\n", "\\n").replaceAll("	", "\\t");
+  return input.replaceAll('"', '\\"').replaceAll("\n", "\\n").replaceAll("	", "\\t");
 }
 
 // src/generators/actions.ts
