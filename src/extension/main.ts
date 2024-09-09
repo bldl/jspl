@@ -2,13 +2,14 @@ import type { LanguageClientOptions, ServerOptions} from 'vscode-languageclient/
 import { ExtensionContext, commands, window, workspace, Uri } from 'vscode';
 import { join as pathJoin, dirname as pathDirname } from 'node:path';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { generateGraphvizAction, generateJSONAction, generateLaboratoryAction } from '../generators/actions.js';
+import { generateGraphvizAction, generateJSONAction, generateLaboratoryAction, generateOptimizerAction } from '../generators/actions.js';
 
 let client: LanguageClient;
 
 const GENERATE_WEB_PAGE_COMMAND_IDENTIFIER: string = "jspl.generate-webpage";
 const GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER: string = "jspl.generate-graphviz";
 const GENERATE_JSON_COMMAND_IDENTIFIER: string = "jspl.generate-json";
+const GENERATE_OPTIMIZER_COMMAND_IDENTIFIER: string = "jspl.generate-optimizer"
 
 // This function is called when the extension is activated.
 export function activate(context: ExtensionContext): void {
@@ -27,6 +28,11 @@ export function activate(context: ExtensionContext): void {
     commands.registerCommand(
         GENERATE_JSON_COMMAND_IDENTIFIER,
         () => {generateJSONCommand(context);}
+    );
+
+    commands.registerCommand(
+        GENERATE_OPTIMIZER_COMMAND_IDENTIFIER,
+        () => {generateOptimizerCommand(context);}
     );
 }
 
@@ -127,6 +133,39 @@ async function generateJSONCommand(context: ExtensionContext) {
     })
 }
 
+async function generateOptimizerCommand(context: ExtensionContext) {
+    const currentFilePath: string = window.activeTextEditor?.document.uri.fsPath!;
+    const defaultOutputDirectory: string = pathDirname(currentFilePath);
+    const laboratoryTemplatePath = context.asAbsolutePath(pathJoin("templates", "optimizer-template"));
+
+    // Let user pick directory
+    const selectedUris = await window.showOpenDialog({
+        canSelectMany: false,
+        title: 'Select Output Directory',
+        openLabel: 'Select',
+        canSelectFiles: false,
+        canSelectFolders: true,
+        defaultUri: Uri.file(defaultOutputDirectory)
+    });
+    if (selectedUris === undefined) {
+        window.showErrorMessage("No Directory selected.");
+        return;
+    }
+    const outputDirectoryPath: string = selectedUris[0].fsPath;
+
+    generateOptimizerAction(
+        currentFilePath,
+        outputDirectoryPath,
+        laboratoryTemplatePath
+    ).then((value: string) => {
+        // message user that the lab was created successfully
+        window.showInformationMessage("Successfully created Laboratory at: " + value);
+    }).catch((reason: any) => {
+        // message user about error
+        window.showErrorMessage("Couldn't create laboratory. " + reason);
+    });
+}
+
 function startLanguageClient(context: ExtensionContext): LanguageClient {
     const serverModule = context.asAbsolutePath(pathJoin('out', 'language', 'main.cjs'));
     // The debug options for the server
@@ -165,4 +204,6 @@ function startLanguageClient(context: ExtensionContext): LanguageClient {
     client.start();
     return client;
 }
+
+
 

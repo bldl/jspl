@@ -33,7 +33,7 @@ const RESOURCES_TO_COPY: Array<string> = [
     "github.png"
 ];
 
-export function generateLaboratory(model: Model, outputDirectory: string, templateDirectory: string): string {
+export function generateOptimizer(model: Model, outputDirectory: string, templateDirectory: string): string {
     const outputResourcesPath = path.join(outputDirectory, "res");
 
     // make sure Resources Folder exists

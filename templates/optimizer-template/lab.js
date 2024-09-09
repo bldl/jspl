@@ -102,7 +102,7 @@ function shuffle() {
 function App() {
 	return html`
 		<h1 class="text-center">
-			${metaData.title} ${metaData.version == undefined ? "" : `(v${metaData.version})`}
+			${metaData.title} ${metaData.version == undefined ? "" : `(v${metaData.version})`} [Optimize]
 		</h1>
 		${
 			metaData.author == undefined ? "" : html`

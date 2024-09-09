@@ -1,17 +1,19 @@
 import { commands, window, workspace, Uri } from 'vscode';
 import { join as pathJoin, dirname as pathDirname } from 'node:path';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { generateGraphvizAction, generateJSONAction, generateLaboratoryAction } from '../generators/actions.js';
+import { generateGraphvizAction, generateJSONAction, generateLaboratoryAction, generateOptimizerAction } from '../generators/actions.js';
 let client;
 const GENERATE_WEB_PAGE_COMMAND_IDENTIFIER = "jspl.generate-webpage";
 const GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER = "jspl.generate-graphviz";
 const GENERATE_JSON_COMMAND_IDENTIFIER = "jspl.generate-json";
+const GENERATE_OPTIMIZER_COMMAND_IDENTIFIER = "jspl.generate-optimizer";
 // This function is called when the extension is activated.
 export function activate(context) {
     client = startLanguageClient(context);
     commands.registerCommand(GENERATE_WEB_PAGE_COMMAND_IDENTIFIER, () => { generateWebpageCommand(context); });
     commands.registerCommand(GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER, () => { generateGraphvizCommand(context); });
     commands.registerCommand(GENERATE_JSON_COMMAND_IDENTIFIER, () => { generateJSONCommand(context); });
+    commands.registerCommand(GENERATE_OPTIMIZER_COMMAND_IDENTIFIER, () => { generateOptimizerCommand(context); });
 }
 // This function is called when the extension is deactivated.
 export function deactivate() {
@@ -91,6 +93,33 @@ async function generateJSONCommand(context) {
     }).catch((reason) => {
         // message user about error
         window.showErrorMessage("Couldn't create JSON file. " + reason);
+    });
+}
+async function generateOptimizerCommand(context) {
+    var _a;
+    const currentFilePath = (_a = window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document.uri.fsPath;
+    const defaultOutputDirectory = pathDirname(currentFilePath);
+    const laboratoryTemplatePath = context.asAbsolutePath(pathJoin("templates", "optimizer-template"));
+    // Let user pick directory
+    const selectedUris = await window.showOpenDialog({
+        canSelectMany: false,
+        title: 'Select Output Directory',
+        openLabel: 'Select',
+        canSelectFiles: false,
+        canSelectFolders: true,
+        defaultUri: Uri.file(defaultOutputDirectory)
+    });
+    if (selectedUris === undefined) {
+        window.showErrorMessage("No Directory selected.");
+        return;
+    }
+    const outputDirectoryPath = selectedUris[0].fsPath;
+    generateOptimizerAction(currentFilePath, outputDirectoryPath, laboratoryTemplatePath).then((value) => {
+        // message user that the lab was created successfully
+        window.showInformationMessage("Successfully created Laboratory at: " + value);
+    }).catch((reason) => {
+        // message user about error
+        window.showErrorMessage("Couldn't create laboratory. " + reason);
     });
 }
 function startLanguageClient(context) {

@@ -3130,7 +3130,7 @@ var require_main = __commonJS({
     exports2.createMessageConnection = exports2.createServerSocketTransport = exports2.createClientSocketTransport = exports2.createServerPipeTransport = exports2.createClientPipeTransport = exports2.generateRandomPipeName = exports2.StreamMessageWriter = exports2.StreamMessageReader = exports2.SocketMessageWriter = exports2.SocketMessageReader = exports2.PortMessageWriter = exports2.PortMessageReader = exports2.IPCMessageWriter = exports2.IPCMessageReader = void 0;
     var ril_1 = require_ril();
     ril_1.default.install();
-    var path2 = require("path");
+    var path3 = require("path");
     var os2 = require("os");
     var crypto_1 = require("crypto");
     var net_1 = require("net");
@@ -3266,9 +3266,9 @@ var require_main = __commonJS({
       }
       let result;
       if (XDG_RUNTIME_DIR) {
-        result = path2.join(XDG_RUNTIME_DIR, `vscode-ipc-${randomSuffix}.sock`);
+        result = path3.join(XDG_RUNTIME_DIR, `vscode-ipc-${randomSuffix}.sock`);
       } else {
-        result = path2.join(os2.tmpdir(), `vscode-${randomSuffix}.sock`);
+        result = path3.join(os2.tmpdir(), `vscode-${randomSuffix}.sock`);
       }
       const limit = safeIpcPathLengths.get(process.platform);
       if (limit !== void 0 && result.length > limit) {
@@ -9468,8 +9468,8 @@ var require_minimatch = __commonJS({
       return new Minimatch(pattern, options).match(p);
     };
     module2.exports = minimatch;
-    var path2 = require_path();
-    minimatch.sep = path2.sep;
+    var path3 = require_path();
+    minimatch.sep = path3.sep;
     var GLOBSTAR = Symbol("globstar **");
     minimatch.GLOBSTAR = GLOBSTAR;
     var expand = require_brace_expansion();
@@ -9990,8 +9990,8 @@ var require_minimatch = __commonJS({
         if (f === "/" && partial)
           return true;
         const options = this.options;
-        if (path2.sep !== "/") {
-          f = f.split(path2.sep).join("/");
+        if (path3.sep !== "/") {
+          f = f.split(path3.sep).join("/");
         }
         f = f.split(slashSplit);
         this.debug(this.pattern, "split", f);
@@ -11738,13 +11738,13 @@ var require_configuration = __commonJS({
         });
       }
       extractSettingsInformation(keys2) {
-        function ensurePath(config, path2) {
+        function ensurePath(config, path3) {
           let current = config;
-          for (let i = 0; i < path2.length - 1; i++) {
-            let obj = current[path2[i]];
+          for (let i = 0; i < path3.length - 1; i++) {
+            let obj = current[path3[i]];
             if (!obj) {
               obj = /* @__PURE__ */ Object.create(null);
-              current[path2[i]] = obj;
+              current[path3[i]] = obj;
             }
             current = obj;
           }
@@ -11762,8 +11762,8 @@ var require_configuration = __commonJS({
             config = vscode_1.workspace.getConfiguration(void 0, resource).get(key);
           }
           if (config) {
-            let path2 = keys2[i].split(".");
-            ensurePath(result, path2)[path2[path2.length - 1]] = toJSONObject(config);
+            let path3 = keys2[i].split(".");
+            ensurePath(result, path3)[path3[path3.length - 1]] = toJSONObject(config);
           }
         }
         return result;
@@ -14332,13 +14332,13 @@ var require_fileOperations = __commonJS({
       async filter(event, prop) {
         const fileMatches = await Promise.all(event.files.map(async (item) => {
           const uri = prop(item);
-          const path2 = uri.fsPath.replace(/\\/g, "/");
+          const path3 = uri.fsPath.replace(/\\/g, "/");
           for (const filters of this._filters.values()) {
             for (const filter2 of filters) {
               if (filter2.scheme !== void 0 && filter2.scheme !== uri.scheme) {
                 continue;
               }
-              if (filter2.matcher.match(path2)) {
+              if (filter2.matcher.match(path3)) {
                 if (filter2.kind === void 0) {
                   return true;
                 }
@@ -14352,7 +14352,7 @@ var require_fileOperations = __commonJS({
                 }
               } else if (filter2.kind === proto2.FileOperationPatternKind.folder) {
                 const fileType = await _FileOperationFeature.getFileType(uri);
-                if (fileType === code.FileType.Directory && filter2.matcher.match(`${path2}/`)) {
+                if (fileType === code.FileType.Directory && filter2.matcher.match(`${path3}/`)) {
                   return true;
                 }
               }
@@ -18133,7 +18133,7 @@ var require_main4 = __commonJS({
     exports2.SettingMonitor = exports2.LanguageClient = exports2.TransportKind = void 0;
     var cp = require("child_process");
     var fs3 = require("fs");
-    var path2 = require("path");
+    var path3 = require("path");
     var vscode_1 = require("vscode");
     var Is2 = require_is();
     var client_1 = require_client();
@@ -18553,18 +18553,18 @@ var require_main4 = __commonJS({
         });
       }
       _getRuntimePath(runtime, serverWorkingDirectory) {
-        if (path2.isAbsolute(runtime)) {
+        if (path3.isAbsolute(runtime)) {
           return runtime;
         }
         const mainRootPath = this._mainGetRootPath();
         if (mainRootPath !== void 0) {
-          const result = path2.join(mainRootPath, runtime);
+          const result = path3.join(mainRootPath, runtime);
           if (fs3.existsSync(result)) {
             return result;
           }
         }
         if (serverWorkingDirectory !== void 0) {
-          const result = path2.join(serverWorkingDirectory, runtime);
+          const result = path3.join(serverWorkingDirectory, runtime);
           if (fs3.existsSync(result)) {
             return result;
           }
@@ -20652,7 +20652,7 @@ var require_files = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.resolveModulePath = exports2.FileSystem = exports2.resolveGlobalYarnPath = exports2.resolveGlobalNodePath = exports2.resolve = exports2.uriToFilePath = void 0;
     var url = require("url");
-    var path2 = require("path");
+    var path3 = require("path");
     var fs3 = require("fs");
     var child_process_1 = require("child_process");
     function uriToFilePath(uri) {
@@ -20671,7 +20671,7 @@ var require_files = __commonJS({
           segments.shift();
         }
       }
-      return path2.normalize(segments.join("/"));
+      return path3.normalize(segments.join("/"));
     }
     exports2.uriToFilePath = uriToFilePath;
     function isWindows() {
@@ -20702,7 +20702,7 @@ var require_files = __commonJS({
         Object.keys(env2).forEach((key) => newEnv[key] = env2[key]);
         if (nodePath && fs3.existsSync(nodePath)) {
           if (newEnv[nodePathKey]) {
-            newEnv[nodePathKey] = nodePath + path2.delimiter + newEnv[nodePathKey];
+            newEnv[nodePathKey] = nodePath + path3.delimiter + newEnv[nodePathKey];
           } else {
             newEnv[nodePathKey] = nodePath;
           }
@@ -20775,9 +20775,9 @@ var require_files = __commonJS({
         }
         if (prefix.length > 0) {
           if (isWindows()) {
-            return path2.join(prefix, "node_modules");
+            return path3.join(prefix, "node_modules");
           } else {
-            return path2.join(prefix, "lib", "node_modules");
+            return path3.join(prefix, "lib", "node_modules");
           }
         }
         return void 0;
@@ -20817,7 +20817,7 @@ var require_files = __commonJS({
           try {
             let yarn = JSON.parse(line);
             if (yarn.type === "log") {
-              return path2.join(yarn.data, "node_modules");
+              return path3.join(yarn.data, "node_modules");
             }
           } catch (e) {
           }
@@ -20847,17 +20847,17 @@ var require_files = __commonJS({
       FileSystem2.isCaseSensitive = isCaseSensitive;
       function isParent(parent, child) {
         if (isCaseSensitive()) {
-          return path2.normalize(child).indexOf(path2.normalize(parent)) === 0;
+          return path3.normalize(child).indexOf(path3.normalize(parent)) === 0;
         } else {
-          return path2.normalize(child).toLowerCase().indexOf(path2.normalize(parent).toLowerCase()) === 0;
+          return path3.normalize(child).toLowerCase().indexOf(path3.normalize(parent).toLowerCase()) === 0;
         }
       }
       FileSystem2.isParent = isParent;
     })(FileSystem || (exports2.FileSystem = FileSystem = {}));
     function resolveModulePath(workspaceRoot, moduleName, nodePath, tracer) {
       if (nodePath) {
-        if (!path2.isAbsolute(nodePath)) {
-          nodePath = path2.join(workspaceRoot, nodePath);
+        if (!path3.isAbsolute(nodePath)) {
+          nodePath = path3.join(workspaceRoot, nodePath);
         }
         return resolve(moduleName, nodePath, nodePath, tracer).then((value) => {
           if (FileSystem.isParent(nodePath, value)) {
@@ -21255,7 +21255,7 @@ __export(main_exports, {
 });
 module.exports = __toCommonJS(main_exports);
 var import_vscode2 = require("vscode");
-var import_node_path4 = require("path");
+var import_node_path5 = require("path");
 var import_node2 = __toESM(require_node3(), 1);
 
 // node_modules/langium/lib/default-module.js
@@ -28582,15 +28582,15 @@ var TypeGraph = class {
       }
       split.properties.push(...part.properties);
       split.ruleCalls.push(...part.ruleCalls);
-      const path2 = {
+      const path3 = {
         alt: split,
         next: part.children
       };
-      if (path2.next.length === 0) {
-        path2.alt.super = path2.alt.super.filter((e) => e !== path2.alt.name);
-        paths.push(path2);
+      if (path3.next.length === 0) {
+        path3.alt.super = path3.alt.super.filter((e) => e !== path3.alt.name);
+        paths.push(path3);
       } else {
-        paths.push(...this.applyNext(root2, path2));
+        paths.push(...this.applyNext(root2, path3));
       }
     }
     return flattenTypes(paths);
@@ -28939,10 +28939,10 @@ function flattenTypes(alternatives) {
     const properties = [];
     const ruleCalls = /* @__PURE__ */ new Set();
     const type = { alt: { name, properties, ruleCalls: [], super: [] }, next: [] };
-    for (const path2 of namedAlternatives) {
-      const alt = path2.alt;
+    for (const path3 of namedAlternatives) {
+      const alt = path3.alt;
       type.alt.super.push(...alt.super);
-      type.next.push(...path2.next);
+      type.next.push(...path3.next);
       const altProperties = alt.properties;
       for (const altProperty of altProperties) {
         const existingProperty = properties.find((e) => e.name === altProperty.name);
@@ -28955,8 +28955,8 @@ function flattenTypes(alternatives) {
       }
       alt.ruleCalls.forEach((ruleCall) => ruleCalls.add(ruleCall));
     }
-    for (const path2 of namedAlternatives) {
-      const alt = path2.alt;
+    for (const path3 of namedAlternatives) {
+      const alt = path3.alt;
       if (alt.ruleCalls.length === 0) {
         for (const property2 of properties) {
           if (!alt.properties.find((e) => e.name === property2.name)) {
@@ -30870,7 +30870,7 @@ var LangiumGrammarCompletionProvider = class extends DefaultCompletionProvider {
     };
     if (existingText.length > 0) {
       const existingPath = existingText.substring(1);
-      allPaths = allPaths.filter((path2) => path2.startsWith(existingPath));
+      allPaths = allPaths.filter((path3) => path3.startsWith(existingPath));
       const start = context.textDocument.positionAt(context.tokenOffset + 1);
       const end = context.textDocument.positionAt(context.tokenEndOffset - 1);
       range = {
@@ -30878,11 +30878,11 @@ var LangiumGrammarCompletionProvider = class extends DefaultCompletionProvider {
         end
       };
     }
-    for (const path2 of allPaths) {
+    for (const path3 of allPaths) {
       const delimiter = existingText.length > 0 ? "" : '"';
-      const completionValue = `${delimiter}${path2}${delimiter}`;
+      const completionValue = `${delimiter}${path3}${delimiter}`;
       acceptor(context, {
-        label: path2,
+        label: path3,
         textEdit: {
           newText: completionValue,
           range
@@ -32143,12 +32143,12 @@ var DefaultReferences = class {
     const nameNode = this.nameProvider.getNameNode(targetNode);
     if (nameNode) {
       const doc = getDocument(targetNode);
-      const path2 = this.nodeLocator.getAstNodePath(targetNode);
+      const path3 = this.nodeLocator.getAstNodePath(targetNode);
       return {
         sourceUri: doc.uri,
-        sourcePath: path2,
+        sourcePath: path3,
         targetUri: doc.uri,
-        targetPath: path2,
+        targetPath: path3,
         segment: toDocumentSegment(nameNode),
         local: true
       };
@@ -34796,19 +34796,19 @@ function toKey(value) {
 var toKey_default = toKey;
 
 // node_modules/lodash-es/_baseGet.js
-function baseGet(object, path2) {
-  path2 = castPath_default(path2, object);
-  var index = 0, length = path2.length;
+function baseGet(object, path3) {
+  path3 = castPath_default(path3, object);
+  var index = 0, length = path3.length;
   while (object != null && index < length) {
-    object = object[toKey_default(path2[index++])];
+    object = object[toKey_default(path3[index++])];
   }
   return index && index == length ? object : void 0;
 }
 var baseGet_default = baseGet;
 
 // node_modules/lodash-es/get.js
-function get(object, path2, defaultValue) {
-  var result = object == null ? void 0 : baseGet_default(object, path2);
+function get(object, path3, defaultValue) {
+  var result = object == null ? void 0 : baseGet_default(object, path3);
   return result === void 0 ? defaultValue : result;
 }
 var get_default = get;
@@ -35720,11 +35720,11 @@ function baseHasIn(object, key) {
 var baseHasIn_default = baseHasIn;
 
 // node_modules/lodash-es/_hasPath.js
-function hasPath(object, path2, hasFunc) {
-  path2 = castPath_default(path2, object);
-  var index = -1, length = path2.length, result = false;
+function hasPath(object, path3, hasFunc) {
+  path3 = castPath_default(path3, object);
+  var index = -1, length = path3.length, result = false;
   while (++index < length) {
-    var key = toKey_default(path2[index]);
+    var key = toKey_default(path3[index]);
     if (!(result = object != null && hasFunc(object, key))) {
       break;
     }
@@ -35739,21 +35739,21 @@ function hasPath(object, path2, hasFunc) {
 var hasPath_default = hasPath;
 
 // node_modules/lodash-es/hasIn.js
-function hasIn(object, path2) {
-  return object != null && hasPath_default(object, path2, baseHasIn_default);
+function hasIn(object, path3) {
+  return object != null && hasPath_default(object, path3, baseHasIn_default);
 }
 var hasIn_default = hasIn;
 
 // node_modules/lodash-es/_baseMatchesProperty.js
 var COMPARE_PARTIAL_FLAG6 = 1;
 var COMPARE_UNORDERED_FLAG4 = 2;
-function baseMatchesProperty(path2, srcValue) {
-  if (isKey_default(path2) && isStrictComparable_default(srcValue)) {
-    return matchesStrictComparable_default(toKey_default(path2), srcValue);
+function baseMatchesProperty(path3, srcValue) {
+  if (isKey_default(path3) && isStrictComparable_default(srcValue)) {
+    return matchesStrictComparable_default(toKey_default(path3), srcValue);
   }
   return function(object) {
-    var objValue = get_default(object, path2);
-    return objValue === void 0 && objValue === srcValue ? hasIn_default(object, path2) : baseIsEqual_default(srcValue, objValue, COMPARE_PARTIAL_FLAG6 | COMPARE_UNORDERED_FLAG4);
+    var objValue = get_default(object, path3);
+    return objValue === void 0 && objValue === srcValue ? hasIn_default(object, path3) : baseIsEqual_default(srcValue, objValue, COMPARE_PARTIAL_FLAG6 | COMPARE_UNORDERED_FLAG4);
   };
 }
 var baseMatchesProperty_default = baseMatchesProperty;
@@ -35767,16 +35767,16 @@ function baseProperty(key) {
 var baseProperty_default = baseProperty;
 
 // node_modules/lodash-es/_basePropertyDeep.js
-function basePropertyDeep(path2) {
+function basePropertyDeep(path3) {
   return function(object) {
-    return baseGet_default(object, path2);
+    return baseGet_default(object, path3);
   };
 }
 var basePropertyDeep_default = basePropertyDeep;
 
 // node_modules/lodash-es/property.js
-function property(path2) {
-  return isKey_default(path2) ? baseProperty_default(toKey_default(path2)) : basePropertyDeep_default(path2);
+function property(path3) {
+  return isKey_default(path3) ? baseProperty_default(toKey_default(path3)) : basePropertyDeep_default(path3);
 }
 var property_default = property;
 
@@ -36144,8 +36144,8 @@ function baseHas(object, key) {
 var baseHas_default = baseHas;
 
 // node_modules/lodash-es/has.js
-function has(object, path2) {
-  return object != null && hasPath_default(object, path2, baseHas_default);
+function has(object, path3) {
+  return object != null && hasPath_default(object, path3, baseHas_default);
 }
 var has_default = has;
 
@@ -36293,14 +36293,14 @@ function negate(predicate) {
 var negate_default = negate;
 
 // node_modules/lodash-es/_baseSet.js
-function baseSet(object, path2, value, customizer) {
+function baseSet(object, path3, value, customizer) {
   if (!isObject_default(object)) {
     return object;
   }
-  path2 = castPath_default(path2, object);
-  var index = -1, length = path2.length, lastIndex = length - 1, nested = object;
+  path3 = castPath_default(path3, object);
+  var index = -1, length = path3.length, lastIndex = length - 1, nested = object;
   while (nested != null && ++index < length) {
-    var key = toKey_default(path2[index]), newValue = value;
+    var key = toKey_default(path3[index]), newValue = value;
     if (key === "__proto__" || key === "constructor" || key === "prototype") {
       return object;
     }
@@ -36308,7 +36308,7 @@ function baseSet(object, path2, value, customizer) {
       var objValue = nested[key];
       newValue = customizer ? customizer(objValue, key, nested) : void 0;
       if (newValue === void 0) {
-        newValue = isObject_default(objValue) ? objValue : isIndex_default(path2[index + 1]) ? [] : {};
+        newValue = isObject_default(objValue) ? objValue : isIndex_default(path3[index + 1]) ? [] : {};
       }
     }
     assignValue_default(nested, key, newValue);
@@ -36322,9 +36322,9 @@ var baseSet_default = baseSet;
 function basePickBy(object, paths, predicate) {
   var index = -1, length = paths.length, result = {};
   while (++index < length) {
-    var path2 = paths[index], value = baseGet_default(object, path2);
-    if (predicate(value, path2)) {
-      baseSet_default(result, castPath_default(path2, object), value);
+    var path3 = paths[index], value = baseGet_default(object, path3);
+    if (predicate(value, path3)) {
+      baseSet_default(result, castPath_default(path3, object), value);
     }
   }
   return result;
@@ -36340,8 +36340,8 @@ function pickBy(object, predicate) {
     return [prop];
   });
   predicate = baseIteratee_default(predicate);
-  return basePickBy_default(object, props, function(value, path2) {
-    return predicate(value, path2[0]);
+  return basePickBy_default(object, props, function(value, path3) {
+    return predicate(value, path3[0]);
   });
 }
 var pickBy_default = pickBy;
@@ -37938,12 +37938,12 @@ function assignCategoriesMapProp(tokenTypes) {
     singleAssignCategoriesToksMap([], currTokType);
   });
 }
-function singleAssignCategoriesToksMap(path2, nextNode) {
-  forEach_default(path2, (pathNode) => {
+function singleAssignCategoriesToksMap(path3, nextNode) {
+  forEach_default(path3, (pathNode) => {
     nextNode.categoryMatchesMap[pathNode.tokenTypeIdx] = true;
   });
   forEach_default(nextNode.CATEGORIES, (nextCategory) => {
-    const newPath = path2.concat(nextNode);
+    const newPath = path3.concat(nextNode);
     if (!includes_default(newPath, nextCategory)) {
       singleAssignCategoriesToksMap(newPath, nextCategory);
     }
@@ -38787,10 +38787,10 @@ var GastRefResolverVisitor = class extends GAstVisitor {
 
 // node_modules/chevrotain/lib/src/parse/grammar/interpreter.js
 var AbstractNextPossibleTokensWalker = class extends RestWalker {
-  constructor(topProd, path2) {
+  constructor(topProd, path3) {
     super();
     this.topProd = topProd;
-    this.path = path2;
+    this.path = path3;
     this.possibleTokTypes = [];
     this.nextProductionName = "";
     this.nextProductionOccurrence = 0;
@@ -38834,9 +38834,9 @@ var AbstractNextPossibleTokensWalker = class extends RestWalker {
   }
 };
 var NextAfterTokenWalker = class extends AbstractNextPossibleTokensWalker {
-  constructor(topProd, path2) {
-    super(topProd, path2);
-    this.path = path2;
+  constructor(topProd, path3) {
+    super(topProd, path3);
+    this.path = path3;
     this.nextTerminalName = "";
     this.nextTerminalOccurrence = 0;
     this.nextTerminalName = this.path.lastTok.name;
@@ -39444,10 +39444,10 @@ function initializeArrayOfArrays(size) {
   }
   return result;
 }
-function pathToHashKeys(path2) {
+function pathToHashKeys(path3) {
   let keys2 = [""];
-  for (let i = 0; i < path2.length; i++) {
-    const tokType = path2[i];
+  for (let i = 0; i < path3.length; i++) {
+    const tokType = path3[i];
     const longerKeys = [];
     for (let j = 0; j < keys2.length; j++) {
       const currShorterKey = keys2[j];
@@ -39687,7 +39687,7 @@ function validateRuleIsOverridden(ruleName, definedRulesNames, className) {
   }
   return errors;
 }
-function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path2 = []) {
+function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path3 = []) {
   const errors = [];
   const nextNonTerminals = getFirstNoneTerminal(currRule.definition);
   if (isEmpty_default(nextNonTerminals)) {
@@ -39699,15 +39699,15 @@ function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path2 = []) 
       errors.push({
         message: errMsgProvider.buildLeftRecursionError({
           topLevelRule: topRule,
-          leftRecursionPath: path2
+          leftRecursionPath: path3
         }),
         type: ParserDefinitionErrorType.LEFT_RECURSION,
         ruleName
       });
     }
-    const validNextSteps = difference_default(nextNonTerminals, path2.concat([topRule]));
+    const validNextSteps = difference_default(nextNonTerminals, path3.concat([topRule]));
     const errorsFromNextSteps = flatMap_default(validNextSteps, (currRefRule) => {
-      const newPath = clone_default(path2);
+      const newPath = clone_default(path3);
       newPath.push(currRefRule);
       return validateNoLeftRecursion(topRule, currRefRule, errMsgProvider, newPath);
     });
@@ -42567,7 +42567,7 @@ var LLStarLookaheadStrategy = class extends LLkLookaheadStrategy {
       occurrence: prodOccurrence,
       prodType: "Alternation",
       rule
-    }), (currAlt) => map_default(currAlt, (path2) => path2[0]));
+    }), (currAlt) => map_default(currAlt, (path3) => path3[0]));
     if (isLL1Sequence(partialAlts, false) && !dynamicTokensEnabled) {
       const choiceToAlt = reduce_default(partialAlts, (result, currAlt, idx) => {
         forEach_default(currAlt, (currTokType) => {
@@ -42712,7 +42712,7 @@ function adaptivePredict(dfaCaches, decision, predicateSet, logging) {
 function performLookahead(dfa, s0, predicateSet, logging) {
   let previousD = s0;
   let i = 1;
-  const path2 = [];
+  const path3 = [];
   let t = this.LA(i++);
   while (true) {
     let d = getExistingTargetState(previousD, t);
@@ -42720,13 +42720,13 @@ function performLookahead(dfa, s0, predicateSet, logging) {
       d = computeLookaheadTarget.apply(this, [dfa, previousD, t, i, predicateSet, logging]);
     }
     if (d === DFA_ERROR) {
-      return buildAdaptivePredictError(path2, previousD, t);
+      return buildAdaptivePredictError(path3, previousD, t);
     }
     if (d.isAcceptState === true) {
       return d.prediction;
     }
     previousD = d;
-    path2.push(t);
+    path3.push(t);
     t = this.LA(i++);
   }
 }
@@ -42799,13 +42799,13 @@ function getProductionDslName2(prod) {
     throw Error("non exhaustive match");
   }
 }
-function buildAdaptivePredictError(path2, previous, current) {
+function buildAdaptivePredictError(path3, previous, current) {
   const nextTransitions = flatMap_default(previous.configs.elements, (e) => e.state.transitions);
   const nextTokenTypes = uniqBy_default(nextTransitions.filter((e) => e instanceof AtomTransition).map((e) => e.tokenType), (e) => e.tokenTypeIdx);
   return {
     actualToken: current,
     possibleTokenTypes: nextTokenTypes,
-    tokenPath: path2
+    tokenPath: path3
   };
 }
 function getExistingTargetState(state, token) {
@@ -44389,8 +44389,8 @@ var DefaultJsonSerializer = class {
       return void 0;
     }
   }
-  getRefNode(root2, path2) {
-    return this.astNodeLocator.getAstNode(root2, path2.substring(1));
+  getRefNode(root2, path3) {
+    return this.astNodeLocator.getAstNode(root2, path3.substring(1));
   }
 };
 
@@ -44451,9 +44451,9 @@ var DefaultAstNodeDescriptionProvider = class {
   }
   createDescription(node, name, document = getDocument(node)) {
     name !== null && name !== void 0 ? name : name = this.nameProvider.getName(node);
-    const path2 = this.astNodeLocator.getAstNodePath(node);
+    const path3 = this.astNodeLocator.getAstNodePath(node);
     if (!name) {
-      throw new Error(`Node at path ${path2} has no name.`);
+      throw new Error(`Node at path ${path3} has no name.`);
     }
     let nameNodeSegment;
     const nameSegmentGetter = () => {
@@ -44469,7 +44469,7 @@ var DefaultAstNodeDescriptionProvider = class {
       selectionSegment: toDocumentSegment(node.$cstNode),
       type: node.$type,
       documentUri: document.uri,
-      path: path2
+      path: path3
     };
   }
 };
@@ -44533,8 +44533,8 @@ var DefaultAstNodeLocator = class {
     }
     return $containerProperty;
   }
-  getAstNode(node, path2) {
-    const segments = path2.split(this.segmentSeparator);
+  getAstNode(node, path3) {
+    const segments = path3.split(this.segmentSeparator);
     return segments.reduce((previousValue, currentValue) => {
       if (!previousValue || currentValue.length === 0) {
         return previousValue;
@@ -48894,9 +48894,9 @@ var extractJSCondition = {
     const equalTo = `${expression.negation ? "!" : "="}== ${extractValueAsString(expression.value)}`;
     switch (reference.$type) {
       case "Condition":
-        return `conditions.${reference.name}() ${equalTo}`;
+        return `conditions.${reference.name}(get) ${equalTo}`;
       case "Proposition":
-        return `get(tweakablesContainer.${reference.name}) ${equalTo}`;
+        return `get('${reference.name}') ${equalTo}`;
     }
   },
   fromExpression: function(expression) {
@@ -48960,7 +48960,7 @@ function generateConditions(conditions, node) {
   node.append(`const conditions = {
 `);
   conditions.forEach((condition) => {
-    node.append(`	${condition.name}: () => {
+    node.append(`	${condition.name}: (get) => {
 `);
     node.append(`		return ${extractJSCondition.fromExpression(condition.condition.expression)};
 `);
@@ -48976,7 +48976,7 @@ function isGiven(proposition) {
   return proposition.valueClauses.length == 1;
 }
 function generateGivens(propositions, node) {
-  node.append(`const givens = [
+  node.append(`export const givens = [
 `);
   propositions.filter(isGiven).forEach((given) => {
     let value = given.valueClauses[0].value;
@@ -48988,7 +48988,7 @@ function generateGivens(propositions, node) {
 }
 function generateConcernFunction(proposition, node, baseIndent) {
   const indent = (level) => baseIndent + "	".repeat(level);
-  node.append(`(self) => {
+  node.append(`(self, get) => {
 `);
   node.append(indent(1) + `let result = [];
 `);
@@ -49032,13 +49032,10 @@ function generateDisableFunction(proposition, node, baseIndent) {
 }
 function generateTweakables(propositions, node) {
   const tweakables = propositions.filter((proposition) => !isGiven(proposition));
-  const reference = (proposition) => {
-    return `tweakablesContainer.${proposition.name}`;
-  };
-  node.append(`const tweakablesContainer = {
+  node.append(`export const tweakables = [
 `);
   tweakables.forEach((tweakable) => {
-    node.append(`	${tweakable.name}: tweakable({
+    node.append(`	tweakable({
 `);
     {
       let defaultValue = tweakable.valueClauses.filter((clause) => {
@@ -49057,7 +49054,7 @@ function generateTweakables(propositions, node) {
       generateConcernFunction(tweakable, node, "		");
       node.append(`,
 `);
-      node.append(`		disabled: () => {
+      node.append(`		disabled: (get) => {
 `);
       generateDisableFunction(tweakable, node, "		");
       node.append(`		},
@@ -49066,20 +49063,12 @@ function generateTweakables(propositions, node) {
     node.append(`	}),
 `);
   });
-  node.append(`};
-`);
-  node.append(`const tweakables = [
-`);
-  tweakables.forEach((tweakable) => {
-    node.append(`	${reference(tweakable)},
-`);
-  });
   node.append(`];
 `);
 }
 
 // src/generators/lab/main.ts
-var LAB_TEMPLATE_MARKER = {
+var DATA_TEMPLATE_MARKER = {
   START: "//???TEMPLATE-MARKER-START???",
   END: "//???TEMPLATE-MARKER-END???"
 };
@@ -49089,7 +49078,8 @@ var INDEX_TEMPLATE_MARKER = {
 };
 var ROOT_FILES_TO_COPY = [
   //"README.md",
-  //"LICENSE"
+  //"LICENSE",
+  "lab.js"
 ];
 var RESOURCES_TO_COPY = [
   "favicon.svg",
@@ -49118,11 +49108,11 @@ function generateLaboratory(model, outputDirectory, templateDirectory) {
     import_node_path2.default.join(templateDirectory, "index.html"),
     import_node_path2.default.join(outputDirectory, "index.html")
   );
-  generateLabJS(
+  generateDataJS(
     model,
     laboratoryInformation,
-    import_node_path2.default.join(templateDirectory, "lab.js"),
-    import_node_path2.default.join(outputDirectory, "lab.js")
+    import_node_path2.default.join(templateDirectory, "data.js"),
+    import_node_path2.default.join(outputDirectory, "data.js")
   );
   return outputDirectory;
 }
@@ -49136,8 +49126,8 @@ function generateIndex(model, laboratoryInformation, indexTemplatePath, outputIn
   (0, import_node_fs2.appendFileSync)(outputIndexPath, headerData);
   (0, import_node_fs2.appendFileSync)(outputIndexPath, indexTemplate.postfix);
 }
-function generateLabJS(model, laboratoryInformation, labTemplatePath, outputJavaScript) {
-  const labTemplate = readTemplatedFile(labTemplatePath, LAB_TEMPLATE_MARKER);
+function generateDataJS(model, laboratoryInformation, labTemplatePath, outputJavaScript) {
+  const labTemplate = readTemplatedFile(labTemplatePath, DATA_TEMPLATE_MARKER);
   (0, import_node_fs2.writeFileSync)(outputJavaScript, "");
   (0, import_node_fs2.appendFileSync)(outputJavaScript, labTemplate.prefix);
   const laboratoryInformationNode = new CompositeGeneratorNode();
@@ -49158,18 +49148,20 @@ function generateLabJS(model, laboratoryInformation, labTemplatePath, outputJava
   (0, import_node_fs2.appendFileSync)(outputJavaScript, labTemplate.postfix);
 }
 function generateLaboratoryInformation(laboratoryInformation, node) {
+  node.append("export const metaData = {\n");
   const titleString = laboratoryInformation.title == void 0 ? "undefined" : `"${laboratoryInformation.title}"`;
-  node.append(`const appTitle = ${titleString};
+  node.append(`	title: ${titleString},
 `);
   const descriptionString = laboratoryInformation.description == void 0 ? "undefined" : `${laboratoryInformation.description}`;
-  node.append(`const appDescriptionHtml = html\`${descriptionString}\`;
+  node.append(`	descriptionHtml: html\`${descriptionString}\`,
 `);
   const authorString = laboratoryInformation.author == void 0 ? "undefined" : `"${laboratoryInformation.author}"`;
-  node.append(`const appAuthor = ${authorString};
+  node.append(`	author: ${authorString},
 `);
   const versionString = laboratoryInformation.version == void 0 ? "undefined" : `"${laboratoryInformation.version}"`;
-  node.append(`const appVersion = ${versionString};
+  node.append(`	version: ${versionString},
 `);
+  node.append("};\n");
 }
 
 // src/generators/graphviz/main.ts
@@ -49252,6 +49244,319 @@ function getReferenceablesCausingDisable(proposition) {
   return result;
 }
 
+// src/generators/optimizer/main.ts
+var import_node_fs5 = require("fs");
+var import_node_path3 = __toESM(require("path"), 1);
+
+// src/generators/optimizer/concerns.ts
+function generateConcernHtml2(concern, default_format) {
+  return `<details><summary>\u26A0 ${concern.summary}</summary>
+    ${formattedStringToHTML(concern.description, default_format)}
+    </details>`;
+}
+function generateConcerns2(concerns, node, laboratoryInformation) {
+  node.append(`const concerns = {
+`);
+  concerns.forEach((concern) => {
+    node.append(`	${concern.name}: html\`${generateConcernHtml2(concern, laboratoryInformation.format)}\`,
+`);
+  });
+  node.append(`};
+`);
+}
+
+// src/generators/optimizer/util.ts
+var import_node_fs4 = require("fs");
+var extractJSCondition2 = {
+  fromOrExpression: function(expression) {
+    return `${extractJSCondition2.fromExpression(expression.left)} || ${extractJSCondition2.fromExpression(expression.right)}`;
+  },
+  fromAndExpression: function(expression) {
+    return `${extractJSCondition2.fromExpression(expression.left)} && ${extractJSCondition2.fromExpression(expression.right)}`;
+  },
+  fromNegation: function(expression) {
+    return `! ${extractJSCondition2.fromExpression(expression.inner)}`;
+  },
+  fromGroup: function(expression) {
+    return `(${extractJSCondition2.fromExpression(expression.inner)})`;
+  },
+  fromStatement: function(expression) {
+    const reference = expression.reference.ref;
+    if (reference == void 0)
+      return "";
+    const equalTo = `${expression.negation ? "!" : "="}== ${extractValueAsString(expression.value)}`;
+    switch (reference.$type) {
+      case "Condition":
+        return `conditions.${reference.name}(get) ${equalTo}`;
+      case "Proposition":
+        return `get('${reference.name}') ${equalTo}`;
+    }
+  },
+  fromExpression: function(expression) {
+    switch (expression.$type) {
+      case "OrExpression":
+        return extractJSCondition2.fromOrExpression(expression);
+      case "AndExpression":
+        return extractJSCondition2.fromAndExpression(expression);
+      case "Negation":
+        return extractJSCondition2.fromNegation(expression);
+      case "Group":
+        return extractJSCondition2.fromGroup(expression);
+      case "Statement":
+        return extractJSCondition2.fromStatement(expression);
+    }
+  }
+};
+function splitByStartAndEndMarker2(input, markers) {
+  const splitByStartMarker = input.split(markers.START);
+  return {
+    BEFORE: splitByStartMarker[0],
+    AFTER: splitByStartMarker[1].split(markers.END)[1]
+  };
+}
+function readTemplatedFile2(templateFilePath, templateMarker) {
+  const template = (0, import_node_fs4.readFileSync)(templateFilePath, `utf-8`);
+  const splitByConcernsMarkers = splitByStartAndEndMarker2(template, templateMarker);
+  return {
+    prefix: splitByConcernsMarkers.BEFORE,
+    postfix: splitByConcernsMarkers.AFTER
+  };
+}
+var DEFAULT_WEB_LABORATORY_INFORMATION2 = {
+  title: "Laboratory Title",
+  description: "<p>Laboratory description</p>",
+  icon: void 0,
+  format: "MD",
+  author: void 0,
+  version: void 0
+};
+function extractLaboratoryInformationForWebWithDefaults2(information) {
+  const extracted = extractLaboratoryInformation(information);
+  let result = DEFAULT_WEB_LABORATORY_INFORMATION2;
+  if (extracted.title !== void 0)
+    result.title = extracted.title;
+  if (extracted.icon !== void 0)
+    result.icon = extracted.icon;
+  if (extracted.format !== void 0)
+    result.format = extracted.format;
+  if (extracted.author !== void 0)
+    result.author = extracted.author;
+  if (extracted.version !== void 0)
+    result.version = extracted.version;
+  if (extracted.description !== void 0)
+    result.description = formattedStringToHTML(extracted.description, result.format);
+  return result;
+}
+
+// src/generators/optimizer/conditions.ts
+function generateConditions3(conditions, node) {
+  node.append(`const conditions = {
+`);
+  conditions.forEach((condition) => {
+    node.append(`	${condition.name}: (get) => {
+`);
+    node.append(`		return ${extractJSCondition2.fromExpression(condition.condition.expression)};
+`);
+    node.append(`	},
+`);
+  });
+  node.append(`};
+`);
+}
+
+// src/generators/optimizer/propositions.ts
+function isGiven2(proposition) {
+  return proposition.valueClauses.length == 1;
+}
+function generateGivens2(propositions, node) {
+  node.append(`export const givens = [
+`);
+  propositions.filter(isGiven2).forEach((given) => {
+    let value = given.valueClauses[0].value;
+    node.append(`	{ input: \`${given.expression}\`, output: ${extractValueAsString(value)} },
+`);
+  });
+  node.append(`];
+`);
+}
+function generateConcernFunction2(proposition, node, baseIndent) {
+  const indent = (level) => baseIndent + "	".repeat(level);
+  node.append(`(self, get) => {
+`);
+  node.append(indent(1) + `let result = [];
+`);
+  proposition.valueClauses.forEach((clause) => {
+    node.append(indent(1) + `if (self === ${extractValueAsString(clause.value)}) {
+`);
+    clause.raises.forEach((raise) => {
+      var _a, _b;
+      if (raise.condition === void 0) {
+        node.append(indent(2) + `result.push(concerns.${(_a = raise.concern.ref) == null ? void 0 : _a.name});
+`);
+      } else {
+        node.append(indent(2) + `if (${extractJSCondition2.fromExpression(raise.condition.expression)}) {
+`);
+        node.append(indent(3) + `result.push(concerns.${(_b = raise.concern.ref) == null ? void 0 : _b.name});
+`);
+        node.append(indent(2) + "}\n");
+      }
+    });
+    node.append(indent(1) + "}\n");
+  });
+  node.append(indent(1) + `return result;
+`);
+  node.append(`${indent(0)}}`);
+}
+function generateDisableFunction2(proposition, node, baseIndent) {
+  const indent = (level) => baseIndent + "	".repeat(level);
+  if (proposition.disable === void 0) {
+    node.append(indent(1) + "return false;\n");
+    return;
+  }
+  proposition.disable.statements.forEach((statement) => {
+    node.append(indent(1) + `if (${extractJSCondition2.fromExpression(statement.condition.expression)}) {
+`);
+    node.append(indent(2) + `return "${statement.message}"
+`);
+    node.append(indent(1) + `}
+`);
+  });
+  node.append(indent(1) + "return false;\n");
+}
+function generateTweakables2(propositions, node) {
+  const tweakables = propositions.filter((proposition) => !isGiven2(proposition));
+  node.append(`export const tweakables = [
+`);
+  tweakables.forEach((tweakable) => {
+    node.append(`	tweakable({
+`);
+    {
+      let defaultValue = tweakable.valueClauses.filter((clause) => {
+        return clause.default;
+      })[0].value;
+      let outputListAsString = tweakable.valueClauses.map((clause) => extractValueAsString(clause.value)).join(", ");
+      node.append(`		name: \`${tweakable.name}\`,
+`);
+      node.append(`		input: \`${tweakable.expression}\`,
+`);
+      node.append(`		output: [${outputListAsString}],
+`);
+      node.append(`		default: ${extractValueAsString(defaultValue)},
+`);
+      node.append(`		concern: `);
+      generateConcernFunction2(tweakable, node, "		");
+      node.append(`,
+`);
+      node.append(`		disabled: (get) => {
+`);
+      generateDisableFunction2(tweakable, node, "		");
+      node.append(`		},
+`);
+    }
+    node.append(`	}),
+`);
+  });
+  node.append(`];
+`);
+}
+
+// src/generators/optimizer/main.ts
+var DATA_TEMPLATE_MARKER2 = {
+  START: "//???TEMPLATE-MARKER-START???",
+  END: "//???TEMPLATE-MARKER-END???"
+};
+var INDEX_TEMPLATE_MARKER2 = {
+  START: "<!--???TEMPLATE-MARKER-START???-->",
+  END: "<!--???TEMPLATE-MARKER-END???-->"
+};
+var ROOT_FILES_TO_COPY2 = [
+  //"README.md",
+  //"LICENSE",
+  "lab.js"
+];
+var RESOURCES_TO_COPY2 = [
+  "favicon.svg",
+  "github.png"
+];
+function generateOptimizer(model, outputDirectory, templateDirectory) {
+  const outputResourcesPath = import_node_path3.default.join(outputDirectory, "res");
+  if (!(0, import_node_fs5.existsSync)(outputResourcesPath))
+    (0, import_node_fs5.mkdirSync)(outputResourcesPath);
+  ROOT_FILES_TO_COPY2.forEach((fileName) => {
+    (0, import_node_fs5.copyFileSync)(
+      import_node_path3.default.join(templateDirectory, fileName),
+      import_node_path3.default.join(outputDirectory, fileName)
+    );
+  });
+  RESOURCES_TO_COPY2.forEach((fileName) => {
+    (0, import_node_fs5.copyFileSync)(
+      import_node_path3.default.join(templateDirectory, fileName),
+      import_node_path3.default.join(outputResourcesPath, fileName)
+    );
+  });
+  const laboratoryInformation = extractLaboratoryInformationForWebWithDefaults2(model.laboratory);
+  generateIndex2(
+    model,
+    laboratoryInformation,
+    import_node_path3.default.join(templateDirectory, "index.html"),
+    import_node_path3.default.join(outputDirectory, "index.html")
+  );
+  generateDataJS2(
+    model,
+    laboratoryInformation,
+    import_node_path3.default.join(templateDirectory, "data.js"),
+    import_node_path3.default.join(outputDirectory, "data.js")
+  );
+  return outputDirectory;
+}
+function generateIndex2(model, laboratoryInformation, indexTemplatePath, outputIndexPath) {
+  const indexTemplate = readTemplatedFile2(indexTemplatePath, INDEX_TEMPLATE_MARKER2);
+  (0, import_node_fs5.writeFileSync)(outputIndexPath, "");
+  (0, import_node_fs5.appendFileSync)(outputIndexPath, indexTemplate.prefix);
+  const iconString = laboratoryInformation.icon == void 0 ? "undefined" : laboratoryInformation.icon;
+  const headerData = `<title>${laboratoryInformation.title}</title>
+	<link rel="icon" href="${iconString}"/>`;
+  (0, import_node_fs5.appendFileSync)(outputIndexPath, headerData);
+  (0, import_node_fs5.appendFileSync)(outputIndexPath, indexTemplate.postfix);
+}
+function generateDataJS2(model, laboratoryInformation, labTemplatePath, outputJavaScript) {
+  const labTemplate = readTemplatedFile2(labTemplatePath, DATA_TEMPLATE_MARKER2);
+  (0, import_node_fs5.writeFileSync)(outputJavaScript, "");
+  (0, import_node_fs5.appendFileSync)(outputJavaScript, labTemplate.prefix);
+  const laboratoryInformationNode = new CompositeGeneratorNode();
+  generateLaboratoryInformation2(laboratoryInformation, laboratoryInformationNode);
+  (0, import_node_fs5.appendFileSync)(outputJavaScript, toString2(laboratoryInformationNode));
+  const concernsNode = new CompositeGeneratorNode();
+  generateConcerns2(model.concerns, concernsNode, laboratoryInformation);
+  (0, import_node_fs5.appendFileSync)(outputJavaScript, toString2(concernsNode));
+  const conditionsNode = new CompositeGeneratorNode();
+  generateConditions3(model.conditions, conditionsNode);
+  (0, import_node_fs5.appendFileSync)(outputJavaScript, toString2(conditionsNode));
+  const givensNode = new CompositeGeneratorNode();
+  generateGivens2(model.propositions, givensNode);
+  (0, import_node_fs5.appendFileSync)(outputJavaScript, toString2(givensNode));
+  const tweakablesNode = new CompositeGeneratorNode();
+  generateTweakables2(model.propositions, tweakablesNode);
+  (0, import_node_fs5.appendFileSync)(outputJavaScript, toString2(tweakablesNode));
+  (0, import_node_fs5.appendFileSync)(outputJavaScript, labTemplate.postfix);
+}
+function generateLaboratoryInformation2(laboratoryInformation, node) {
+  node.append("export const metaData = {\n");
+  const titleString = laboratoryInformation.title == void 0 ? "undefined" : `"${laboratoryInformation.title}"`;
+  node.append(`	title: ${titleString},
+`);
+  const descriptionString = laboratoryInformation.description == void 0 ? "undefined" : `${laboratoryInformation.description}`;
+  node.append(`	descriptionHtml: html\`${descriptionString}\`,
+`);
+  const authorString = laboratoryInformation.author == void 0 ? "undefined" : `"${laboratoryInformation.author}"`;
+  node.append(`	author: ${authorString},
+`);
+  const versionString = laboratoryInformation.version == void 0 ? "undefined" : `"${laboratoryInformation.version}"`;
+  node.append(`	version: ${versionString},
+`);
+  node.append("};\n");
+}
+
 // node_modules/langium/lib/node/node-file-system-provider.js
 var fs2 = __toESM(require("fs"), 1);
 var NodeFileSystemProvider = class {
@@ -49279,30 +49584,30 @@ var NodeFileSystem = {
 };
 
 // src/generators/actions.ts
-var import_node_fs5 = require("fs");
+var import_node_fs7 = require("fs");
 var import_vscode = require("vscode");
-var import_node_path3 = require("path");
+var import_node_path4 = require("path");
 
 // src/generators/json/main.ts
-var import_node_fs4 = require("fs");
+var import_node_fs6 = require("fs");
 function generateJSON(model, destination) {
-  (0, import_node_fs4.writeFileSync)(destination, "{\n");
+  (0, import_node_fs6.writeFileSync)(destination, "{\n");
   const informationNode = new CompositeGeneratorNode();
-  generateLaboratoryInformation2(model.laboratory, informationNode);
-  (0, import_node_fs4.appendFileSync)(destination, toString2(informationNode));
+  generateLaboratoryInformation3(model.laboratory, informationNode);
+  (0, import_node_fs6.appendFileSync)(destination, toString2(informationNode));
   const concernsNode = new CompositeGeneratorNode();
-  generateConcerns2(model.concerns, concernsNode);
-  (0, import_node_fs4.appendFileSync)(destination, toString2(concernsNode));
+  generateConcerns3(model.concerns, concernsNode);
+  (0, import_node_fs6.appendFileSync)(destination, toString2(concernsNode));
   const conditionsNode = new CompositeGeneratorNode();
-  generateConditions3(model.conditions, conditionsNode);
-  (0, import_node_fs4.appendFileSync)(destination, toString2(conditionsNode));
+  generateConditions4(model.conditions, conditionsNode);
+  (0, import_node_fs6.appendFileSync)(destination, toString2(conditionsNode));
   const propositionsNode = new CompositeGeneratorNode();
   generatePropositions2(model.propositions, propositionsNode);
-  (0, import_node_fs4.appendFileSync)(destination, toString2(propositionsNode));
-  (0, import_node_fs4.appendFileSync)(destination, "}");
+  (0, import_node_fs6.appendFileSync)(destination, toString2(propositionsNode));
+  (0, import_node_fs6.appendFileSync)(destination, "}");
   return destination;
 }
-function generateLaboratoryInformation2(laboratory, fileNode) {
+function generateLaboratoryInformation3(laboratory, fileNode) {
   const extracted = extractLaboratoryInformation(laboratory);
   fileNode.append(`	"laboratory": {
 `);
@@ -49327,7 +49632,7 @@ function generateLaboratoryInformation2(laboratory, fileNode) {
   fileNode.append(`	},
 `);
 }
-function generateConcerns2(concerns, fileNode) {
+function generateConcerns3(concerns, fileNode) {
   if (concerns.length === 0) {
     fileNode.append(`	"concerns": [],
 `);
@@ -49356,7 +49661,7 @@ function generateConcerns2(concerns, fileNode) {
   fileNode.append(`	],
 `);
 }
-function generateConditions3(conditions, fileNode) {
+function generateConditions4(conditions, fileNode) {
   if (conditions.length === 0) {
     fileNode.append(`	"conditions": [],
 `);
@@ -49513,16 +49818,16 @@ function getModel(inputFile) {
 }
 function checkJSPLInput(inputFile) {
   const fileExtensions = getInputExtensionsAsSet();
-  const inputStats = (0, import_node_fs5.statSync)(inputFile);
+  const inputStats = (0, import_node_fs7.statSync)(inputFile);
   if (!inputStats.isFile())
     throw new import_vscode.FileSystemError(`The specified input file (${inputFile}) is not a file.`);
-  if (!fileExtensions.has((0, import_node_path3.extname)(inputFile)))
+  if (!fileExtensions.has((0, import_node_path4.extname)(inputFile)))
     throw new import_vscode.FileSystemError(`The specified input file (${inputFile}) does not have one of the allowed file extensions (${getInputExtensionsAsString()}).`);
 }
 function checkLaboratoryOutputDirectory(outputDirectoryPath) {
-  if (!(0, import_node_fs5.existsSync)(outputDirectoryPath))
-    (0, import_node_fs5.mkdirSync)(outputDirectoryPath);
-  const outputStats = (0, import_node_fs5.statSync)(outputDirectoryPath);
+  if (!(0, import_node_fs7.existsSync)(outputDirectoryPath))
+    (0, import_node_fs7.mkdirSync)(outputDirectoryPath);
+  const outputStats = (0, import_node_fs7.statSync)(outputDirectoryPath);
   if (!outputStats.isDirectory())
     throw new import_vscode.FileSystemError(`The specified output directory (${outputDirectoryPath}) is not a directory.`);
 }
@@ -49561,12 +49866,28 @@ var generateJSONAction = async (inputFile, destination) => {
   const generatedFilePath = generateJSON(model, destination);
   return Promise.resolve(generatedFilePath);
 };
+var generateOptimizerAction = async (inputFile, destination, templatePath = LABORATORY_TEMPLATE_DIRECTORY) => {
+  try {
+    checkJSPLInput(inputFile);
+  } catch (error) {
+    return Promise.reject(`Something went wrong while checking the input file. (Error: ${error})`);
+  }
+  try {
+    checkLaboratoryOutputDirectory(destination);
+  } catch (error) {
+    return Promise.reject(`Something went wrong while checking the output directory. (Error: ${error})`);
+  }
+  const model = await getModel(inputFile);
+  const generatedLabPath = generateOptimizer(model, destination, templatePath);
+  return Promise.resolve(generatedLabPath);
+};
 
 // src/extension/main.ts
 var client;
 var GENERATE_WEB_PAGE_COMMAND_IDENTIFIER = "jspl.generate-webpage";
 var GENERATE_GRAPHVIZ_COMMAND_IDENTIFIER = "jspl.generate-graphviz";
 var GENERATE_JSON_COMMAND_IDENTIFIER = "jspl.generate-json";
+var GENERATE_OPTIMIZER_COMMAND_IDENTIFIER = "jspl.generate-optimizer";
 function activate(context) {
   client = startLanguageClient(context);
   import_vscode2.commands.registerCommand(
@@ -49587,6 +49908,12 @@ function activate(context) {
       generateJSONCommand(context);
     }
   );
+  import_vscode2.commands.registerCommand(
+    GENERATE_OPTIMIZER_COMMAND_IDENTIFIER,
+    () => {
+      generateOptimizerCommand(context);
+    }
+  );
 }
 function deactivate() {
   if (client) {
@@ -49597,8 +49924,8 @@ function deactivate() {
 async function generateWebpageCommand(context) {
   var _a;
   const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
-  const defaultOutputDirectory = (0, import_node_path4.dirname)(currentFilePath);
-  const laboratoryTemplatePath = context.asAbsolutePath((0, import_node_path4.join)("templates", "laboratory-template"));
+  const defaultOutputDirectory = (0, import_node_path5.dirname)(currentFilePath);
+  const laboratoryTemplatePath = context.asAbsolutePath((0, import_node_path5.join)("templates", "laboratory-template"));
   const selectedUris = await import_vscode2.window.showOpenDialog({
     canSelectMany: false,
     title: "Select Output Directory",
@@ -49625,7 +49952,7 @@ async function generateWebpageCommand(context) {
 async function generateGraphvizCommand(context) {
   var _a;
   const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
-  const defaultOutputFile = (0, import_node_path4.dirname)(currentFilePath) + "/graphviz.dot";
+  const defaultOutputFile = (0, import_node_path5.dirname)(currentFilePath) + "/graphviz.dot";
   const selectedUri = await import_vscode2.window.showSaveDialog({
     title: "Save DOT Output",
     saveLabel: "Save",
@@ -49649,7 +49976,7 @@ async function generateGraphvizCommand(context) {
 async function generateJSONCommand(context) {
   var _a;
   const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
-  const defaultOutputFile = (0, import_node_path4.dirname)(currentFilePath) + "/laboratory.json";
+  const defaultOutputFile = (0, import_node_path5.dirname)(currentFilePath) + "/laboratory.json";
   const selectedUri = await import_vscode2.window.showSaveDialog({
     title: "Select JSON Output",
     saveLabel: "Save",
@@ -49670,8 +49997,36 @@ async function generateJSONCommand(context) {
     import_vscode2.window.showErrorMessage("Couldn't create JSON file. " + reason);
   });
 }
+async function generateOptimizerCommand(context) {
+  var _a;
+  const currentFilePath = (_a = import_vscode2.window.activeTextEditor) == null ? void 0 : _a.document.uri.fsPath;
+  const defaultOutputDirectory = (0, import_node_path5.dirname)(currentFilePath);
+  const laboratoryTemplatePath = context.asAbsolutePath((0, import_node_path5.join)("templates", "optimizer-template"));
+  const selectedUris = await import_vscode2.window.showOpenDialog({
+    canSelectMany: false,
+    title: "Select Output Directory",
+    openLabel: "Select",
+    canSelectFiles: false,
+    canSelectFolders: true,
+    defaultUri: import_vscode2.Uri.file(defaultOutputDirectory)
+  });
+  if (selectedUris === void 0) {
+    import_vscode2.window.showErrorMessage("No Directory selected.");
+    return;
+  }
+  const outputDirectoryPath = selectedUris[0].fsPath;
+  generateOptimizerAction(
+    currentFilePath,
+    outputDirectoryPath,
+    laboratoryTemplatePath
+  ).then((value) => {
+    import_vscode2.window.showInformationMessage("Successfully created Laboratory at: " + value);
+  }).catch((reason) => {
+    import_vscode2.window.showErrorMessage("Couldn't create laboratory. " + reason);
+  });
+}
 function startLanguageClient(context) {
-  const serverModule = context.asAbsolutePath((0, import_node_path4.join)("out", "language", "main.cjs"));
+  const serverModule = context.asAbsolutePath((0, import_node_path5.join)("out", "language", "main.cjs"));
   const debugOptions = { execArgv: ["--nolazy", `--inspect${process.env.DEBUG_BREAK ? "-brk" : ""}=${process.env.DEBUG_SOCKET || "6009"}`] };
   const serverOptions = {
     run: { module: serverModule, transport: import_node2.TransportKind.ipc },

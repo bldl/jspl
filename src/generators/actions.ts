@@ -3,6 +3,7 @@ import { createJavaScriptPropositionalLaboratoryFormatServices } from '../langua
 import { extractAstNode, getInputExtensionsAsSet, getInputExtensionsAsString } from '../util/cli-util.js';
 import { generateLaboratory } from './lab/main.js';
 import { generateGraphviz } from './graphviz/main.js';
+import { generateOptimizer } from './optimizer/main.js';
 import { NodeFileSystem } from 'langium/node';
 import { statSync, existsSync, mkdirSync } from 'node:fs';
 import { FileSystemError } from 'vscode';
@@ -82,3 +83,23 @@ export const generateJSONAction = async (inputFile: string, destination: string)
     const generatedFilePath = generateJSON(model, destination);
     return Promise.resolve(generatedFilePath);
 }
+
+export const generateOptimizerAction = async (inputFile: string, destination: string, templatePath: string = LABORATORY_TEMPLATE_DIRECTORY): Promise<string> => {
+    // check input file
+    try {
+        checkJSPLInput(inputFile);
+    } catch (error) {
+        return Promise.reject(`Something went wrong while checking the input file. (Error: ${error})`)
+    }
+
+    // check output directory
+    try {
+        checkLaboratoryOutputDirectory(destination);
+    } catch (error) {
+        return Promise.reject(`Something went wrong while checking the output directory. (Error: ${error})`);
+    }
+
+    const model = await getModel(inputFile);
+    const generatedLabPath = generateOptimizer(model, destination, templatePath);
+    return Promise.resolve(generatedLabPath);
+};

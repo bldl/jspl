@@ -90,6 +90,10 @@
             {
                 "command": "jspl.generate-json",
                 "title": "JSPL: Generate JSON Representation"
+            },
+            {
+                "command": "jspl.generate-optimizer",
+                "title": "JSPL: Generate Optimizer (Experimental)"
             }
         ],
         "menus": {
@@ -104,6 +108,10 @@
                 },
                 {
                     "command": "jspl.generate-json",
+                    "when": "editorLangId == java-script-propositional-laboratory-format"
+                },
+                {
+                    "command": "jspl.generate-optimizer",
                     "when": "editorLangId == java-script-propositional-laboratory-format"
                 }
             ]
