@@ -49460,6 +49460,150 @@ function generateTweakables2(propositions, node) {
 `);
 }
 
+// src/generators/optimizer/logic.ts
+function propositionalToLogical(expression) {
+  return extractLogicalExpression.fromExpression(expression);
+}
+var extractLogicalExpression = {
+  fromAndExpression: function(expression) {
+    return {
+      type: "and",
+      left: extractLogicalExpression.fromExpression(expression.left),
+      right: extractLogicalExpression.fromExpression(expression.right)
+    };
+  },
+  fromOrExpression: function(expression) {
+    return {
+      type: "or",
+      left: extractLogicalExpression.fromExpression(expression.left),
+      right: extractLogicalExpression.fromExpression(expression.right)
+    };
+  },
+  fromNegation: function(expression) {
+    return {
+      type: "not",
+      inner: extractLogicalExpression.fromExpression(expression.inner)
+    };
+  },
+  fromGroup: function(expression) {
+    return extractLogicalExpression.fromExpression(expression.inner);
+  },
+  fromStatement: function(expression) {
+    let ref = expression.reference.ref;
+    if ((ref == null ? void 0 : ref.$type) === void 0) {
+      throw new Error("Can't resolve references correctly.");
+    } else if ((ref == null ? void 0 : ref.$type) === "Proposition") {
+      return {
+        type: "statement",
+        proposition: ref.name,
+        value: expression.value
+      };
+    } else {
+      return extractLogicalExpression.fromExpression(ref.condition.expression);
+    }
+  },
+  fromExpression: function(expression) {
+    switch (expression.$type) {
+      case "OrExpression":
+        return extractLogicalExpression.fromOrExpression(expression);
+      case "AndExpression":
+        return extractLogicalExpression.fromAndExpression(expression);
+      case "Negation":
+        return extractLogicalExpression.fromNegation(expression);
+      case "Group":
+        return extractLogicalExpression.fromGroup(expression);
+      case "Statement":
+        return extractLogicalExpression.fromStatement(expression);
+    }
+  }
+};
+
+// src/generators/optimizer/raiseConditions.ts
+function generateRaiseConditions(model, node) {
+  node.append("export const raiseConditions = {\n");
+  model.concerns.forEach((concern) => {
+    let condition = generateDisjunction(extractRelatedConditions(model, concern.name));
+    if (condition !== void 0) {
+      let simplified = simplifyCondition(condition);
+      node.append(`	${concern.name}: ${JSON.stringify(simplified)},
+`);
+    }
+  });
+  node.append("};\n");
+}
+function extractRelatedConditions(model, concernName) {
+  let result = Array();
+  model.propositions.forEach((proposition) => {
+    proposition.valueClauses.forEach((valueClause) => {
+      valueClause.raises.filter((raise) => {
+        var _a;
+        return ((_a = raise.concern.ref) == null ? void 0 : _a.name) === concernName;
+      }).forEach((raise) => {
+        let valueStatement = { type: "statement", proposition: proposition.name, value: valueClause.value };
+        let baseExpression;
+        if (raise.condition === void 0) {
+          baseExpression = valueStatement;
+        } else {
+          baseExpression = {
+            type: "and",
+            left: valueStatement,
+            right: propositionalToLogical(raise.condition.expression)
+          };
+        }
+        if (proposition.disable === void 0) {
+          result.push(baseExpression);
+        } else {
+          result.push({
+            type: "and",
+            left: {
+              type: "not",
+              inner: lExpressionFromDisable(proposition.disable)
+            },
+            right: baseExpression
+          });
+        }
+      });
+    });
+  });
+  return result;
+}
+function generateDisjunction(conditions) {
+  if (conditions.length === 0) {
+    return void 0;
+  }
+  if (conditions.length === 1) {
+    return conditions[0];
+  }
+  let result = conditions.pop();
+  if (result === void 0)
+    return void 0;
+  while (conditions.length >= 1) {
+    let current = conditions.pop();
+    if (current === void 0)
+      return void 0;
+    result = {
+      type: "or",
+      left: current,
+      right: result
+    };
+  }
+  return result;
+}
+function simplifyCondition(condition) {
+  return condition;
+}
+function lExpressionFromDisable(disable) {
+  let condition = generateDisjunction(
+    disable.statements.map(
+      (statement) => propositionalToLogical(statement.condition.expression)
+    )
+  );
+  if (condition === void 0) {
+    throw new Error("Unexpected Error");
+  }
+  return condition;
+}
+
 // src/generators/optimizer/main.ts
 var DATA_TEMPLATE_MARKER2 = {
   START: "//???TEMPLATE-MARKER-START???",
@@ -49538,6 +49682,9 @@ function generateDataJS2(model, laboratoryInformation, labTemplatePath, outputJa
   const tweakablesNode = new CompositeGeneratorNode();
   generateTweakables2(model.propositions, tweakablesNode);
   (0, import_node_fs5.appendFileSync)(outputJavaScript, toString2(tweakablesNode));
+  const raiseConditionsNode = new CompositeGeneratorNode();
+  generateRaiseConditions(model, raiseConditionsNode);
+  (0, import_node_fs5.appendFileSync)(outputJavaScript, toString2(raiseConditionsNode));
   (0, import_node_fs5.appendFileSync)(outputJavaScript, labTemplate.postfix);
 }
 function generateLaboratoryInformation2(laboratoryInformation, node) {

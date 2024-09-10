@@ -7,6 +7,7 @@ import { generateConcerns } from './concerns.js';
 import { generateConditions } from './conditions.js';
 import { generateGivens, generateTweakables } from './propositions.js';
 import { extractLaboratoryInformationForWebWithDefaults, ExtractedWebLaboratoryInformation, readTemplatedFile } from './util.js';
+import { generateRaiseConditions } from './raiseConditions.js';
 
 type TemplateMarker = {
     START: string,
@@ -126,6 +127,11 @@ function generateDataJS(model: Model, laboratoryInformation: ExtractedWebLaborat
     const tweakablesNode = new CompositeGeneratorNode();
     generateTweakables(model.propositions, tweakablesNode);
     appendFileSync(outputJavaScript, toString(tweakablesNode));
+
+    const raiseConditionsNode = new CompositeGeneratorNode();
+    generateRaiseConditions(model, raiseConditionsNode);
+    appendFileSync(outputJavaScript, toString(raiseConditionsNode));
+
 
     // 7. Write Postfix
     appendFileSync(outputJavaScript, labTemplate.postfix);
