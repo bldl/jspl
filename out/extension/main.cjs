@@ -49255,7 +49255,7 @@ function generateConcernHtml2(concern, default_format) {
     </details>`;
 }
 function generateConcerns2(concerns, node, laboratoryInformation) {
-  node.append(`const concerns = {
+  node.append(`export const concerns = {
 `);
   concerns.forEach((concern) => {
     node.append(`	${concern.name}: html\`${generateConcernHtml2(concern, laboratoryInformation.format)}\`,
@@ -49316,6 +49316,10 @@ function splitByStartAndEndMarker2(input, markers) {
 }
 function readTemplatedFile2(templateFilePath, templateMarker) {
   const template = (0, import_node_fs4.readFileSync)(templateFilePath, `utf-8`);
+  if (template.indexOf(templateMarker.START) === -1)
+    throw new Error(`Template file is missing START Marker. file: "${templateFilePath}", START Marker: "${templateMarker.START}"`);
+  if (template.indexOf(templateMarker.END) === -1)
+    throw new Error(`Template file is missing END Marker. file: "${templateFilePath}", END Marker: "${templateMarker.END}"`);
   const splitByConcernsMarkers = splitByStartAndEndMarker2(template, templateMarker);
   return {
     prefix: splitByConcernsMarkers.BEFORE,
@@ -49625,7 +49629,8 @@ var INDEX_TEMPLATE_MARKER2 = {
 var ROOT_FILES_TO_COPY2 = [
   //"README.md",
   //"LICENSE",
-  "lab.js"
+  "lab.js",
+  "optimization.js"
 ];
 var RESOURCES_TO_COPY2 = [
   "favicon.svg",

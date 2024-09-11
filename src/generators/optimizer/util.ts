@@ -45,7 +45,7 @@ export const extractJSCondition: LogicalExpressionExtractor = {
     }
 };
 
-function splitByStartAndEndMarker(input: string, markers: {START: string, END: string}): {BEFORE: string, AFTER: string} {
+function splitByStartAndEndMarker(input: string, markers: TemplateMarker): {BEFORE: string, AFTER: string} {
     const splitByStartMarker = input.split(markers.START);
 
     return {
@@ -57,8 +57,12 @@ function splitByStartAndEndMarker(input: string, markers: {START: string, END: s
 export type TemplateMarker = {START: string, END: string}
 export function readTemplatedFile(templateFilePath: string, templateMarker: TemplateMarker): {prefix: string, postfix: string} {
     const template: string = readFileSync(templateFilePath, `utf-8`);
-    const splitByConcernsMarkers = splitByStartAndEndMarker(template, templateMarker);
+    if (template.indexOf(templateMarker.START) === -1) 
+        throw new Error(`Template file is missing START Marker. file: "${templateFilePath}", START Marker: "${templateMarker.START}"`);
+    if (template.indexOf(templateMarker.END) === -1) 
+        throw new Error(`Template file is missing END Marker. file: "${templateFilePath}", END Marker: "${templateMarker.END}"`);
 
+    const splitByConcernsMarkers = splitByStartAndEndMarker(template, templateMarker);
     return {
         prefix: splitByConcernsMarkers.BEFORE,
         postfix: splitByConcernsMarkers.AFTER
