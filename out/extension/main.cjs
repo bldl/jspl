@@ -49492,15 +49492,24 @@ var extractLogicalExpression = {
     let ref = expression.reference.ref;
     if ((ref == null ? void 0 : ref.$type) === void 0) {
       throw new Error("Can't resolve references correctly.");
-    } else if ((ref == null ? void 0 : ref.$type) === "Proposition") {
-      return {
+    }
+    let baseStatement;
+    if ((ref == null ? void 0 : ref.$type) === "Proposition") {
+      baseStatement = {
         type: "statement",
         proposition: ref.name,
         value: expression.value
       };
     } else {
-      return extractLogicalExpression.fromExpression(ref.condition.expression);
+      baseStatement = extractLogicalExpression.fromExpression(ref.condition.expression);
     }
+    if (expression.negation) {
+      return {
+        type: "not",
+        inner: baseStatement
+      };
+    }
+    return baseStatement;
   },
   fromExpression: function(expression) {
     switch (expression.$type) {

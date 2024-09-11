@@ -12,7 +12,7 @@ function generateConcernHtml(concern: Concern, default_format: string): string {
 
 export function generateConcerns(concerns: Concern[], node: CompositeGeneratorNode, laboratoryInformation: ExtractedWebLaboratoryInformation) {
     // Create JS-Object with concerns as members and string/html values (see original lab)
-    node.append(`const concerns = {\n`);
+    node.append(`export const concerns = {\n`);
 
     concerns.forEach(concern => {
         node.append(`\t${concern.name}: html\`${generateConcernHtml(concern, laboratoryInformation.format)}\`,\n`);

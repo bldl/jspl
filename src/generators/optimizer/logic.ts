@@ -54,20 +54,34 @@ const extractLogicalExpression: LogicalExpressionExtractor = {
     fromGroup: function (expression: Group): LExpression {
         return extractLogicalExpression.fromExpression(expression.inner);
     },
-    fromStatement: function (expression: Statement): LStatement {
+    fromStatement: function (expression: Statement): LExpression {
         let ref = expression.reference.ref;
-        // type cant really be undefined here unless there is a syntactical mistake in the input, then crashing is okay...
+        // ref cant really be undefined here unless there is a syntactical mistake in the input, then crashing is okay...
         if (ref?.$type === undefined) {
             throw new Error("Can't resolve references correctly.");
-        } else if (ref?.$type === "Proposition") {   
-            return {
+        }
+
+        // extract base statement
+        let baseStatement: LExpression;
+        if (ref?.$type === "Proposition") {   
+            baseStatement = {
                 type: "statement",
                 proposition: ref.name,
                 value: expression.value
             }
         } else {
-            return extractLogicalExpression.fromExpression(ref.condition.expression);
+            baseStatement = extractLogicalExpression.fromExpression(ref.condition.expression);
         }
+
+        // negate if necessary
+        if (expression.negation) {
+            return {
+                type: "not",
+                inner: baseStatement
+            }
+        }
+
+        return baseStatement;
     },
     fromExpression: function (expression: PropositionalExpression): LExpression {
         switch (expression.$type) {
