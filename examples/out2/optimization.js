@@ -1,138 +1,123 @@
-export class SparseMatrix {
-    width = 0;
-    height = 0;
+/**
+ * @typedef {Object} OptimizerInput
+ * @property {string} objective 
+ * @property {Array<string>} variables
+ * @property {Array<string>} constraints
+ */
 
-    /**
-     * The state of currently selected weights for every concern
-     * @type {Map<number, Map<number, number>>}
-     */
-    #data = new Map();
+/**
+ * @typedef {Object} VariableMeaningMap
+ * @property {Map<string, string>} concerns mapping concern ids to variable names
+ * @property {Map<string, Object>} propositions maps proposition ids to objects with fields for every possible value with their variable 
+ */
 
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
+/**
+ * @typedef {Object} ReversibleOptimizerInput
+ * @property {OptimizerInput} optimizerInput
+ * @property {VariableMeaningMap} variableMeaningMap
+ */
+
+/**
+ * @param {Map<string, number>} weights
+ * @param {Array<Object>} tweakables  
+ * @param {Object} raiseConditions 
+ * @returns {ReversibleOptimizerInput} 
+ */
+export function constructOptimizerInput(tweakables, raiseConditions, weights) {
+    let input = {
+        objective: "",
+        variables: [],
+        constraints: []
     }
 
-    /**
-     * Method to get the value of the matrix at certain coordinates. 
-     * The function will not throw an error if values outside of the width and height are accessed, instead 0 is returned.
-     * 
-     * @param {number} x the x coordinate of the value to get
-     * @param {number} y the y coordinate of the value to get
-     * @returns {number} the value at coordinates x,y. 0 if no value was set.
-     */
-    at(x, y) {
-        if (!this.#data.has(x)) return 0;
-        if (!this.#data.get(x).has(y)) return 0;
-        return this.#data.get(x).get(y);
+    let map = {
+        concerns: new Map(),
+        propositions: new Map()
     }
 
-    set(x, y, value) {
-        if (!this.#data.has(x))
-            this.#data.set(x, new Map());
-        
-        this.#data.get(x).set(y, value);
-    }
+    extractBasePropositionValues(input, map, tweakables);
 
-    toHTMLTable(html) {
-        return html`
-            <table style="display: inline-block">
-                <tr>
-                <td></td>
-                ${[...Array(this.width).keys()].map((i) => {
-                    return html`<td><b>${i}</b></td>`;
-                })}
-                </tr>
-                ${[...Array(this.height).keys()].map((y) => {
-                    return html`
-                        <tr>
-                            <td><b>${y}</b></td>
-                            ${[...Array(this.width).keys()].map((x) => {
-                                return html`<td>${this.at(x,y)}</td>`;
-                            })}
-                        </tr>
-                    `
-                })}
-            </table>
-        `
-    }
+    extractRaiseVariables(input, map, weights);
+
+    constructConstraintsForTweakableValues(input, map, tweakables);
+
+    // TODO: construct constraints from raise conditions
+
+    constructObjectiveFunction(input, map, weights);
+
+    return {
+        optimizerInput: input,
+        variableMeaningMap: map
+    };
 }
 
-export class SparseVector {
-    length = 0;
 
-    /**
-     * 
-     * @type {Map<number, number>}
-     */
-    #data = new Map();
+/**
+ * 
+ * @param {OptimizerInput} input 
+ * @param {VariableMeaningMap} map 
+ * @param {Map<string, number>} weights 
+ */
+function extractRaiseVariables(input, map, weights) {
+    let index = 1;
 
-    constructor(length) {
-        this.length = length;
-    }
+    weights.forEach((value, key) => {
+        let variableName = `r${index}`;
+        index += 1;
 
-    /**
-     * Method to get the value of the matrix at certain coordinates. 
-     * The function will not throw an error if values outside of the width and height are accessed, instead 0 is returned.
-     * 
-     * @param {number} i the coordinate of the value to get
-     * @returns {number} the value at coordinates x,y. 0 if no value was set.
-     */
-    at(i) {
-        if (!this.#data.has(i)) return 0;
-        return this.#data.get(i);
-    }
-
-    set(i, value) {
-        this.#data.set(i, value);
-    }
-
-    toHTMLTable(html) {
-        return html`
-            <table style="display: inline-block">
-                <tr>
-                <td></td>
-                </tr>
-                ${[...Array(this.length).keys()].map((i) => {
-                    return html`
-                        <tr>
-                            <td>${this.at(i)}</td>
-                        </tr>
-                    `
-                })}
-            </table>
-        `
-    }
+        input.variables.push(variableName);
+        map.concerns.set(key, variableName);
+    })
 }
 
 /**
  * 
- * @param {*} tweakables 
- * @param {*} raiseConditions 
- * @returns {{A: SparseMatrix, b: SparseVector}}
+ * @param {OptimizerInput} input 
+ * @param {VariableMeaningMap} map 
+ * @param {Map<string, number>} weights 
  */
-export function constructBLPWithoutC(tweakables, raiseConditions) {
-    return {
-        A: new SparseMatrix(0, 0),
-        b: new SparseVector(0)
-    }
+function constructObjectiveFunction(input, map, weights) {
+    input.objective = Array.from(weights.keys()).map((key) => {
+        if (weights.get(key) === 1) return map.concerns.get(key);
+
+        return `${weights.get(key)}*${map.concerns.get(key)}`;
+    }).join("+");
 }
 
 /**
  * 
- * @param {*} tweakables 
- * @param {*} raiseConditions 
- * @param {*} weightsMap 
- * @returns {{A: SparseMatrix, b: SparseVector, c: SparseVector}}
+ * @param {OptimizerInput} input 
+ * @param {VariableMeaningMap} map 
+ * @param {Array<Object>} tweakables 
  */
-export function constructBLP(tweakables, raiseConditions, weightsMap) {
-    let base = constructBLPWithoutC(tweakables, raiseConditions);
+function extractBasePropositionValues(input, map, tweakables) {
+    let index = 1;
 
-    // TODO: construct c
+    tweakables.forEach((tweakable) => {
+        let valueVariables = {};
+        tweakable.output.forEach((value) => {
+            let variableName = `x${index}`;
+            index += 1;
 
-    return {
-        A: base.A,
-        b: base.b,
-        c: new SparseVector(0)
-    }
+            input.variables.push(variableName);
+            valueVariables[value] = variableName;
+        });
+        map.propositions.set(tweakable.name, valueVariables);
+    });
+}
+
+/**
+ * 
+ * @param {OptimizerInput} input 
+ * @param {VariableMeaningMap} map 
+ * @param {Array<Object>} tweakables 
+ */
+function constructConstraintsForTweakableValues(input, map, tweakables) {
+    tweakables.forEach((tweakable) => {
+        let sum = Object.keys(map.propositions.get(tweakable.name))
+        .map((value) => map.propositions.get(tweakable.name)[value])
+        .join("+");
+
+        input.constraints.push(sum + " == 1");
+    });
 }

@@ -5,13 +5,19 @@ concern concerning {
 
 proposition first {
     expression "a == 0"
-    default value True
-    value False
+    default value True {
+        raise concerning when second is False
+    } 
+    value False {
+        raise concerning when second is True
+    }
 }
 
 proposition second {
     expression "b == 0"
-    value True
+    value True {
+        raise concerning when first is False
+    }
     default value False {
         raise concerning when first is True
     }

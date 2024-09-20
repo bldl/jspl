@@ -24,15 +24,16 @@ function tweakable({name, input, output, concern, default: _default, disabled}) 
 
 
 export const metaData = {
-	title: "Records and Tuples Laboratory 🔬",
-	descriptionHtml: html`<p>🏗 Work in progress - <a href="https://github.com/acutmore/record-tuple-laboratory/issues/new">raise issue</a></p>
-`,
-	author: "Ashley Claymore",
-	version: "2",
+	title: "Laboratory Title",
+	descriptionHtml: html`<p>Laboratory description</p>`,
+	author: undefined,
+	version: undefined,
+	scipUrl: "http://localhost:5000/optimize"
 };
 export const concerns = {
 	concerning: html`<details><summary>⚠ a != b</summary>
-    We need a to be equal to b.
+    <p>We need a to be equal to b.</p>
+
     </details>`,
 };
 const conditions = {
@@ -48,8 +49,14 @@ export const tweakables = [
 		concern: (self, get) => {
 			let result = [];
 			if (self === true) {
+				if (get('second') === false) {
+					result.push(concerns.concerning);
+				}
 			}
 			if (self === false) {
+				if (get('second') === true) {
+					result.push(concerns.concerning);
+				}
 			}
 			return result;
 		},
@@ -65,6 +72,9 @@ export const tweakables = [
 		concern: (self, get) => {
 			let result = [];
 			if (self === true) {
+				if (get('first') === false) {
+					result.push(concerns.concerning);
+				}
 			}
 			if (self === false) {
 				if (get('first') === true) {
@@ -79,6 +89,6 @@ export const tweakables = [
 	}),
 ];
 export const raiseConditions = {
-	concerning: {"type":"and","left":{"type":"statement","proposition":"second","value":false},"right":{"type":"statement","proposition":"first","value":true}},
+	concerning: {"type":"or","left":{"type":"and","left":{"type":"statement","proposition":"first","value":true},"right":{"type":"statement","proposition":"second","value":false}},"right":{"type":"or","left":{"type":"and","left":{"type":"statement","proposition":"first","value":false},"right":{"type":"statement","proposition":"second","value":true}},"right":{"type":"or","left":{"type":"and","left":{"type":"statement","proposition":"second","value":true},"right":{"type":"statement","proposition":"first","value":false}},"right":{"type":"and","left":{"type":"statement","proposition":"second","value":false},"right":{"type":"statement","proposition":"first","value":true}}}}},
 };
 

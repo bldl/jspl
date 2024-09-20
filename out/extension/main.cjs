@@ -48125,7 +48125,7 @@ var DEFAULT_LABORATORY_INFORMATION = {
   version: void 0
 };
 function extractLaboratoryInformation(information) {
-  let result = DEFAULT_LABORATORY_INFORMATION;
+  let result = JSON.parse(JSON.stringify(DEFAULT_LABORATORY_INFORMATION));
   if (information === void 0)
     return result;
   if (information.titles.length > 0)
@@ -49336,7 +49336,7 @@ var DEFAULT_WEB_LABORATORY_INFORMATION2 = {
 };
 function extractLaboratoryInformationForWebWithDefaults2(information) {
   const extracted = extractLaboratoryInformation(information);
-  let result = DEFAULT_WEB_LABORATORY_INFORMATION2;
+  let result = JSON.parse(JSON.stringify(DEFAULT_WEB_LABORATORY_INFORMATION2));
   if (extracted.title !== void 0)
     result.title = extracted.title;
   if (extracted.icon !== void 0)

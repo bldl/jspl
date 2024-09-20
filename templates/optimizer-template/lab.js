@@ -145,7 +145,7 @@ function App() {
 		<button class="tablink" onclick=${()=>openPage('Debug')} id="defaultOpen">Debug</button>
 		
 		<div id="Experiment" class="tabcontent">
-			<h3>Experiment</h3>
+			${experimentContent()}
 		</div>
 		<div id="Weights" class="tabcontent">
 			${weightsContent()}
@@ -242,6 +242,55 @@ function setDefaultWeights() {
 	});
 }
 setDefaultWeights();
+
+function experimentContent() {
+	return html`
+		<h3>Experiment</h3>
+		${urlLoadingIssues.length > 0
+			? html`
+					<ul class="text-center">
+						${urlLoadingIssues.map((issue) => html`<li>${issue}</li>`)}
+					</ul>
+			  `
+			: false}
+		<p class="text-center">
+			<button onClick=${setToDefaults}>reset</button>
+			<button onClick=${shuffle}>shuffle</button>
+		</p>
+		<table class="center">
+			${design.map((c) => {
+				const disabled = "disabled" in c ? c.disabled?.(get) ?? false : false;
+				//const currentValue = get(c);
+				const concerns = "concern" in c ? c.concern?.(get) ?? false : false;
+				const attrs = disabled ? { class: "disabled", title: disabled } : {};
+				return html`
+					<tr>
+						<td ...${attrs}><pre>${c.input}</pre></td>
+						<td><${Selection} ...${c} disabled=${disabled} /></td>
+						<td width="500em">
+							${disabled
+								? html`<details>
+										<summary>…</summary>
+										${disabled}
+								  </details>`
+								: concerns
+								? concerns
+								: ""}
+						</td>
+					</tr>
+				`;
+			})}
+		</table>
+		<div class="center" style=${{ width: "500px" }}>
+			<div class="scrollable" style=${{ marginTop: "10px", float: "left" }}>
+				<${JSONOutput} />
+			</div>
+			<div class="scrollable" style=${{ marginTop: "10px", float: "left" }}>
+				<${JSONInput} />
+			</div>
+		</div>
+	`
+}
 
 function weightsContent() {	
     return html`

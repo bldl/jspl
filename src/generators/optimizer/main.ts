@@ -153,5 +153,9 @@ function generateLaboratoryInformation(laboratoryInformation: ExtractedWebLabora
     const versionString = (laboratoryInformation.version == undefined) ? "undefined" : `"${laboratoryInformation.version}"`;
     node.append(`\tversion: ${versionString},\n`);
 
+    // TODO: extract from laboratory information (also add to laboratory information...)
+    const scipUrlString = "http://localhost:5000/optimize";
+    node.append(`\tscipUrl: ${scipUrlString},\n`);
+
     node.append("};\n");
 }

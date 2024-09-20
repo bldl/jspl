@@ -185,7 +185,7 @@ const DEFAULT_LABORATORY_INFORMATION: ExtractedLaboratoryInformation = {
     version: undefined
 }
 export function extractLaboratoryInformation(information: LaboratoryInformation | undefined): ExtractedLaboratoryInformation {
-    let result: ExtractedLaboratoryInformation = DEFAULT_LABORATORY_INFORMATION;
+    let result: ExtractedLaboratoryInformation = JSON.parse(JSON.stringify(DEFAULT_LABORATORY_INFORMATION));
     if (information === undefined) return result;
 
     if (information.titles.length > 0)
