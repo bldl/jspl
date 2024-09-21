@@ -142,8 +142,8 @@ function App() {
 			: false}
 		<button class="tablink" onclick=${()=>openPage('Experiment')}>Experiment</button>
 		<button class="tablink" onclick=${()=>openPage('Weights')}>Weights</button>
-		<button class="tablink" onclick=${()=>openPage('Optimize')}>Optimize</button>
-		<button class="tablink" onclick=${()=>openPage('Debug')} id="defaultOpen">Debug</button>
+		<button class="tablink" onclick=${()=>openPage('Optimize')} id="defaultOpen">Optimize</button>
+		<button class="tablink" onclick=${()=>openPage('Debug')}>Debug</button>
 		
 		<div id="Experiment" class="tabcontent">
 			${experimentContent()}
@@ -152,7 +152,7 @@ function App() {
 			${weightsContent()}
 		</div>
 		<div id="Optimize" class="tabcontent">
-			<h3>Optimize</h3>
+			${optimizeContent()}
 		</div>
 		<div id="Debug" class="tabcontent">
 			${debugContent()}
@@ -320,6 +320,14 @@ function weightChanged(concernName) {
 	selectedWeights.set(concernName, newValue);
 }
 
+function optimizeContent() {
+	return html`
+		<h3>Optimize</h3>
+		<button onclick=${() => optimizeAction()} class="optimizeButton">Optimize</button>
+		<div class="center" id="optimizeResults"></div>
+	`
+}
+
 function debugContent() {
 
 	return html`
@@ -385,7 +393,7 @@ function optimizeAction() {
 		let debugConstraints = document.getElementById("debugConstraints");
 		let debugReverse = document.getElementById("debugReverseVariableMap");
 
-		console.log(reversibleInput);
+		//console.log(reversibleInput);
 
 		// @ts-ignore
 		debugObjective.innerHTML = `
@@ -434,8 +442,6 @@ function optimizeAction() {
 		`;
 	}
 
-	return;
-
 	fetch(`${metaData.scipUrl}?input=${encodeApiInput(reversibleInput.optimizerInput)}`)
 	.then(response => response.json())
 	.then(data => {
@@ -445,7 +451,7 @@ function optimizeAction() {
 			case "error":
 				throw new Error("An Error occurred while solving the request.");
 			case "success":
-				showOptimizerResults(JSON.parse(data.result));
+				showOptimizerResults(JSON.parse(data.result), reversibleInput.variableMeaningMap);
 				break;
 		}
 	})
@@ -456,29 +462,82 @@ function optimizeAction() {
 	})
 }
 
-function showOptimizerResults(result) {
-	let outputElement = document.getElementById("optimizerResult");
+function showOptimizerResults(result, variableMeaningMap) {
+	// console.log(result)
 
-	let representation = `
+	{ // TODO: Remove debug
+		let outputElement = document.getElementById("debugOptimizerResult");
+		let representation = `
+			<table class="center">
+				<tr>	
+					<td><b>Variable</b></td>
+					<td><b>Value</b></td>
+				</tr>
+				${Object.keys(result).map((variable) => {
+						return `
+							<tr>
+								<td>${variable}</td>
+								<td>${result[variable]}</td>
+							</tr>	
+						`
+					}).join("")
+				}
+			</table>
+		`;
+		// @ts-ignore
+		outputElement.innerHTML = representation;
+	}
+
+	let outputElement = document.getElementById("optimizeResults");
+
+	// @ts-ignore
+	outputElement.innerHTML = `
+		<h4>Settings</h4>
+		${generateOptimizedPropositionSettings(result, variableMeaningMap)}
+		<h4>Raised Concerns</h4>
+		${generateOptimizedRaisedConcerns(result, variableMeaningMap)}
+	`;
+}
+
+function generateOptimizedPropositionSettings(result, variableMeaningMap) {
+	return `
 		<table class="center">
-			<tr>	
-				<td><b>Variable</b></td>
+			<tr>
+				<td><b>Proposition</b></td>
 				<td><b>Value</b></td>
 			</tr>
-			${Object.keys(result).map((variable) => {
+			${
+				tweakables.map((tweakable) => {
+					let propositionName = tweakable.name;
+					let propositionValueVariables = variableMeaningMap.propositions.get(propositionName);
+
+					let propositionValue = Object.keys(propositionValueVariables)
+					.filter((value) => result[propositionValueVariables[value]] == 1)[0];
+
 					return `
 						<tr>
-							<td>${variable}</td>
-							<td>${result[variable]}</td>
-						</tr>	
-					`
+							<td>${propositionName}</td>
+							<td>${propositionValue}</td>
+						</tr>
+					`;
 				}).join("")
 			}
 		</table>
 	`;
-	console.log(representation);
-	// @ts-ignore
-	outputElement.innerHTML = representation;
+}
+
+
+function generateOptimizedRaisedConcerns(result, variableMeaningMap) {
+	return `
+		<table class="center">
+			${
+			Object.keys(concerns)
+			.filter((concernName) => result[variableMeaningMap.concerns.get(concernName)] == 1)
+			.map((concernName) => {
+				return `<tr><td>${concernName}</td></tr>`
+			}).join("")}
+		</table>
+	`;
 }
 
 function encodeApiInput(jsonObject) {

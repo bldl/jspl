@@ -15,7 +15,7 @@ export function generateConcerns(concerns: Concern[], node: CompositeGeneratorNo
     node.append(`export const concerns = {\n`);
 
     concerns.forEach(concern => {
-        node.append(`\t${concern.name}: html\`${generateConcernHtml(concern, laboratoryInformation.format)}\`,\n`);
+        node.append(`\t${concern.name}: \`${generateConcernHtml(concern, laboratoryInformation.format)}\`,\n`);
     });
 
     node.append(`};\n`);

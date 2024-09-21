@@ -2,6 +2,9 @@ from pyscipopt import Variable
 
 
 def constructFactor(input: str, vars_dict: dict[str, Variable]):
+    if len(input) == 0:
+        return 0
+
     print(f"in: {input}, vars: {vars_dict}")
     negative = input.startswith('-')
 
