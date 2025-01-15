@@ -9,10 +9,12 @@ def optimize():
     try:
         input = request.args.get('input')
         data = decodeInput(input)
+        print("INPUT: " + str(data))
 
         solver = Solver(data["variables"], data["constraints"], data["objective"])
         solution = solver.solve()
         
+        print("SOLUTION: " + str(solution))
         return jsonify({'status': 'success', 'result': encodeOutput(solution)})
     except Exception as e:
         print(e)
@@ -26,9 +28,6 @@ def decodeInput(input:str) -> dict:
 def encodeOutput(input) -> dict:
     # TODO: base 64 encode
     return json.dumps(input)
-
-def encode(input:str) -> str:
-    pass
 
 if __name__ == '__main__':
     app.run(port=5000)

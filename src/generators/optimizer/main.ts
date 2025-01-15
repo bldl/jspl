@@ -155,7 +155,7 @@ function generateLaboratoryInformation(laboratoryInformation: ExtractedWebLabora
 
     // TODO: extract from laboratory information (also add to laboratory information...)
     const scipUrlString = "http://localhost:5000/optimize";
-    node.append(`\tscipUrl: ${scipUrlString},\n`);
+    node.append(`\tscipUrl: "${scipUrlString}",\n`);
 
     node.append("};\n");
 }

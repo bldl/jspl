@@ -2,7 +2,8 @@
 // @ts-expect-error
 import { html, render } from "https://unpkg.com/htm/preact/standalone.module.js";
 import { metaData, givens, tweakables, concerns, raiseConditions } from "./data.js";
-import { SparseMatrix, SparseVector } from "./optimization.js";
+import { constructOptimizerInput } from "./optimization.js";
+
 
 let appLoaded = false;
 let paintScheduled = true;
@@ -139,10 +140,10 @@ function App() {
 					</ul>
 			  `
 			: false}
-		<button class="tablink" onclick=${()=>openPage('Experiment')}>Experiment</button>
+		<button class="tablink" onclick=${()=>openPage('Experiment')} id="defaultOpen">Experiment</button>
 		<button class="tablink" onclick=${()=>openPage('Weights')}>Weights</button>
 		<button class="tablink" onclick=${()=>openPage('Optimize')}>Optimize</button>
-		<button class="tablink" onclick=${()=>openPage('Debug')} id="defaultOpen">Debug</button>
+		<button class="tablink" onclick=${()=>openPage('Debug')}>Debug</button>
 		
 		<div id="Experiment" class="tabcontent">
 			${experimentContent()}
@@ -151,7 +152,7 @@ function App() {
 			${weightsContent()}
 		</div>
 		<div id="Optimize" class="tabcontent">
-			<h3>Optimize</h3>
+			${optimizeContent()}
 		</div>
 		<div id="Debug" class="tabcontent">
 			${debugContent()}
@@ -238,7 +239,7 @@ async function copyText(element) {
 const selectedWeights = new Map();
 function setDefaultWeights() {
 	Object.keys(concerns).forEach((concernName) => {
-		selectedWeights[concernName] = 1.0;
+		selectedWeights.set(concernName, 1.0);
 	});
 }
 setDefaultWeights();
@@ -316,17 +317,18 @@ function weightChanged(concernName) {
 
 	// @ts-ignore
 	let newValue = parseFloat(selector.value);
-	selectedWeights[concernName] = newValue;
+	selectedWeights.set(concernName, newValue);
+}
+
+function optimizeContent() {
+	return html`
+		<h3>Optimize</h3>
+		<button onclick=${() => optimizeAction()} class="optimizeButton">Optimize</button>
+		<div class="center" id="optimizeResults"></div>
+	`
 }
 
 function debugContent() {
-	let A = new SparseMatrix(5, 2);
-	A.set(0, 0, 1);
-	A.set(1, 1, 1);
-
-	let b = new SparseVector(2);
-	b.set(0, 2);
-	b.set(1, -2)
 
 	return html`
 		<h3>Debug</h3>
@@ -346,14 +348,209 @@ function debugContent() {
 			</div>
 		</details>
 		<details open="true">
-			<summary>Matrix</summary>
-			<div class="center">
-				${A.toHTMLTable(html)}
-				x leq
-				${b.toHTMLTable(html)}
+			<summary>Optimizer Test</summary>
+			<button onclick=${() => optimizeAction()}>Optimize</button>
+			<div style="padding-left: 2em">
+				<details>
+					<summary>Objective Function</summary>
+					<div class="center" id="debugObjectiveFunction"></div>
+				</details>
+				<details>
+					<summary>Variables</summary>
+					<div class="center" id="debugVariables"></div>
+				</details>
+				<details>
+					<summary>Constraints</summary>
+					<div class="center" id="debugConstraints"></div>
+				</details>
+				<details>
+					<summary>Reverse Variable Map</summary>
+					<div class="center" id="debugReverseVariableMap"></div>
+				</details>
+				<details>
+					<summary>Raw Optimizer Results</summary>
+					<div class="center" id="debugOptimizerResult"></div>
+				</details>
 			</div>
 		</details>
 	`;
+}
+
+function optimizeAction() {
+	let outputElement = document.getElementById("debugOptimizerResult");
+
+	// @ts-ignore
+	outputElement.innerHTML = "Computing...";
+	
+	let reversibleInput = constructOptimizerInput(
+		tweakables,
+		raiseConditions,
+		selectedWeights
+	);
+
+	// TODO: remove debug
+	{
+		let debugObjective = document.getElementById("debugObjectiveFunction");
+		let debugVar = document.getElementById("debugVariables");
+		let debugConstraints = document.getElementById("debugConstraints");
+		let debugReverse = document.getElementById("debugReverseVariableMap");
+
+		//console.log(reversibleInput);
+
+		// @ts-ignore
+		debugObjective.innerHTML = `
+			<p>${reversibleInput.optimizerInput.objective}</p>
+		`;
+
+		// @ts-ignore
+		debugVar.innerHTML = `
+			<p>#Variables = <b>${reversibleInput.optimizerInput.variables.length}</b></p>
+			<table class="center">
+			${reversibleInput.optimizerInput.variables.map((variableName) => {
+				return `<tr><td>${variableName}</td></tr>`;
+			}).join("")}
+			</table>
+		`;
+
+		// @ts-ignore
+		debugConstraints.innerHTML = `
+			<p>#Constraints = <b>${reversibleInput.optimizerInput.constraints.length}</b></p>
+			<table class="center">
+			${reversibleInput.optimizerInput.constraints.map((constraint) => {
+				return `<tr><td>${constraint}</td></tr>`;
+			}).join("")}
+			</table>
+		`;
+		
+		// @ts-ignore
+		debugReverse.innerHTML = `
+			<h4>Concerns</h4>
+			<table class="center">
+			${Array.from(reversibleInput.variableMeaningMap.concerns.keys()).map((key) => {
+				return `
+					<tr>
+						<td><b>${key}</b></td>
+						<td>${reversibleInput.variableMeaningMap.concerns.get(key)}</td>
+					</tr>
+				`;
+			}).join("")}
+			</table>
+			<h4>Propositions</h4>
+			<table class="center">
+			${Array.from(reversibleInput.variableMeaningMap.propositions.keys()).map((key) => {
+				return `<tr><td><b>${key}</b></td>` + Object.keys(reversibleInput.variableMeaningMap.propositions.get(key)).map((value) => {
+					return `<td><b>${value}</b></td><td>${reversibleInput.variableMeaningMap.propositions.get(key)[value]}</td>`;
+				}).join("</tr><tr><td></td>") + "</tr></tr>";
+			}).join("")}
+			</table>
+		`;
+	}
+
+	fetch(`${metaData.scipUrl}?input=${encodeApiInput(reversibleInput.optimizerInput)}`)
+	.then(response => response.json())
+	.then(data => {
+		// @ts-ignore
+		outputElement.innerHTML = "YAY";
+		switch (data.status) {
+			case "error":
+				throw new Error("An Error occurred while solving the request.");
+			case "success":
+				showOptimizerResults(JSON.parse(data.result), reversibleInput.variableMeaningMap);
+				break;
+		}
+	})
+	.catch(error => {
+		// @ts-ignore
+		outputElement.innerHTML = "ERROR";
+		console.log(error)
+	})
+}
+
+function showOptimizerResults(result, variableMeaningMap) {
+	// console.log(result)
+
+	{ // TODO: Remove debug
+		let outputElement = document.getElementById("debugOptimizerResult");
+		let representation = `
+			<table class="center">
+				<tr>	
+					<td><b>Variable</b></td>
+					<td><b>Value</b></td>
+				</tr>
+				${Object.keys(result).map((variable) => {
+						return `
+							<tr>
+								<td>${variable}</td>
+								<td>${result[variable]}</td>
+							</tr>	
+						`
+					}).join("")
+				}
+			</table>
+		`;
+		// @ts-ignore
+		outputElement.innerHTML = representation;
+	}
+
+	let outputElement = document.getElementById("optimizeResults");
+
+	// @ts-ignore
+	outputElement.innerHTML = `
+		<h4>Settings</h4>
+		${generateOptimizedPropositionSettings(result, variableMeaningMap)}
+		<h4>Raised Concerns</h4>
+		${generateOptimizedRaisedConcerns(result, variableMeaningMap)}
+	`;
+}
+
+function generateOptimizedPropositionSettings(result, variableMeaningMap) {
+	return `
+		<table class="center">
+			<tr>
+				<td><b>Proposition ID</b></td>
+				<td><b>Proposition Expression</b></td>
+				<td><b>Value</b></td>
+			</tr>
+			${
+				tweakables.map((tweakable) => {
+					let propositionName = tweakable.name;
+					let propositionExpression = tweakable.input;
+					let propositionValueVariables = variableMeaningMap.propositions.get(propositionName);
+
+					let propositionValue = Object.keys(propositionValueVariables)
+					.filter((value) => result[propositionValueVariables[value]] == 1)[0];
+
+					return `
+						<tr>
+							<td>${propositionName}</td>
+							<td><pre>${propositionExpression}</pre></td>
+							<td>${propositionValue}</td>
+						</tr>
+					`;
+				}).join("")
+			}
+		</table>
+	`;
+}
+
+
+function generateOptimizedRaisedConcerns(result, variableMeaningMap) {
+	return `
+		<table class="center">
+			${
+			Object.keys(concerns)
+			.filter((concernName) => result[variableMeaningMap.concerns.get(concernName)] == 1)
+			.map((concernName) => {
+				return `<tr><td>${concernName}</td></tr>`
+			}).join("")}
+		</table>
+	`;
+}
+
+function encodeApiInput(jsonObject) {
+	// TODO: base 64 encode
+	//return btoa(JSON.stringify(jsonObject))
+	return encodeURIComponent(JSON.stringify(jsonObject));
 }
 
 function toStringRaiseCondition(condition) {

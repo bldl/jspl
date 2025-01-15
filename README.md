@@ -83,3 +83,9 @@ concern test {
     "
 }
 ```
+
+# Optimizer (Experimental)
+
+**WARNING:** This feature is still experimental and not very user-friendly.
+
+The VSCode-Extension allows to create an experimental optimizer from the command palette. This optimizer has the original laboratory included, but comes with multiple new "tabs". In the weights tab, penalties can be assigned to the different concerns to indicate "how concerning" they are. In the optimize tab the optimize button can be clicked to automatically find an optimal selection of the values for every tweakable (proposition). This however requires a local python server to be run, that does the actual solving of the problem. Such a server can be found in the git repository in the file "scip-server". Using the optimizer might require you to disable CORS-checks, if the python server is run locally.

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2025-01-15
+
+- Added experimental Optimizer webpage.
+    - Requires to run a local python server running a linear programming solver. A suitable server using the SCIP Solver can be found in the Git repository. (Actually using the solver locally might require the user to disable Cors-checks)
+
 ## [0.6.3] - 2024-04-28
 
 - Repository was moved over to GitHub under the Bergen Language Design Laboratory

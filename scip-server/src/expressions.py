@@ -5,7 +5,7 @@ def constructFactor(input: str, vars_dict: dict[str, Variable]):
     if len(input) == 0:
         return 0
 
-    print(f"in: {input}, vars: {vars_dict}")
+    #print(f"in: {input}, vars: {vars_dict}")
     negative = input.startswith('-')
 
     if  negative and input[1: len(input)] in vars_dict:
@@ -45,6 +45,6 @@ def constructExpression(input: str, vars_dict: dict[str, Variable]):
     input = input.replace('-', '+-')
 
     terms = input.split('+')   
-    print(terms) 
+    #print(terms) 
 
     return sum(constructTerm(term, vars_dict) for term in terms)

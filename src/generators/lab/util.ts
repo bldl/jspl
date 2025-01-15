@@ -83,7 +83,7 @@ const DEFAULT_WEB_LABORATORY_INFORMATION: ExtractedWebLaboratoryInformation = {
 }
 export function extractLaboratoryInformationForWebWithDefaults(information: LaboratoryInformation | undefined): ExtractedWebLaboratoryInformation {
     const extracted = extractLaboratoryInformation(information);
-    let result = DEFAULT_WEB_LABORATORY_INFORMATION;
+    let result = JSON.parse(JSON.stringify(DEFAULT_WEB_LABORATORY_INFORMATION));
 
     if (extracted.title !== undefined) result.title = extracted.title;
     if (extracted.icon !== undefined) result.icon = extracted.icon;

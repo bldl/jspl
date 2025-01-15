@@ -2,7 +2,7 @@
     "name": "jspl-javascript-propositional-laboratory",
     "displayName": "JSPL: JavaScript Propositional Laboratory",
     "description": "Support for writing JavaScript Proposal Laboratories",
-    "version": "0.6.3",
+    "version": "0.7.0",
     "publisher": "PhilippRiemer",
     "license": "SEE LICENSE IN LICENSE.txt",
     "icon": "icon.png",
@@ -19,10 +19,6 @@
     },
     "homepage": "https://github.com/bldl/jspl",
     "categories": ["Programming Languages"],
-    "files": [
-        "bin",
-        "templates"
-    ],
     "type": "module",
     "scripts": {
         "build": "tsc -b tsconfig.json && node esbuild.mjs",
