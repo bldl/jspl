@@ -44,7 +44,7 @@ LaboratoryInformation:
 
 // Concerns
 Concern:
-    "concern" name=ID "{"
+    "issue" name=ID "{"
         "summary" summary=STRING
         "description" description=FormattedString
     "}"
@@ -98,7 +98,7 @@ DisableClause:
 ;
 
 Proposition:
-    "proposition" name=ID "{"
+    "tweakable" name=ID "{"
         "expression" expression=STRING
         //"default" valueDescription+=ValueDescription // how can I get this value to also show up in the list of ALL value descriptions?
         (valueClauses+=ValueClause)+

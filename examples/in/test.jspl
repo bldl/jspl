@@ -1,51 +1,42 @@
 laboratory {
-    title "Different title"
-    description "
-    This is a laboratory for the proposal x and there is a lot to talk about...
-
-    Example Code:
-    
-        int i = 0;
-        i++;
-    
-    ## Subsection:
-
-    Testing
-    "
-    //icon "some url" 
-    //author "Philipp Riemer"
-    version "1.0"
-    format MD
+	title "Basic Test Laboratory"
+	description "This is a basic test to try out DSL components"
+	icon "./res/favicon.svg"
+	author "Philipp"
+	format HTML
+	version "2"
 }
 
-concern used {
-    summary "CONCERNING!!!!"
-    description "Okay, maybe not so concerning"
+issue concerning {
+    summary "a != b"
+    description "We need a to be equal to b."
 }
 
-concern unused {
-    summary "nothing"
-    description "nothing at all"
+issue concerning2 {
+    summary ""
+    description ""
 }
 
-proposition test {
-    expression "a === b"
-    default value True
+tweakable first {
+    expression "a == 0"
+    default value True {
+        raise concerning when second is False
+    } 
     value False {
-        raise used
+        raise concerning when second is True
+        raise concerning2
     }
 }
 
-condition usedCondition holds when test is True
-condition unusedCondition holds when test is False
+condition unequal holds when 
+(first is True and second is False) or (first is False and second is True) 
 
-proposition test22 {
-    expression "a === 2"
-    default value "test" {
-
+tweakable second {
+    expression "b == 0"
+    value True {
+        raise concerning when unequal is True
     }
-    value "object"
-    disabled {
-        message "something" when usedCondition is True
+    default value False {
+        raise concerning when unequal is True
     }
 }

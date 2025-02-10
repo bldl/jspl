@@ -424,7 +424,7 @@ function optimizeAction() {
 		
 		// @ts-ignore
 		debugReverse.innerHTML = `
-			<h4>Concerns</h4>
+			<h4>Issues</h4>
 			<table class="center">
 			${Array.from(reversibleInput.variableMeaningMap.concerns.keys()).map((key) => {
 				return `
@@ -435,7 +435,7 @@ function optimizeAction() {
 				`;
 			}).join("")}
 			</table>
-			<h4>Propositions</h4>
+			<h4>Tweakables</h4>
 			<table class="center">
 			${Array.from(reversibleInput.variableMeaningMap.propositions.keys()).map((key) => {
 				return `<tr><td><b>${key}</b></td>` + Object.keys(reversibleInput.variableMeaningMap.propositions.get(key)).map((value) => {
@@ -498,7 +498,7 @@ function showOptimizerResults(result, variableMeaningMap) {
 	outputElement.innerHTML = `
 		<h4>Settings</h4>
 		${generateOptimizedPropositionSettings(result, variableMeaningMap)}
-		<h4>Raised Concerns</h4>
+		<h4>Raised Issues</h4>
 		${generateOptimizedRaisedConcerns(result, variableMeaningMap)}
 	`;
 }
@@ -507,8 +507,8 @@ function generateOptimizedPropositionSettings(result, variableMeaningMap) {
 	return `
 		<table class="center">
 			<tr>
-				<td><b>Proposition ID</b></td>
-				<td><b>Proposition Expression</b></td>
+				<td><b>Tweakable ID</b></td>
+				<td><b>Tweakable Expression</b></td>
 				<td><b>Value</b></td>
 			</tr>
 			${

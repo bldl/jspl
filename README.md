@@ -14,34 +14,34 @@ laboratory {
     description "This laboratory is for x"
     icon "./path/to/favicon.svg or some url" 
     format MD
-    author "Philipp Riemer"
+    author "Test Author"
     version "1.0"
 }
 ```
 
-## Concerns
+## Issues
 ```
-concern name {
+issue name {
     summary "a short summary"
-    description "a more detailed description of the concern, possibly containing html elements."
+    description "a more detailed description of the issue, possibly containing html elements."
 }
 ```
 
-## Proposition
+## Tweakables
 ```
-proposition name {
+tweakable name {
     expression "what Expression to display"
     default value True
     value False {
-        raise someConcern when someCondition is True
+        raise someIssue when someCondition is True
     }
     value "some custom value"
     disabled {
-        message "this is disabled, because ..." when someCondition is True and someOtherProposition is "undefined"
+        message "this is disabled, because ..." when someCondition is True and someOtherTweakable is "undefined"
     }
 }
 
-proposition given {
+tweakable given {
     expression "this is given"
     value True
 }
@@ -49,19 +49,19 @@ proposition given {
 
 ## Conditions
 ```
-condition name holds when someProposition is "value1" and someOtherCondition is False
+condition name holds when someTweakable is "value1" and someOtherCondition is False
 ```
 
 ## Markdown support
-Multiline strings (laboratory description, concern description) are by default interpreted as markdown. Because markdown is indentation-sensitive, it is important to always indent the descriptions to the level of the original node. This following example of a concern is correctly indented:
+Multiline strings (laboratory description, issue description) are by default interpreted as markdown. Because markdown is indentation-sensitive, it is important to always indent the descriptions to the level of the original node. This following example of a issue is correctly indented:
 ```
-concern test {
-    summary "CONCERN!"
+issue test {
+    summary "ISSUE!"
     description "
     
-    # This is concerning.
+    # This is severe.
             
-    **Very concerning!** 
+    **Very severe!** 
 
     *Or is it?*
 
@@ -76,10 +76,10 @@ concern test {
 
 The usage of markdown can be disabled in favour of direct html-interpretation on a general basis by changing the format in the Laboratory Information or on a per-description basis by prefixing a string with "HTML":
 ```
-concern test {
+issue test {
     summary "summary"
     description HTML "
-        <p>This is my concern</p>
+        <p>This is my issue</p>
     "
 }
 ```
@@ -88,4 +88,4 @@ concern test {
 
 **WARNING:** This feature is still experimental and not very user-friendly.
 
-The VSCode-Extension allows to create an experimental optimizer from the command palette. This optimizer has the original laboratory included, but comes with multiple new "tabs". In the weights tab, penalties can be assigned to the different concerns to indicate "how concerning" they are. In the optimize tab the optimize button can be clicked to automatically find an optimal selection of the values for every tweakable (proposition). This however requires a local python server to be run, that does the actual solving of the problem. Such a server can be found in the git repository in the file "scip-server". Using the optimizer might require you to disable CORS-checks, if the python server is run locally.
+The VSCode-Extension allows to create an experimental optimizer from the command palette. This optimizer has the original laboratory included, but comes with multiple new "tabs". In the weights tab, penalties can be assigned to the different issues to indicate "how severe" they are. In the optimize tab the optimize button can be clicked to automatically find an optimal selection of the values for every tweakable. This however requires a local python server to be run, that does the actual solving of the problem. Such a server can be found in the git repository in the file "scip-server". Using the optimizer might require you to disable CORS-checks, if the python server is run locally.

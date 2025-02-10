@@ -1,13 +1,13 @@
 laboratory {
 	title "Records and Tuples Laboratory 🔬"
-	description MD "🏗 Work in progress - [raise issue](https://github.com/acutmore/record-tuple-laboratory/issues/new)"
+	description MD "🏗 Work in progress - [raise technical issue](https://github.com/acutmore/record-tuple-laboratory/issues/new)"
 	icon "./res/favicon.svg"
 	author "Ashley Claymore"
 	format HTML
 	version "2"
 }
 
-concern withoutBox {
+issue withoutBox {
     summary 
         "complexity moved to ecosystem"
     description 
@@ -31,7 +31,7 @@ concern withoutBox {
 		</p>"
 }
 
-concern typeofPowerfulObjectIsNotObject {
+issue typeofPowerfulObjectIsNotObject {
 	summary
 		"security risk"
 	description
@@ -41,7 +41,7 @@ concern typeofPowerfulObjectIsNotObject {
 		to interact with Records and Tuples."
 }
 
-concern validWeakValue {
+issue validWeakValue {
 	summary
 		"consistency change"
 	description
@@ -50,7 +50,7 @@ concern validWeakValue {
 		placed in a WeakSet this consistency is no longer reliable. And code will need to be updated."
 }
 
-concern weakSetLeak {
+issue weakSetLeak {
 	summary 
 		"memory leak"
 	description
@@ -58,7 +58,7 @@ concern weakSetLeak {
 		create a silent memory leak."
 }
 
-concern slotSensitiveTypeof {
+issue slotSensitiveTypeof {
 	summary
 		"slot sensitive typeof"
 	description
@@ -67,7 +67,7 @@ concern slotSensitiveTypeof {
 		Record.isRecord instead."
 }
 
-concern confusingTypeof {
+issue confusingTypeof {
 	summary
 		"problematic typeof"
 	description
@@ -76,7 +76,7 @@ concern confusingTypeof {
 		when it contains a Box."
 }
 
-concern objectWrappers {
+issue objectWrappers {
 	summary
 		"object wrappers"
 	description
@@ -84,7 +84,7 @@ concern objectWrappers {
 		which will have its own unique identity: <pre>Object(#[]) !== Object(#[])</pre></p>."
 }
 
-concern objectWrapperInConsistency {
+issue objectWrapperInConsistency {
 	summary
 		"being objects"
 	description
@@ -97,7 +97,7 @@ concern objectWrapperInConsistency {
 		</p>"
 }
 
-concern noBoxesInWeakSets {
+issue noBoxesInWeakSets {
 	summary
 		"performance"
 	description
@@ -107,7 +107,7 @@ concern noBoxesInWeakSets {
 		Records with Boxes can't be WeakMaps keys."
 }
 
-concern unequalTupleNan {
+issue unequalTupleNan {
 	summary
 		"consistency change"
 	description
@@ -123,7 +123,7 @@ concern unequalTupleNan {
 		</ul>"
 }
 
-concern noNegativeZero {
+issue noNegativeZero {
 	summary	
 		"no negative zero"
 	description
@@ -142,7 +142,7 @@ concern noNegativeZero {
 		</ul>"
 }
 
-concern impossibleEqualityOfZeros {
+issue impossibleEqualityOfZeros {
 	summary
 		"impossible equality"
 	description
@@ -150,7 +150,7 @@ concern impossibleEqualityOfZeros {
 		unequal to #[+0]."
 }
 
-concern observableDifferentButIsEqual {
+issue observableDifferentButIsEqual {
 	summary
 		"Object.is semantics"
 	description
@@ -163,7 +163,7 @@ concern observableDifferentButIsEqual {
 		this changes the semantics of Object.is, and the use cases it can be applied to."
 }
 
-concern nanNotIsNan {
+issue nanNotIsNan {
 	summary
 		"Object.is NaN semantics"
 	description
@@ -171,7 +171,7 @@ concern nanNotIsNan {
 		a reason for Object.is(#[NaN], #[NaN]) to not be true."
 }
 
-concern canNotAlwaysIntern {
+issue canNotAlwaysIntern {
 	summary
 		"can not always intern"
 	description
@@ -180,7 +180,7 @@ concern canNotAlwaysIntern {
 		preserved then records and tuple equality can not solely rely on interning."
 }
 
-concern zerosNotTripleEqual {
+issue zerosNotTripleEqual {
 	summary
 		"Triple equality semantics"
 	description
@@ -195,7 +195,7 @@ concern zerosNotTripleEqual {
 		</ul>"
 }
 
-concern storingPrimitiveInBox {
+issue storingPrimitiveInBox {
 	summary
 		"storing <i>primitives*</i> in a Box"
 	description
@@ -226,7 +226,7 @@ concern storingPrimitiveInBox {
 		</ul>"
 }
 
-concern noPrimitivesInBox {
+issue noPrimitivesInBox {
 	summary
 		"Box construction ergonomics"
 	description
@@ -239,7 +239,7 @@ concern noPrimitivesInBox {
 		impossible."
 }
 
-concern recordProxies {
+issue recordProxies {
 	summary
 		"Record proxies"
 	description
@@ -252,7 +252,7 @@ concern recordProxies {
 		future."
 }
 
-concern proxyThrowTypeofObject {
+issue proxyThrowTypeofObject {
 	summary
 		"proxy ergonomics"
 	description
@@ -262,7 +262,7 @@ concern proxyThrowTypeofObject {
 		object counterparts before passing them to the proxy constructor."
 }
 
-concern differenceBetweenEqualityForTypeofObject {
+issue differenceBetweenEqualityForTypeofObject {
 	summary
 		"different equality of an object-like value"
 	description
@@ -278,7 +278,7 @@ concern differenceBetweenEqualityForTypeofObject {
 		</p>"
 }
 
-concern boxType {
+issue boxType {
 	summary
 		"Box type"
 	description
@@ -287,7 +287,7 @@ concern boxType {
 		</p>"
 }
 
-concern objectsDontHaveWrappers {
+issue objectsDontHaveWrappers {
 	summary
 		"Value is already an object"
 	description
@@ -296,7 +296,7 @@ concern objectsDontHaveWrappers {
 		</p>"
 }
 
-concern tuplePrototypeEquality {
+issue tuplePrototypeEquality {
 	summary
 		"Tuple prototype equality"
 	description
@@ -318,57 +318,57 @@ concern tuplePrototypeEquality {
 	Propositions
 */
 
-proposition typeofArray {
+tweakable typeofArray {
     expression "typeof []"
     default value "object"
 }
 
-proposition typeofNan {
+tweakable typeofNan {
     expression "typeof NaN"
     default value "number"
 }
 
-proposition zeroTripleEqualsNegativZero {
+tweakable zeroTripleEqualsNegativZero {
     expression "+0 === -0"
     default value True
 }
 
-proposition zeroObjectIsNegativeZero {
+tweakable zeroObjectIsNegativeZero {
     expression "Object.is(+0, -0)"
     default value False
 }
 
-proposition arrayWithNegativeZeroIncludesZero {
+tweakable arrayWithNegativeZeroIncludesZero {
     expression "[-0].includes(+0)"
     default value True {}
 }
 
-proposition nanTripleEqualsNan {
+tweakable nanTripleEqualsNan {
     expression "NaN === NaN"
     default value False
 }
 
-proposition nanObjectIsNan {
+tweakable nanObjectIsNan {
     expression "Object.is(NaN, Nan)"
     default value True
 }
 
-proposition arrayWithNanIncludesNan {
+tweakable arrayWithNanIncludesNan {
     expression "[NaN].includes(NaN)"
     default value True
 }
 
-proposition arrayWithZeroTripleEqualsArrayWithZero {
+tweakable arrayWithZeroTripleEqualsArrayWithZero {
     expression "[0] === [0]"
     default value False
 }
 
-proposition tupleWithZeroTripleEqualsTupleWithZero {
+tweakable tupleWithZeroTripleEqualsTupleWithZero {
     expression "#[0] === #[0]"
     default value True 
 }
 
-proposition objectIsFrozenTupleWithZero {
+tweakable objectIsFrozenTupleWithZero {
     expression "Object.isFrozen(#[0])"
     default value True {}
 }
@@ -377,7 +377,7 @@ proposition objectIsFrozenTupleWithZero {
     Tweakables
 */
 
-proposition storeNegativeZero {
+tweakable storeNegativeZero {
     expression "Object.is(#[-0].at(0), -0)"
     default value True {}
     value False {
@@ -385,7 +385,7 @@ proposition storeNegativeZero {
     }
 }
 
-proposition zerosAreTripleEqual {
+tweakable zerosAreTripleEqual {
     expression "#[+0] === #[-0]"
     default value True {
         raise canNotAlwaysIntern when storeNegativeZero is True
@@ -396,7 +396,7 @@ proposition zerosAreTripleEqual {
     }
 }
 
-proposition tupleNaNAreTripleEqual {
+tweakable tupleNaNAreTripleEqual {
     expression "#[NaN] === #[NaN]"
     default value True {}
     value False {
@@ -404,7 +404,7 @@ proposition tupleNaNAreTripleEqual {
     }
 }
 
-proposition tupleWithZeroObjectIsTupleWithNegativeZero {
+tweakable tupleWithZeroObjectIsTupleWithNegativeZero {
     expression "Object.is(#[+0], #[-0])"
     default value False {
         raise impossibleEqualityOfZeros when storeNegativeZero is False
@@ -415,7 +415,7 @@ proposition tupleWithZeroObjectIsTupleWithNegativeZero {
     }
 }
 
-proposition tupleWithNanObjectIsTupleWithNan {
+tweakable tupleWithNanObjectIsTupleWithNan {
     expression "Object.is(#[NaN], #[NaN])"
     default value True {}
     value False {
@@ -423,7 +423,7 @@ proposition tupleWithNanObjectIsTupleWithNan {
     }
 }
 
-proposition typeofTuple {
+tweakable typeofTuple {
     expression "typeof #[]"
     default value "tuple" {
         raise slotSensitiveTypeof when typeOfTupleWithBox is "tuple" and typeofBoxConstructor is "function"
@@ -434,7 +434,7 @@ proposition typeofTuple {
     }
 }
 
-proposition tupleWrappedInObjectTripleEqualsTuple {
+tweakable tupleWrappedInObjectTripleEqualsTuple {
     expression "Object(#[]) === #[]"
     default value False {
         raise objectsDontHaveWrappers when typeofTuple is "object"
@@ -445,7 +445,7 @@ proposition tupleWrappedInObjectTripleEqualsTuple {
     }
 }
 
-proposition addingTupleToWeakSetThrows {
+tweakable addingTupleToWeakSetThrows {
     expression "new WeakSet().add(#[]) // throws?"
     default value True {
         raise validWeakValue when typeofTuple is "object"
@@ -455,7 +455,7 @@ proposition addingTupleToWeakSetThrows {
     }
 }
 
-proposition tupleAsArgumentOfNewProxyThrows {
+tweakable tupleAsArgumentOfNewProxyThrows {
     expression "new Proxy(#[]) // throws?"
     default value True {
         raise proxyThrowTypeofObject when typeofTuple is "object"
@@ -465,7 +465,7 @@ proposition tupleAsArgumentOfNewProxyThrows {
     }
 }
 
-proposition typeofBoxConstructor {
+tweakable typeofBoxConstructor {
     expression "typeof Box"
     default value "undefined" {
         raise withoutBox 
@@ -477,7 +477,7 @@ proposition typeofBoxConstructor {
 
 condition noBox holds when typeofBoxConstructor is "undefined"
 
-proposition typeofBoxInstance {
+tweakable typeofBoxInstance {
     expression "typeof Box({})"
     default value "box" {
         raise typeofPowerfulObjectIsNotObject
@@ -488,7 +488,7 @@ proposition typeofBoxInstance {
     }
 }
 
-proposition typeOfTupleWithBox {
+tweakable typeOfTupleWithBox {
     expression "typeof #[Box({})]"
     default value "tuple" {
         raise confusingTypeof when typeofTuple is "object"
@@ -500,7 +500,7 @@ proposition typeOfTupleWithBox {
     }
 }
 
-proposition boxConstructorWithPrimitives {
+tweakable boxConstructorWithPrimitives {
     expression "Box(42) // throws?"
     default value True {
         raise noPrimitivesInBox
@@ -513,7 +513,7 @@ proposition boxConstructorWithPrimitives {
     }
 }
 
-proposition addingTuplesWithBoxesToWeakSets {
+tweakable addingTuplesWithBoxesToWeakSets {
     expression "new WeakSet().add(#[Box({})]) // throws?"
     default value True {
         raise noBoxesInWeakSets
@@ -524,7 +524,7 @@ proposition addingTuplesWithBoxesToWeakSets {
     }
 }
 
-proposition tupleWithBoxAsArgumentForNewProxy {
+tweakable tupleWithBoxAsArgumentForNewProxy {
     expression "new Proxy(#[Box({})]) // throws?"
     default value True {
         raise proxyThrowTypeofObject when typeOfTupleWithBox is "object"

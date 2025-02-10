@@ -1,4 +1,4 @@
-concern unequalTupleNan {
+issue unequalTupleNan {
 	summary
 		"consistency change"
 	description
@@ -14,7 +14,7 @@ concern unequalTupleNan {
 		</ul>"
 }
 
-concern nanNotIsNan {
+issue nanNotIsNan {
 	summary
 		"Object.is NaN semantics"
 	description
@@ -28,7 +28,7 @@ concern nanNotIsNan {
 */
 
 
-proposition tupleNaNAreTripleEqual {
+tweakable tupleNaNAreTripleEqual {
     expression "#[NaN] === #[NaN]"
     default value True {}
     value False {
@@ -36,7 +36,7 @@ proposition tupleNaNAreTripleEqual {
     }
 }
 
-proposition tupleWithNanObjectIsTupleWithNan {
+tweakable tupleWithNanObjectIsTupleWithNan {
     expression "Object.is(#[NaN], #[NaN])"
     default value True {}
     value False {
