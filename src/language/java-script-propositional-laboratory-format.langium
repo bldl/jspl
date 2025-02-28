@@ -13,7 +13,7 @@ entry Model:
 
 // Terminals
 
-terminal BOOLEAN returns boolean: /True|False/;
+terminal BOOLEAN returns boolean: /True|False|true|false/;
 terminal ML_STRING_FORMAT returns string: /MD|HTML/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 //terminal INT returns number: /[0-9]+/;

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.3] - 2025-02-28
+
+- Allowed for uncapitalised boolean values (true/false and True/False are now all allowed)
+- Updated examples to reflect scientific work
+
 ## [0.7.2] - 2025-02-10
 
 - Changed `proposition` keyword to `tweakable` 

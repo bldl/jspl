@@ -30,16 +30,16 @@ issue nanNotIsNan {
 
 tweakable tupleNaNAreTripleEqual {
     expression "#[NaN] === #[NaN]"
-    default value True {}
-    value False {
+    default value true {}
+    value false {
         raise unequalTupleNan
     }
 }
 
 tweakable tupleWithNanObjectIsTupleWithNan {
     expression "Object.is(#[NaN], #[NaN])"
-    default value True {}
-    value False {
-        raise nanNotIsNan when tupleNaNAreTripleEqual is True
+    default value true {}
+    value false {
+        raise nanNotIsNan when tupleNaNAreTripleEqual is true
     }
 }

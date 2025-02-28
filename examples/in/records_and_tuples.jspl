@@ -330,47 +330,47 @@ tweakable typeofNan {
 
 tweakable zeroTripleEqualsNegativZero {
     expression "+0 === -0"
-    default value True
+    default value true
 }
 
 tweakable zeroObjectIsNegativeZero {
     expression "Object.is(+0, -0)"
-    default value False
+    default value false
 }
 
 tweakable arrayWithNegativeZeroIncludesZero {
     expression "[-0].includes(+0)"
-    default value True {}
+    default value true {}
 }
 
 tweakable nanTripleEqualsNan {
     expression "NaN === NaN"
-    default value False
+    default value false
 }
 
 tweakable nanObjectIsNan {
     expression "Object.is(NaN, Nan)"
-    default value True
+    default value true
 }
 
 tweakable arrayWithNanIncludesNan {
     expression "[NaN].includes(NaN)"
-    default value True
+    default value true
 }
 
 tweakable arrayWithZeroTripleEqualsArrayWithZero {
     expression "[0] === [0]"
-    default value False
+    default value false
 }
 
 tweakable tupleWithZeroTripleEqualsTupleWithZero {
     expression "#[0] === #[0]"
-    default value True 
+    default value true 
 }
 
 tweakable objectIsFrozenTupleWithZero {
     expression "Object.isFrozen(#[0])"
-    default value True {}
+    default value true {}
 }
 
 /*
@@ -379,47 +379,47 @@ tweakable objectIsFrozenTupleWithZero {
 
 tweakable storeNegativeZero {
     expression "Object.is(#[-0].at(0), -0)"
-    default value True {}
-    value False {
+    default value true {}
+    value false {
         raise noNegativeZero
     }
 }
 
 tweakable zerosAreTripleEqual {
     expression "#[+0] === #[-0]"
-    default value True {
-        raise canNotAlwaysIntern when storeNegativeZero is True
+    default value true {
+        raise canNotAlwaysIntern when storeNegativeZero is true
     }
     value False {
-        raise zerosNotTripleEqual when storeNegativeZero is True
-        raise impossibleEqualityOfZeros when storeNegativeZero is False
+        raise zerosNotTripleEqual when storeNegativeZero is true
+        raise impossibleEqualityOfZeros when storeNegativeZero is false
     }
 }
 
 tweakable tupleNaNAreTripleEqual {
     expression "#[NaN] === #[NaN]"
-    default value True {}
-    value False {
+    default value true {}
+    value false {
         raise unequalTupleNan
     }
 }
 
 tweakable tupleWithZeroObjectIsTupleWithNegativeZero {
     expression "Object.is(#[+0], #[-0])"
-    default value False {
-        raise impossibleEqualityOfZeros when storeNegativeZero is False
-        raise differenceBetweenEqualityForTypeofObject when typeofTuple is "object" and zerosAreTripleEqual is True
+    default value false {
+        raise impossibleEqualityOfZeros when storeNegativeZero is false
+        raise differenceBetweenEqualityForTypeofObject when typeofTuple is "object" and zerosAreTripleEqual is true
     }
-    value True {
-        raise observableDifferentButIsEqual when storeNegativeZero is True
+    value true {
+        raise observableDifferentButIsEqual when storeNegativeZero is true
     }
 }
 
 tweakable tupleWithNanObjectIsTupleWithNan {
     expression "Object.is(#[NaN], #[NaN])"
-    default value True {}
-    value False {
-        raise nanNotIsNan when tupleNaNAreTripleEqual is True
+    default value true {}
+    value false {
+        raise nanNotIsNan when tupleNaNAreTripleEqual is true
     }
 }
 
@@ -436,31 +436,31 @@ tweakable typeofTuple {
 
 tweakable tupleWrappedInObjectTripleEqualsTuple {
     expression "Object(#[]) === #[]"
-    default value False {
+    default value false {
         raise objectsDontHaveWrappers when typeofTuple is "object"
         raise objectWrappers
     }
-    value True {
+    value true {
         raise objectWrapperInConsistency when typeofTuple is "tuple"
     }
 }
 
 tweakable addingTupleToWeakSetThrows {
-    expression "new WeakSet().add(#[]) // throws?"
-    default value True {
+    expression "new WeakSet().add(#[])"
+    default value "ShouldThrow" {
         raise validWeakValue when typeofTuple is "object"
     }
-    value False {
+    value "ShouldSucceed" {
         raise weakSetLeak
     }
 }
 
 tweakable tupleAsArgumentOfNewProxyThrows {
-    expression "new Proxy(#[]) // throws?"
-    default value True {
+    expression "new Proxy(#[])"
+    default value "ShouldThrow" {
         raise proxyThrowTypeofObject when typeofTuple is "object"
     }
-    value False {
+    value "ShouldSucceed" {
         raise recordProxies
     }
 }
@@ -475,8 +475,6 @@ tweakable typeofBoxConstructor {
     }
 }
 
-condition noBox holds when typeofBoxConstructor is "undefined"
-
 tweakable typeofBoxInstance {
     expression "typeof Box({})"
     default value "box" {
@@ -484,7 +482,7 @@ tweakable typeofBoxInstance {
     }
     value "object" {}
     disabled {
-        message "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
     }
 }
 
@@ -496,43 +494,43 @@ tweakable typeOfTupleWithBox {
     }
     value "object" {}
     disabled {
-        message "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
     }
 }
 
 tweakable boxConstructorWithPrimitives {
-    expression "Box(42) // throws?"
-    default value True {
+    expression "Box(42)"
+    default value "ShouldThrow" {
         raise noPrimitivesInBox
     }
-    value False {
+    value "ShouldSucceed" {
         raise storingPrimitiveInBox
     }
     disabled {
-        message "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
     }
 }
 
 tweakable addingTuplesWithBoxesToWeakSets {
-    expression "new WeakSet().add(#[Box({})]) // throws?"
-    default value True {
+    expression "new WeakSet().add(#[Box({})])"
+    default value "ShouldThrow" {
         raise noBoxesInWeakSets
     }
-    value False {}
+    value "ShouldSucceed" {}
     disabled {
-        message "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
     }
 }
 
 tweakable tupleWithBoxAsArgumentForNewProxy {
-    expression "new Proxy(#[Box({})]) // throws?"
-    default value True {
+    expression "new Proxy(#[Box({})])"
+    default value "ShouldThrow" {
         raise proxyThrowTypeofObject when typeOfTupleWithBox is "object"
     }
-    value False {
+    value "ShouldSucceed" {
         raise recordProxies
     }
     disabled {
-        message "typeof Box === 'undefined'" when noBox is True
+        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
     }
 }
