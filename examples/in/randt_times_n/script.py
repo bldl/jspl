@@ -1,3 +1,9 @@
+from math import ceil
+
+TWEAKABLES_IN_R_AND_T = 15
+WANTED_TWEAKABLES = 1000
+
+LAB_PREFIX = """
 laboratory {
 	title "Records and Tuples Laboratory 🔬"
 	description MD "🏗 Work in progress - [raise technical issue](https://github.com/acutmore/record-tuple-laboratory/issues/new)"
@@ -12,7 +18,7 @@ issue withoutBox {
         "complexity moved to ecosystem"
     description 
 		"<p>Without a 'Box' like type there will not be any direct support in the language for storing objects in Records and Tuples.</p>
-		Instead using <a href=\"https://github.com/tc39/proposal-symbols-as-weakmap-keys\">symbols-as-weakmap-keys</a>,
+		Instead using <a href=\\\"https://github.com/tc39/proposal-symbols-as-weakmap-keys\\\">symbols-as-weakmap-keys</a>,
 		symbols in Record and Tuples could still refer to objects/functions via a WeakMap.
 		Code will need to ensure the necessary code has access to these WeakMap side tables.
 		APIs conventions will need to be established to distinguish when symbols are being used in this way.
@@ -116,7 +122,7 @@ issue unequalTupleNan {
 		itself, then there would be an infinite number of values not equal to themselves.
 		<ul>
 			<li>
-				<a href=\"https://github.com/tc39/proposal-record-tuple/issues/65\"
+				<a href=\\\"https://github.com/tc39/proposal-record-tuple/issues/65\\\"
 					>R&T #65 Equality semantics for -0 and NaN</a
 				>
 			</li>
@@ -135,7 +141,7 @@ issue noNegativeZero {
 		<p>Being able to store a negative zero is considered important to some users.</p>
 		<ul>
 			<li>
-				<a href=\"https://github.com/tc39/proposal-record-tuple/issues/65\"
+				<a href=\\\"https://github.com/tc39/proposal-record-tuple/issues/65\\\"
 					>R&T #65 Equality semantics for -0 and NaN</a
 				>
 			</li>
@@ -188,7 +194,7 @@ issue zerosNotTripleEqual {
 		equal when compared via a record or tuple. This could lead to bugs.
 		<ul>
 			<li>
-				<a href=\"https://github.com/tc39/proposal-record-tuple/issues/65\"
+				<a href=\\\"https://github.com/tc39/proposal-record-tuple/issues/65\\\"
 					>R&T #65 Equality semantics for -0 and NaN</a
 				>
 			</li>
@@ -213,16 +219,16 @@ issue storingPrimitiveInBox {
 		</p>
 		<p>
 			It appears that there might be situations where checking if a Record contains an Object or not will be important, because of the difference in semantics.
-			e.g. checking for cycles, passing values across a <a href=\"https://github.com/tc39/proposal-shadowrealm\">ShadowRealm</a> boundary,
-			or <a href=\"https://github.com/tc39/proposal-record-tuple/issues/233#issuecomment-895044432\">storing values in a WeakMap</a>.
+			e.g. checking for cycles, passing values across a <a href=\\\"https://github.com/tc39/proposal-shadowrealm\\\">ShadowRealm</a> boundary,
+			or <a href=\\\"https://github.com/tc39/proposal-record-tuple/issues/233#issuecomment-895044432\\\">storing values in a WeakMap</a>.
 			If primitives* can be stored in a Box, then code checking if a Record/Tuple transitively contains an Object can no
 			longer be performed with a single call to a <pre>Box.containsBoxes</pre> predicate, instead different/additional helpers would be needed for this use-case.
 			e.g. <pre>Object.containsObject</pre> or <pre>Box.containsBoxWithIdentity</pre>. These helpers <i>may</i> be harder to explain than 'containsBoxes'.
 			Note: These helpers can be implemented in user-land, recursively walking the tree inspecting the values. They do not necessarily need to be built-in.
 		</p>
 		<ul>
-			<li><a href=\"https://github.com/tc39/proposal-record-tuple/issues/238\">R&T #238 Behavior of Box(Box(x))</a></li>
-			<li><a href=\"https://github.com/tc39/proposal-record-tuple/issues/231\">R&T #231 Boxes: How to expose a way to detect boxes in R&T?</a></li>
+			<li><a href=\\\"https://github.com/tc39/proposal-record-tuple/issues/238\\\">R&T #238 Behavior of Box(Box(x))</a></li>
+			<li><a href=\\\"https://github.com/tc39/proposal-record-tuple/issues/231\\\">R&T #231 Boxes: How to expose a way to detect boxes in R&T?</a></li>
 		</ul>"
 }
 
@@ -312,225 +318,235 @@ issue tuplePrototypeEquality {
 			The choice here is that either two objects with different prototypes can still be === equal to each other.
 			Or Tuples from different realms are never equal even if their contents are equal.
 		</p>"
-}
+}"""
 
-/*  
-	Propositions
-*/
-
-tweakable typeofArray {
+LAB_TWEAKABLES_TEMPLATE = """\
+tweakable typeofArray{lab_index} {{
     expression "typeof []"
     default value "object"
-}
+}}
 
-tweakable typeofNan {
+tweakable typeofNan{lab_index} {{
     expression "typeof NaN"
     default value "number"
-}
+}}
 
-tweakable zeroTripleEqualsNegativZero {
+tweakable zeroTripleEqualsNegativZero{lab_index} {{
     expression "+0 === -0"
     default value true
-}
+}}
 
-tweakable zeroObjectIsNegativeZero {
+tweakable zeroObjectIsNegativeZero{lab_index} {{
     expression "Object.is(+0, -0)"
     default value false
-}
+}}
 
-tweakable arrayWithNegativeZeroIncludesZero {
+tweakable arrayWithNegativeZeroIncludesZero{lab_index} {{
     expression "[-0].includes(+0)"
-    default value true
-}
+    default value true 
+}}
 
-tweakable nanTripleEqualsNan {
+tweakable nanTripleEqualsNan{lab_index} {{
     expression "NaN === NaN"
     default value false
-}
+}}
 
-tweakable nanObjectIsNan {
+tweakable nanObjectIsNan{lab_index} {{
     expression "Object.is(NaN, Nan)"
     default value true
-}
+}}
 
-tweakable arrayWithNanIncludesNan {
+tweakable arrayWithNanIncludesNan{lab_index} {{
     expression "[NaN].includes(NaN)"
     default value true
-}
+}}
 
-tweakable arrayWithZeroTripleEqualsArrayWithZero {
+tweakable arrayWithZeroTripleEqualsArrayWithZero{lab_index} {{
     expression "[0] === [0]"
     default value false
-}
+}}
 
-tweakable tupleWithZeroTripleEqualsTupleWithZero {
+tweakable tupleWithZeroTripleEqualsTupleWithZero{lab_index} {{
     expression "#[0] === #[0]"
     default value true 
-}
+}}
 
-tweakable objectIsFrozenTupleWithZero {
+tweakable objectIsFrozenTupleWithZero{lab_index} {{
     expression "Object.isFrozen(#[0])"
     default value true
-}
+}}
 
 /*
     Tweakables
 */
 
-tweakable storeNegativeZero {
+tweakable storeNegativeZero{lab_index} {{
     expression "Object.is(#[-0].at(0), -0)"
-    default value true
-    value false {
+    default value true 
+    value false {{
         raise noNegativeZero
-    }
-}
+    }}
+}}
 
-tweakable zerosAreTripleEqual {
+tweakable zerosAreTripleEqual{lab_index} {{
     expression "#[+0] === #[-0]"
-    default value true {
-        raise canNotAlwaysIntern when storeNegativeZero is true
-    }
-    value False {
-        raise zerosNotTripleEqual when storeNegativeZero is true
-        raise impossibleEqualityOfZeros when storeNegativeZero is false
-    }
-}
+    default value true {{
+        raise canNotAlwaysIntern when storeNegativeZero{lab_index} is true
+    }}
+    value False {{
+        raise zerosNotTripleEqual when storeNegativeZero{lab_index} is true
+        raise impossibleEqualityOfZeros when storeNegativeZero{lab_index} is false
+    }}
+}}
 
-tweakable tupleNaNAreTripleEqual {
+tweakable tupleNaNAreTripleEqual{lab_index} {{
     expression "#[NaN] === #[NaN]"
-    default value true {}
-    value false {
+    default value true
+    value false {{
         raise unequalTupleNan
-    }
-}
+    }}
+}}
 
-tweakable tupleWithZeroObjectIsTupleWithNegativeZero {
+tweakable tupleWithZeroObjectIsTupleWithNegativeZero{lab_index} {{
     expression "Object.is(#[+0], #[-0])"
-    default value false {
-        raise impossibleEqualityOfZeros when storeNegativeZero is false
-        raise differenceBetweenEqualityForTypeofObject when typeofTuple is "object" and zerosAreTripleEqual is true
-    }
-    value true {
-        raise observableDifferentButIsEqual when storeNegativeZero is true
-    }
-}
+    default value false {{
+        raise impossibleEqualityOfZeros when storeNegativeZero{lab_index} is false
+        raise differenceBetweenEqualityForTypeofObject when typeofTuple{lab_index} is "object" and zerosAreTripleEqual{lab_index} is true
+    }}
+    value true {{
+        raise observableDifferentButIsEqual when storeNegativeZero{lab_index} is true
+    }}
+}}
 
-tweakable tupleWithNanObjectIsTupleWithNan {
+tweakable tupleWithNanObjectIsTupleWithNan{lab_index} {{
     expression "Object.is(#[NaN], #[NaN])"
-    default value true {}
-    value false {
-        raise nanNotIsNan when tupleNaNAreTripleEqual is true
-    }
-}
+    default value true
+    value false {{
+        raise nanNotIsNan when tupleNaNAreTripleEqual{lab_index} is true
+    }}
+}}
 
-tweakable typeofTuple {
+tweakable typeofTuple{lab_index} {{
     expression "typeof #[]"
-    default value "tuple" {
-        raise slotSensitiveTypeof when typeOfTupleWithBox is "tuple" and typeofBoxConstructor is "function"
-    }
-    value "object" {
-        raise slotSensitiveTypeof when typeOfTupleWithBox is "object" and typeofBoxConstructor is "function"
+    default value "tuple" {{
+        raise slotSensitiveTypeof when typeOfTupleWithBox{lab_index} is "tuple" and typeofBoxConstructor{lab_index} is "function"
+    }}
+    value "object" {{
+        raise slotSensitiveTypeof when typeOfTupleWithBox{lab_index} is "object" and typeofBoxConstructor{lab_index} is "function"
         raise tuplePrototypeEquality
-    }
-}
+    }}
+}}
 
-tweakable tupleWrappedInObjectTripleEqualsTuple {
+tweakable tupleWrappedInObjectTripleEqualsTuple{lab_index} {{
     expression "Object(#[]) === #[]"
-    default value false {
-        raise objectsDontHaveWrappers when typeofTuple is "object"
+    default value false {{
+        raise objectsDontHaveWrappers when typeofTuple{lab_index} is "object"
         raise objectWrappers
-    }
-    value true {
-        raise objectWrapperInConsistency when typeofTuple is "tuple"
-    }
-}
+    }}
+    value true {{
+        raise objectWrapperInConsistency when typeofTuple{lab_index} is "tuple"
+    }}
+}}
 
-tweakable addingTupleToWeakSetThrows {
+tweakable addingTupleToWeakSetThrows{lab_index} {{
     expression "new WeakSet().add(#[])"
-    default value "ShouldThrow" {
-        raise validWeakValue when typeofTuple is "object"
-    }
-    value "ShouldSucceed" {
+    default value "ShouldThrow" {{
+        raise validWeakValue when typeofTuple{lab_index} is "object"
+    }}
+    value "ShouldSucceed" {{
         raise weakSetLeak
-    }
-}
+    }}
+}}
 
-tweakable tupleAsArgumentOfNewProxyThrows {
+tweakable tupleAsArgumentOfNewProxyThrows{lab_index} {{
     expression "new Proxy(#[])"
-    default value "ShouldThrow" {
-        raise proxyThrowTypeofObject when typeofTuple is "object"
-    }
-    value "ShouldSucceed" {
+    default value "ShouldThrow" {{
+        raise proxyThrowTypeofObject when typeofTuple{lab_index} is "object"
+    }}
+    value "ShouldSucceed" {{
         raise recordProxies
-    }
-}
+    }}
+}}
 
-tweakable typeofBoxConstructor {
+tweakable typeofBoxConstructor{lab_index} {{
     expression "typeof Box"
-    default value "undefined" {
+    default value "undefined" {{
         raise withoutBox 
-    }
-    value "function" {
+    }}
+    value "function" {{
         raise boxType
-    }
-}
+    }}
+}}
 
-tweakable typeofBoxInstance {
-    expression "typeof Box({})"
-    default value "box" {
+tweakable typeofBoxInstance{lab_index} {{
+    expression "typeof Box({{}})"
+    default value "box" {{
         raise typeofPowerfulObjectIsNotObject
-    }
-    value "object" {}
-    disabled {
-        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
-    }
-}
+    }}
+    value "object"
+    disabled {{
+        message "typeof Box === 'undefined'" when typeofBoxConstructor{lab_index} is "undefined"
+    }}
+}}
 
-tweakable typeOfTupleWithBox {
-    expression "typeof #[Box({})]"
-    default value "tuple" {
-        raise confusingTypeof when typeofTuple is "object"
-        raise typeofPowerfulObjectIsNotObject when typeofBoxInstance is "object"
-    }
-    value "object" {}
-    disabled {
-        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
-    }
-}
+tweakable typeOfTupleWithBox{lab_index} {{
+    expression "typeof #[Box({{}})]"
+    default value "tuple" {{
+        raise confusingTypeof when typeofTuple{lab_index} is "object"
+        raise typeofPowerfulObjectIsNotObject when typeofBoxInstance{lab_index} is "object"
+    }}
+    value "object" 
+    disabled {{
+        message "typeof Box === 'undefined'" when typeofBoxConstructor{lab_index} is "undefined"
+    }}
+}}
 
-tweakable boxConstructorWithPrimitives {
+tweakable boxConstructorWithPrimitives{lab_index} {{
     expression "Box(42)"
-    default value "ShouldThrow" {
+    default value "ShouldThrow" {{
         raise noPrimitivesInBox
-    }
-    value "ShouldSucceed" {
+    }}
+    value "ShouldSucceed" {{
         raise storingPrimitiveInBox
-    }
-    disabled {
-        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
-    }
-}
+    }}
+    disabled {{
+        message "typeof Box === 'undefined'" when typeofBoxConstructor{lab_index} is "undefined"
+    }}
+}}
 
-tweakable addingTuplesWithBoxesToWeakSets {
-    expression "new WeakSet().add(#[Box({})])"
-    default value "ShouldThrow" {
+tweakable addingTuplesWithBoxesToWeakSets{lab_index} {{
+    expression "new WeakSet().add(#[Box({{}})])"
+    default value "ShouldThrow" {{
         raise noBoxesInWeakSets
-    }
-    value "ShouldSucceed" {}
-    disabled {
-        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
-    }
-}
+    }}
+    value "ShouldSucceed"
+    disabled {{
+        message "typeof Box === 'undefined'" when typeofBoxConstructor{lab_index} is "undefined"
+    }}
+}}
 
-tweakable tupleWithBoxAsArgumentForNewProxy {
-    expression "new Proxy(#[Box({})])"
-    default value "ShouldThrow" {
-        raise proxyThrowTypeofObject when typeOfTupleWithBox is "object"
-    }
-    value "ShouldSucceed" {
+tweakable tupleWithBoxAsArgumentForNewProxy{lab_index} {{
+    expression "new Proxy(#[Box({{}})])"
+    default value "ShouldThrow" {{
+        raise proxyThrowTypeofObject when typeOfTupleWithBox{lab_index} is "object"
+    }}
+    value "ShouldSucceed" {{
         raise recordProxies
-    }
-    disabled {
-        message "typeof Box === 'undefined'" when typeofBoxConstructor is "undefined"
-    }
-}
+    }}
+    disabled {{
+        message "typeof Box === 'undefined'" when typeofBoxConstructor{lab_index} is "undefined"
+    }}
+}}
+"""
+
+with open("./lab.jspl", 'w') as output:
+    output.write(LAB_PREFIX)
+
+    randt_copies = ceil(WANTED_TWEAKABLES / TWEAKABLES_IN_R_AND_T)
+    total_tweakables = randt_copies * TWEAKABLES_IN_R_AND_T
+
+    print(f"Duplicating R&T {randt_copies} times, resulting in {total_tweakables} Tweakables.")
+
+    for i in range(randt_copies):
+
+        output.write(LAB_TWEAKABLES_TEMPLATE.format(lab_index = str(i)))
