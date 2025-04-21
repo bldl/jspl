@@ -1,4 +1,4 @@
-import { html } from "https://unpkg.com/htm/preact/standalone.module.js";
+import { html } from "./res/htm_preact_standalone.js";
 
 /**
  * # Tweakables

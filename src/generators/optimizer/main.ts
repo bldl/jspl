@@ -32,7 +32,8 @@ const ROOT_FILES_TO_COPY: Array<string> = [
 ];
 const RESOURCES_TO_COPY: Array<string> = [
     "favicon.svg",
-    "github.png"
+    "github.png",
+    "htm_preact_standalone.js"
 ];
 
 export function generateOptimizer(model: Model, outputDirectory: string, templateDirectory: string): string {

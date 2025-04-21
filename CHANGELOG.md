@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.4] - 2025-04-21
+
+- Updated Optimizer Template to include local version of HTM-Preact instead of loading it through unpkg.com
+
 ## [0.7.3] - 2025-02-28
 
 - Allowed for uncapitalised boolean values (true/false and True/False are now all allowed)

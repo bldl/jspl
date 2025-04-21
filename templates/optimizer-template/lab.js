@@ -1,6 +1,5 @@
 // @ts-check
-// @ts-expect-error
-import { html, render } from "https://unpkg.com/htm/preact/standalone.module.js";
+import { html, render } from "./res/htm_preact_standalone.js";
 import { metaData, givens, tweakables, concerns, raiseConditions } from "./data.js";
 import { constructOptimizerInput } from "./optimization.js";
 
