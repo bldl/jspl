@@ -10,4 +10,4 @@ static/monaco-editor-workers/
 static/worker/
 syntaxes/
 examples/out
-*/__pycache__
+**/__pycache__/*
