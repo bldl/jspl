@@ -1,0 +1,12 @@
+{
+  "projectName": "SpecAlt",
+  "languages": [{
+    "id": "specalt",
+    "textMate": {
+      "out": "../syntaxes/specalt-format.tmLanguage.json"
+    },
+    "fileExtensions": [".spa"],
+    "grammar": "../lib/language/specalt.langium"
+  }],
+  "out": "../lib/language/generated"
+}

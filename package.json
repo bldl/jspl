@@ -1,123 +1,57 @@
 {
-    "name": "jspl-javascript-propositional-laboratory",
-    "displayName": "JSPL: JavaScript Propositional Laboratory",
-    "description": "Support for writing JavaScript Proposal Laboratories",
-    "version": "0.7.4",
-    "publisher": "PhilippRiemer",
-    "license": "SEE LICENSE IN LICENSE.txt",
-    "icon": "icon.png",
-    "galleryBanner": {
-        "color": "#232323",
-        "theme": "dark"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/bldl/jspl"
-    },
-    "bugs": {
-        "url": "https://github.com/bldl/jspl/issues"
-    },
-    "homepage": "https://github.com/bldl/jspl",
-    "categories": ["Programming Languages"],
-    "type": "module",
-    "scripts": {
-        "build": "tsc -b tsconfig.json && node esbuild.mjs",
-        "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\"",
-        "lint": "eslint src --ext ts",
-        "langium:generate": "langium generate",
-        "langium:watch": "langium generate --watch",
-        "vscode:prepublish": "npm run build && npm run lint && npm run esbuild-base",
-        "esbuild-base": "esbuild ./src/extension/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node"
-    },
-    "dependencies": {
-        "@ts-stack/markdown": "^1.5.0",
-        "chalk": "~5.3.0",
-        "commander": "~11.0.0",
-        "dedent-js": "^1.0.1",
-        "langium": "~2.1.0",
-        "vscode-languageclient": "~9.0.1",
-        "vscode-languageserver": "~9.0.1"
-    },
-    "devDependencies": {
-        "@types/node": "~16.18.41",
-        "@types/vscode": "~1.67.0",
-        "@typescript-eslint/eslint-plugin": "~6.4.1",
-        "@typescript-eslint/parser": "~6.4.1",
-        "concurrently": "~8.2.1",
-        "esbuild": "^0.19.12",
-        "eslint": "~8.47.0",
-        "langium-cli": "~2.1.0",
-        "typescript": "~5.1.6"
-    },
-    "engines": {
-        "vscode": "^1.67.0",
-        "node": ">=16.0.0"
-    },
-    "contributes": {
-        "languages": [
-            {
-                "id": "java-script-propositional-laboratory-format",
-                "aliases": [
-                    "JavaScript Propositional Laboratory Format",
-                    "java-script-propositional-laboratory-format"
-                ],
-                "extensions": [
-                    ".jspl"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "java-script-propositional-laboratory-format",
-                "scopeName": "source.java-script-propositional-laboratory-format",
-                "path": "syntaxes/java-script-propositional-laboratory-format.tmLanguage.json"
-            }
-        ],
-        "commands": [
-            {
-                "command": "jspl.generate-webpage",
-                "title": "JSPL: Generate Laboratory Webpage"
-            },
-            {
-                "command": "jspl.generate-graphviz",
-                "title": "JSPL: Generate Graphviz Visualization"
-            },
-            {
-                "command": "jspl.generate-json",
-                "title": "JSPL: Generate JSON Representation"
-            },
-            {
-                "command": "jspl.generate-optimizer",
-                "title": "JSPL: Generate Optimizer (Experimental)"
-            }
-        ],
-        "menus": {
-            "commandPalette": [
-                {
-                    "command": "jspl.generate-webpage",
-                    "when": "editorLangId == java-script-propositional-laboratory-format"
-                },
-                {
-                    "command": "jspl.generate-graphviz",
-                    "when": "editorLangId == java-script-propositional-laboratory-format"
-                },
-                {
-                    "command": "jspl.generate-json",
-                    "when": "editorLangId == java-script-propositional-laboratory-format"
-                },
-                {
-                    "command": "jspl.generate-optimizer",
-                    "when": "editorLangId == java-script-propositional-laboratory-format"
-                }
-            ]
-        }
-    },
-    "activationEvents": [
-        "onLanguage:java-script-propositional-laboratory-format"
-    ],
-    "main": "./out/extension/main.cjs",
-    "bin": {
-        "java-script-propositional-laboratory-format-cli": "./bin/cli.js"
-    }
+  "name": "specalt",
+  "description": "The JavaScript Language Proposal Laboratory",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bldl/specalt-web"
+  },
+  "bugs": {
+    "url": "https://github.com/bldl/specalt-web/issues"
+  },
+  "homepage": "https://github.com/bldl/specalt-web",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "langium:generate": "langium generate -f config/langium.json"
+  },
+  "type": "module",
+  "dependencies": {
+    "@codingame/esbuild-import-meta-url-plugin": "^1.0.3",
+    "@codingame/monaco-vscode-editor-api": "^22.1.3",
+    "@codingame/monaco-vscode-files-service-override": "^22.1.3",
+    "@mantine/core": "^8.3.6",
+    "@mantine/hooks": "^8.3.6",
+    "@mantine/modals": "^8.3.6",
+    "@tabler/icons-react": "^3.35.0",
+    "@typefox/monaco-editor-react": "^7.2.0",
+    "monaco-languageclient": "^10.2.0",
+    "neverthrow": "^8.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-inspector": "^9.0.0",
+    "react-markdown": "^10.1.0",
+    "vscode": "npm:@codingame/monaco-vscode-extension-api@^22.1.3",
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/emscripten": "^1.41.5",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/vscode": "^1.105.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "dprint": "^0.50.2",
+    "langium": "~2.1.0",
+    "langium-cli": "~2.1.0",
+    "postcss": "^8.5.6",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  },
+  "engines": {
+    "vscode": "^1.67.0",
+    "node": ">=16.0.0"
+  }
 }

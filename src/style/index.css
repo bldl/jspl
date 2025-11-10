@@ -1,0 +1,17 @@
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+.editor {
+  width: 50%;
+  height: 100%;
+}
+
+.main {
+  height: calc(
+    100vh - var(--app-shell-header-height, 0x) -
+      var(--app-shell-footer-height, 0px) - var(--app-shell-padding) * 2
+  );
+  width: 100%;
+}
